@@ -1,0 +1,90 @@
+#header_img {
+  height: 450px;
+  background-image: url(img/headback.png);
+}
+
+@keyframes slide-in {
+  0% {
+    width: 0;
+    left: 0;
+  }
+  100% {
+    width: 100%;
+    left: 0;
+  }
+}
+
+/* Keyframes for the right-to-left animation */
+@keyframes slide-out {
+  0% {
+    width: 100%;
+    left: 0;
+  }
+  100% {
+    width: 0;
+    left: 100%;
+  }
+}
+
+/* Utility class to apply the custom animations */
+.animate-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-border::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px; /* Border thickness */
+  width: 0;
+  background-color: white;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover effect - left to right */
+.animate-border:hover::after {
+  animation: slide-in 0.3s ease-in-out forwards;
+}
+
+/* Unhover effect - right to left */
+.animate-border::after {
+  animation: slide-out 0.3s ease-in-out forwards;
+}
+
+#bg {
+  background-image: url(img/bg.png);
+}
+
+#content {
+  background-image: url(img/bg.png);
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 768px) {
+  .carousel-card {
+    flex-direction: column;
+  }
+  .carousel-card img {
+    width: 100%;
+    height: auto;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+  #carousel-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  .carousel-wrapper {
+    display: block;
+    width: 100%;
+    max-width: 400px; /* Restrict card width on mobile */
+  }
+}
+
+#secondpair {
+  display: none;
+}

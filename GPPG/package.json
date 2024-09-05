@@ -1,0 +1,19 @@
+{
+  "name": "gppg",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx tailwindcss -i ./static/index.css -o ./static/main.css --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "tailwindcss": "^3.4.10"
+  },
+  "dependencies": {
+    "alpinejs": "^3.14.1",
+    "preline": "^2.4.1"
+  }
+}
