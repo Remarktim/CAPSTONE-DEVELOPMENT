@@ -1,0 +1,194 @@
+{% load static %}
+<footer class="flex flex-col justify-between bg-[#3f0703]">
+  <div class="w-full text-white">
+    <div class="h-max flex flex-col xl:flex-row">
+      <div class="h-max sm:flex flex flex-col items-center sm:items-start p-20">
+        <!-- Explicit image dimensions and lazy loading -->
+        <img
+          class="w-[81px] h-[81px] rounded-[175px] image-content"
+          src="{% static 'img/logo.jpg' %}"
+          alt="Logo"
+          loading="lazy" />
+
+        <div class="mt-10 grid grid-cols-2 gap-36 xl:col-span-2 xl:mt-10">
+          <div class="md:grid md:grid-cols-2 md:gap-36">
+            <div>
+              <h3 class="text-md font-semibold leading-6 text-white">Home</h3>
+              <ul role="list" class="mt-6 space-y-2">
+                <li><a href="#" class="link">Marketing</a></li>
+                <li><a href="#" class="link">What is pangolin?</a></li>
+                <li><a href="#" class="link">Appearance</a></li>
+                <li><a href="#" class="link">Habits and Lifestyle</a></li>
+                <li><a href="#" class="link">Diet and Nutrition</a></li>
+                <li><a href="#" class="link">Mating Habits</a></li>
+                <li><a href="#" class="link">Here’s other pangolin</a></li>
+              </ul>
+            </div>
+            <div class="mt-10 md:mt-0">
+              <h3 class="text-md font-semibold leading-6 text-white">
+                About Us
+              </h3>
+              <ul role="list" class="mt-6 space-y-2">
+                <li><a href="#" class="link">History</a></li>
+                <li><a href="#" class="link">Mission and Vision</a></li>
+                <li><a href="#" class="link">Our goals</a></li>
+                <li><a href="#" class="link">Developer</a></li>
+                <li><a href="#" class="link">Officers</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="md:grid md:grid-cols-2 md:gap-36">
+            <div>
+              <h3 class="text-md font-semibold leading-6 text-white">
+                Gallery
+              </h3>
+              <ul role="list" class="mt-6 space-y-2">
+                <li><a href="#" class="link">Images</a></li>
+                <li><a href="#" class="link">Photos</a></li>
+              </ul>
+            </div>
+            <div class="mt-10 md:mt-0">
+              <h3 class="leading-6 md font-bold font-['Bahnschrift']">
+                Contact Us
+              </h3>
+              <ul role="list" class="mt-6 space-y-2">
+                <li><a href="#" class="link">Smart - 0912312414</a></li>
+                <li><a href="#" class="link">Globe - 0912312414</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ChatBot Section -->
+      <div
+        x-data="chatBot()"
+        class="xl:w-2/6 w-full px-10 xl:px-0 mx-auto xl:mt-20 xl:mb-0 mb-10 rounded-xl h-auto xl:mr-10">
+        <!-- Start Button -->
+        <div class="text-center">
+          <button
+            @click="startChat()"
+            class="bg-[#3f0703] text-white px-6 py-3 rounded-xl font-semibold focus:outline-none hover:bg-[#570a06] transition duration-300">
+            Start Chat
+          </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div
+          x-show="isChatActive"
+          class="flex-1 p-2 sm:p-6 justify-between flex flex-col bg-[#eaebe6] opacity-80 rounded-xl h-96 mt-5"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:leave="transition ease-in duration-300">
+          <div class="text-right mb-2">
+            <button
+              @click="exitChat()"
+              class="bg-red-500 text-white px-4 py-2 rounded-full text-sm focus:outline-none hover:bg-red-600 transition duration-300">
+              Exit Chat
+            </button>
+          </div>
+
+          <div class="text-center text-black">
+            <h2 class="text-xl font-semibold">Welcome to the GPPG Chat Bot</h2>
+          </div>
+
+          <div
+            id="messages"
+            class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded flex-grow">
+            <template x-for="(message, key) in messages" :key="key">
+              <div x-transition:enter="transition ease-out duration-300">
+                <div
+                  class="flex items-end"
+                  :class="message.from=='bot'?'':'justify-end'">
+                  <div
+                    class="flex flex-col space-y-2 text-md max-w-lg mx-2"
+                    :class="message.from=='bot'?'order-2 items-start':'order-1 items-end'">
+                    <div
+                      class="text-xs text-gray-500"
+                      x-text="new Date(message.timestamp).toLocaleString()"></div>
+                    <div>
+                      <span
+                        class="px-4 py-3 rounded-xl inline-block max-w-xs break-words"
+                        :class="message.from=='bot'?'rounded-bl-none bg-gray-100 text-black':'rounded-br-none bg-[#3f0703] text-white'"
+                        x-html="message.text"></span>
+                    </div>
+                  </div>
+                  <img
+                    :src="message.from=='bot'?'https://cdn.icon-icons.com/icons2/1371/PNG/512/robot02_90810.png':'{% static 'img/person.png' %}'"
+                    alt=""
+                    class="w-6 h-6 rounded-full"
+                    :class="message.from=='bot'?'order-1':'order-2'" />
+                </div>
+              </div>
+            </template>
+
+            <div x-show="botTyping" class="flex items-end">
+              <div class="loader ml-5">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+            <div class="relative flex">
+              <input
+                type="text"
+                placeholder="Say something..."
+                @keydown.enter="updateChat($event.target)"
+                class="text-md w-full focus:outline-none text-gray-600 placeholder-gray-600 pl-5 pr-16 bg-gray-100 border-2 border-gray-200 focus:border-[#3f0703] rounded-full py-2"
+                x-ref="input" />
+              <div class="absolute right-2 inset-y-0 hidden sm:flex">
+                <button
+                  type="button"
+                  class="mt-1.5 inline-flex items-center justify-center rounded-full h-8 w-8 text-white bg-[#3f0703] focus:outline-none transition duration-300"
+                  @click.prevent="updateChat($refs.input)">
+                  <i class="mdi mdi-arrow-right text-xl"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t-[1px] border-white">
+      <div
+        class="flex flex-col items-center sm:flex-row sm:justify-between py-5 mx-10 text-center">
+        <p class="text-sm text-white">
+          © 2024 Guardians of the Palawan Pangolin Guild. All rights reserved.
+        </p>
+        <div class="flex mt-3 sm:mt-0">
+          <a href="#" class="text-white mx-2">
+            <svg
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path fill-rule="evenodd" d="..."></path>
+            </svg>
+          </a>
+          <a href="#" class="text-white mx-2">
+            <svg
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path d="..."></path>
+            </svg>
+          </a>
+          <a href="#" class="text-white mx-2">
+            <svg
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path fill-rule="evenodd" d="..."></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPPG</title>
+    <link rel="icon" href="{% static 'img/logo.jpg' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static "main.css" %}"> <link
+    rel="stylesheet" href="{% static "style.css" %}">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css"
+      integrity="sha256-x8PYmLKD83R9T/sYmJn1j3is/chhJdySyhet/JuHnfY="
+      crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet" />
+
+    <link
+      href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  </head>
+  <body class="bg-[#eaebe6]">
+    <header>
+      <nav
+        class="flex items-center p-3 flex-wrap bg-[#3f0703] shadow-lg opacity-90">
+        <a href="{% url 'home' %}" class="p-2 mr-4 inline-flex items-center">
+          <img
+            class="w-[55px] h-[54px] rounded-[172px]"
+            src="{% static 'img/logo.jpg' %}" />
+          <span
+            class="xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']"
+            >Guardians of the Palawan Pangolin Guild</span
+          >
+        </a>
+        <button
+          class="text-white inline-flex p-3 hover:bg-gray-900 rounded lg:hidden ml-auto hover:text-white outline-none nav-toggler"
+          data-target="#navigation">
+          <i class="material-icons">menu</i>
+        </button>
+        <div
+          class="hidden top-navbar w-full lg:inline-flex lg:flex-grow lg:w-auto"
+          id="navigation">
+          <div
+            class="lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto w-full lg:items-center items-start flex flex-col lg:h-auto">
+            <a
+              href="{% url 'home' %}"
+              class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-5 font-medium font-['Roboto'] text-white items-center justify-center animate-border">
+              <span>Home</span>
+            </a>
+            <a
+              href="#"
+              class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-5 font-medium font-['Roboto'] text-white items-center justify-center animate-border">
+              <span>Trend</span>
+            </a>
+            <a
+              href="#"
+              class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-5 font-medium font-['Roboto'] text-white items-center justify-center animate-border">
+              <span>Map</span>
+            </a>
+            <a
+              href="{% url 'activities' %}"
+              class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-5 font-medium font-['Roboto'] text-white items-center justify-center bord">
+              <span>Activities</span>
+            </a>
+            <a
+              href="{% url 'gallery' %}"
+              class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-5 font-medium font-['Roboto'] text-white items-center justify-center animate-border">
+              <span>Gallery</span>
+            </a>
+            <a
+              href="{% url 'about' %}"
+              class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-5 font-medium font-['Roboto'] text-white items-center justify-center animate-border">
+              <span>About</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.5.0/dist/alpine.min.js"></script>
+    <script src="{% static 'js/index.js' %}" type="text/javascript"></script>
+  </body>
+</html>
