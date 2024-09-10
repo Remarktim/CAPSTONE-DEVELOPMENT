@@ -8,7 +8,7 @@ class BaseModel(models. Model):
     class Meta:
         abstract = True
 
-class Incidents(BaseModel):
+class Incident(BaseModel):
     st_choices = (
         ('Alive', 'Alive'),
         ('Dead', 'Dead'),
@@ -24,15 +24,15 @@ class Incidents(BaseModel):
     def __str__(self):
         return self.description
 
-class Evidences(BaseModel):
-    incidents = models.ForeignKey(Incidents, on_delete=models.CASCADE)
+class Evidence(BaseModel):
+    incidents = models.ForeignKey(Incident, on_delete=models.CASCADE)
     evidence_type = models.CharField(max_length=150)
     file_path = models.CharField(max_length=150)
 
     def __str__(self):
         return self.incident
 
-class Admins(BaseModel):
+class Admin(BaseModel):
     username = models.CharField(max_length=250) 
     password = models.CharField(max_length=500)
     email = models.CharField(max_length=150)
@@ -42,15 +42,15 @@ class Admins(BaseModel):
 
 class IncidentReport(BaseModel):
     
-    admin = models.ForeignKey(Admins, on_delete=models.CASCADE)
-    incident = models.ForeignKey(Incidents, on_delete=models.CASCADE)
-    evidence = models.ForeignKey(Evidences, on_delete=models.CASCADE)
+    admin = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
+    evidence = models.ForeignKey(Evidence, on_delete=models.CASCADE)
     date_joined = models.DateField()
 
     def __str__(self):
         return self.incident
 
-class Officers(BaseModel):
+class Officer(BaseModel):
     
 
     first_name = models.CharField(max_length=150)
@@ -62,13 +62,14 @@ class Officers(BaseModel):
         return f"{self.last_name}, {self.first_name}"
 
 
-class Events(BaseModel):
+class Event(BaseModel):
     
 
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=150)
     date = models.DateField()
     location = models.CharField(max_length=150)
+    officer = models.CharField(max_length=250)
 
     def __str__(self):
         return self.name
