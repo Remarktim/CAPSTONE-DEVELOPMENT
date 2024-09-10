@@ -62,13 +62,13 @@ class Officers(BaseModel):
         return f"{self.last_name}, {self.first_name}"
 
 
-class Officers(BaseModel):
+class Events(BaseModel):
     
 
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    date_joined = models.DateField()
-    position = models.CharField(max_length=150)
+    name = models.CharField(max_length=150)
+    description = models.CharField(max_length=150)
+    date = models.DateField()
+    location = models.CharField(max_length=150)
 
     def __str__(self):
         return self.name
