@@ -1,0 +1,121 @@
+{% load static %}
+<div
+  x-data="{ open: false }"
+  class="flex flex-col px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 bg-[#3f0703]">
+  <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap">
+    <a
+      href="{% url 'home' %}"
+      class="p-2 mr-4 inline-flex items-center">
+      <img
+        class="w-[55px] h-[54px] rounded-[172px]"
+        src="{% static 'img/logo.jpg' %}" />
+      <span class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']">Guardians of the Palawan Pangolin Guild</span> </a
+    ><button
+      class="md:hidden rounded-lg flex items-end justify-end"
+      @click="open = !open">
+      <svg
+        fill="white"
+        viewBox="0 0 20 20"
+        class="w-6 h-6">
+        <path
+          x-show="!open"
+          fill-rule="evenodd"
+          d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z"
+          clip-rule="evenodd"></path>
+        <path
+          x-show="open"
+          fill-rule="evenodd"
+          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  </div>
+  <nav
+    :class="{'flex': open, 'hidden': !open}"
+    class="flex-col flex-grow pb-4 md:pb-0 hidden md:flex md:justify-end md:flex-row xl:gap-3">
+    <a
+      href="{% url 'home' %}"
+      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
+      >Home</a
+    >
+    <a
+      href="{% url 'trend' %}"
+      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
+      >Trend</a
+    >
+    <a
+      href="{% url 'maps' %}"
+      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
+      >Map</a
+    >
+    <a
+      href="{% url 'activities' %}"
+      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
+      >Activities</a
+    >
+    <a
+      href="{% url 'gallery' %}"
+      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
+      >Gallery</a
+    >
+
+    <div
+      @click.away="open = false"
+      class="relative"
+      x-data="{ dropdownOpen: false }">
+      <button
+        @click="dropdownOpen = !dropdownOpen"
+        class="text-left lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border">
+        <span>About</span>
+        <svg
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          :class="{'rotate-180': dropdownOpen, 'rotate-0': !dropdownOpen}"
+          class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1">
+          <path
+            fill-rule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </button>
+      <div
+        x-show="dropdownOpen"
+        x-transition:enter="transition ease-out duration-100"
+        x-transition:enter-start="transform opacity-0 scale-95"
+        x-transition:enter-end="transform opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-75"
+        x-transition:leave-start="transform opacity-100 scale-100"
+        x-transition:leave-end="transform opacity-0 scale-95"
+        class="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-48">
+        <div class="px-2 py-2 bg-white rounded-md shadow dark-mode:bg-gray-800">
+          <a
+            href="{% url 'officers' %}"
+            class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            >Officers</a
+          >
+          <a
+            href="{% url 'about' %}"
+            class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+            >About us</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <a
+      href="{% url 'login' %}"
+      class="text-white inline-flex items-center bg-[#3f0703] border-0 px-4 focus:outline-none hover:bg-gray-200 hover:text-black rounded-2xl text-base mt-4 md:mt-0">
+      Log in
+      <svg
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        class="w-4 h-4 ml-1"
+        viewBox="0 0 24 24">
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+      </svg>
+    </a>
+  </nav>
+</div>

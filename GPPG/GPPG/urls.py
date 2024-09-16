@@ -9,4 +9,8 @@ urlpatterns = [
     path('gallery_video/', views.gallery_video, name='gallery_video'),
     path('about/', views.about, name='about'),
     path('activities/', views.activities, name='activities'),
+    path('trend/', views.trend, name='trend'),
+    path('officers/', views.officers, name='officers'),
+    path('login/', views.login, name='login'),
+    path('maps/', views.maps, name='maps'),
 ]
