@@ -164,3 +164,9 @@ document.getElementById("regionSelect").addEventListener("change", function (e) 
 updateChartData("mimaropa");
 
 //################################################################
+const menuBtn = document.getElementById("menu-btn");
+const mobileMenu = document.getElementById("mobile-menu");
+
+menuBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("hidden");
+});

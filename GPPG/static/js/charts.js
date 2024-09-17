@@ -1,92 +1,106 @@
-const dataByRegion = {
-  mimaropa: [0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0], // Data for Mimaropa
-  region1: [1, 0, 3, 2, 1, 0, 0, 0, 1, 1, 0, 0], // Data for Region 1
-  region2: [0, 0, 0, 1, 1, 0, 2, 3, 1, 0, 0, 0], // Data for Region 2
+Number.prototype.comma_formatter = function () {
+  return this.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 };
 
-// Function to dynamically update the total incidents and region incidents
-function updateIncidentCounts(chart) {
-  const totalIncidents = chart.data.datasets[0].data.reduce(
-    (acc, value) => acc + value,
-    0
-  ); // Sum of all data points
-  const regionIncidents = chart.data.datasets[0].data.filter(
-    (value) => value > 0
-  ).length; // Non-zero months
-
-  // Update the HTML elements dynamically
-  document.getElementById(
-    "totalIncidents"
-  ).innerText = `Total Poaching Incidents: ${totalIncidents}`;
-  document.getElementById(
-    "regionIncidents"
-  ).innerText = `Incidents: ${regionIncidents}`;
-}
-
-// Function to update the chart data dynamically based on selected region
-function updateChartData(region) {
-  const regionData = dataByRegion[region]; // Get the hardcoded data for the selected region
-
-  // Update chart data dynamically
-  poachingChart.data.datasets[0].data = regionData;
-  poachingChart.update();
-
-  // Update the region title
-  document.getElementById("regionTitle").innerText =
-    region.charAt(0).toUpperCase() + region.slice(1);
-
-  // Dynamically update the total and region-specific incidents based on the chart data
-  updateIncidentCounts(poachingChart);
-}
-
-// Initialize the Chart.js chart
-const ctx = document.getElementById("poachingChart").getContext("2d");
-const poachingChart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    datasets: [
+let chartData = function () {
+  return {
+    date: "today",
+    options: [
       {
-        label: "Incidents",
-        data: dataByRegion.mimaropa, // Default data for Mimaropa
-        borderColor: "rgba(75, 0, 0, 1)",
-        backgroundColor: "rgba(75, 0, 0, 0.1)",
-        borderWidth: 1,
-        tension: 0.2, // Smooth the line
+        label: "Today",
+        value: "today",
+      },
+      {
+        label: "Last 7 Days",
+        value: "7days",
+      },
+      {
+        label: "Last 30 Days",
+        value: "30days",
+      },
+      {
+        label: "Last 6 Months",
+        value: "6months",
+      },
+      {
+        label: "This Year",
+        value: "year",
       },
     ],
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 20,
-      },
+    showDropdown: false,
+    selectedOption: 0,
+    selectOption: function (index) {
+      this.selectedOption = index;
+      this.date = this.options[index].value;
+      this.renderChart();
     },
-  },
-});
+    data: null,
+    fetch: function () {
+      fetch("https://cdn.jsdelivr.net/gh/swindon/fake-api@master/tailwindAlpineJsChartJsEx1.json")
+        .then((res) => res.json())
+        .then((res) => {
+          this.data = res.dates;
+          this.renderChart();
+        });
+    },
+    renderChart: function () {
+      let c = false;
 
-// Event listener to change chart data when the region is selected
-document
-  .getElementById("regionSelect")
-  .addEventListener("change", function (e) {
-    const selectedRegion = e.target.value;
-    updateChartData(selectedRegion);
-  });
+      Chart.helpers.each(Chart.instances, function (instance) {
+        if (instance.chart.canvas.id == "chart") {
+          c = instance;
+        }
+      });
 
-// Load initial data for the default region (Mimaropa)
-updateChartData("mimaropa");
+      if (c) {
+        c.destroy();
+      }
+
+      let ctx = document.getElementById("chart").getContext("2d");
+
+      let chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: this.data[this.date].data.labels,
+          datasets: [
+            {
+              label: "Income",
+              backgroundColor: "rgba(102, 126, 234, 0.25)",
+              borderColor: "rgba(102, 126, 234, 1)",
+              pointBackgroundColor: "rgba(102, 126, 234, 1)",
+              data: this.data[this.date].data.income,
+            },
+            {
+              label: "Expenses",
+              backgroundColor: "rgba(237, 100, 166, 0.25)",
+              borderColor: "rgba(237, 100, 166, 1)",
+              pointBackgroundColor: "rgba(237, 100, 166, 1)",
+              data: this.data[this.date].data.expenses,
+            },
+          ],
+        },
+        layout: {
+          padding: {
+            right: 10,
+          },
+        },
+        options: {
+          scales: {
+            yAxes: [
+              {
+                gridLines: {
+                  display: false,
+                },
+                ticks: {
+                  callback: function (value, index, array) {
+                    return value > 1000 ? (value < 1000000 ? value / 1000 + "K" : value / 1000000 + "M") : value;
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+    },
+  };
+};

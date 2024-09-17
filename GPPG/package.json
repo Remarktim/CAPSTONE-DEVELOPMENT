@@ -10,16 +10,20 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "tailwindcss": "^3.4.10",
+    "tailwindcss": "^3.4.11",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@material-tailwind/html": "^2.3.1",
+    "@popperjs/core": "^2.11.8",
+    "@preline/dropdown": "^2.4.1",
     "alpinejs": "^3.14.1",
     "apexcharts": "^3.53.0",
+    "autoprefixer": "^10.4.20",
     "chart.js": "^4.4.4",
     "datamaps": "^0.5.9",
+    "postcss": "^8.4.47",
     "preline": "^2.4.1"
   }
 }
