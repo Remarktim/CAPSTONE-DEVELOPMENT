@@ -414,25 +414,18 @@
     <section class="w-full my-10 border h-max">
       <div class="md:mx-16 p-6 h-full">{% include 'includes/card_carousel.html' %}</div>
     </section>
-    {% include 'includes/footer.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
-    <script
-      src="{% static 'node_modules/preline/dist/preline.js' %}"
-      defer></script>
-    <script
-      src="{% static 'js/popper.js' %}"
-      defer></script>
 
+    {% include 'includes/footer.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
+    <script src="{% static 'node_modules/preline/dist/preline.js' %}"></script>
+    <script src="{% static 'js/popper.js' %}"></script>
     <script
       src="{% static 'js/maps.js' %}"
       type="text/javascript"></script>
-
     <script
       src="{% static 'js/index.js' %}"
-      defer
       type="text/javascript"></script>
     <script
       src="{% static 'js/navbar.js' %}"
-      defer
       type="text/javascript"></script>
   </body>
 </html>

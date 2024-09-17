@@ -1,121 +1,223 @@
 {% load static %}
 <div
   x-data="{ open: false }"
-  class="flex flex-col px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 bg-[#3f0703] sticky top-0">
-  <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap">
+  class="flex flex-col px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 w-full bg-[#3f0703] sticky-0">
+  <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
     <a
       href="{% url 'home' %}"
       class="p-2 mr-4 inline-flex items-center">
       <img
         class="w-[55px] h-[54px] rounded-[172px]"
         src="{% static 'img/logo.jpg' %}" />
-      <span class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']">Guardians of the Palawan Pangolin Guild</span> </a
-    ><button
-      class="md:hidden rounded-lg flex items-end justify-end"
-      @click="open = !open">
+      <span class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']">Guardians of the Palawan Pangolin Guild</span>
+    </a>
+    <button
+      type="button"
+      @click="open = !open"
+      class="md:hidden hs-collapse-toggle absolute right-20 size-7 flex justify-center items-center gap-x-2 rounded-lg"
+      id="hs-navbar-example-collapse"
+      aria-expanded="false"
+      aria-controls="hs-navbar-example"
+      aria-label="Toggle navigation"
+      data-hs-collapse="#hs-navbar-example">
       <svg
+        class="hs-collapse-open:hidden shrink-0 size-4"
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
         fill="white"
-        viewBox="0 0 20 20"
-        class="w-6 h-6">
-        <path
-          x-show="!open"
-          fill-rule="evenodd"
-          d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z"
-          clip-rule="evenodd"></path>
-        <path
-          x-show="open"
-          fill-rule="evenodd"
-          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-          clip-rule="evenodd"></path>
+        stroke="white"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line
+          x1="3"
+          x2="21"
+          y1="6"
+          y2="6" />
+        <line
+          x1="3"
+          x2="21"
+          y1="12"
+          y2="12" />
+        <line
+          x1="3"
+          x2="21"
+          y1="18"
+          y2="18" />
       </svg>
+      <svg
+        class="hs-collapse-open:block hidden shrink-0 size-4"
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="white"
+        stroke="white"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+      <span class="sr-only">Toggle navigation</span>
     </button>
   </div>
-  <nav
+  <div
+    id="hs-navbar-example"
     :class="{'flex': open, 'hidden': !open}"
-    class="flex-col flex-grow pb-4 md:pb-0 hidden md:flex md:justify-end md:flex-row xl:gap-3">
-    <a
-      href="{% url 'home' %}"
-      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
-      >Home</a
-    >
-    <a
-      href="{% url 'trend' %}"
-      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
-      >Trend</a
-    >
-    <a
-      href="{% url 'maps' %}"
-      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
-      >Map</a
-    >
-    <a
-      href="{% url 'activities' %}"
-      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
-      >Activities</a
-    >
-    <a
-      href="{% url 'gallery' %}"
-      class="lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border"
-      >Gallery</a
-    >
-
+    class="hs-collapse overflow-hidden transition-all md:bg-opacity-0 justify-end duration-300 basis-full sm:block flex-col flex-grow -black md:w-1/2"
+    aria-labelledby="hs-navbar-example-collapse">
     <div
-      @click.away="open = false"
-      class="relative"
-      x-data="{ dropdownOpen: false }">
-      <button
-        @click="dropdownOpen = !dropdownOpen"
-        class="text-left lg:inline-flex lg:w-auto w-full px-3 py-2 mx-2 font-medium font-['Roboto'] items-center justify-center text-white animate-border">
-        <span>About</span>
-        <svg
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          :class="{'rotate-180': dropdownOpen, 'rotate-0': !dropdownOpen}"
-          class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1">
-          <path
-            fill-rule="evenodd"
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clip-rule="evenodd"></path>
-        </svg>
-      </button>
-      <div
-        x-show="dropdownOpen"
-        x-transition:enter="transition ease-out duration-100"
-        x-transition:enter-start="transform opacity-0 scale-95"
-        x-transition:enter-end="transform opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-75"
-        x-transition:leave-start="transform opacity-100 scale-100"
-        x-transition:leave-end="transform opacity-0 scale-95"
-        class="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg md:w-48">
-        <div class="px-2 py-2 bg-white rounded-md shadow dark-mode:bg-gray-800">
+      :class="{'flex': open, 'hidden': !open}"
+      class="flex-col flex-grow pb-4 md:pb-0 hidden md:flex md:justify-end md:flex-row xl:gap-5">
+      <a
+        class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+        href="{% url 'home' %}"
+        aria-current="page"
+        >Home</a
+      >
+      <a
+        class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+        href="{% url 'trend' %}"
+        aria-current="page"
+        >Trend</a
+      >
+      <a
+        class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+        href="{% url 'maps' %}"
+        aria-current="page"
+        >Map</a
+      ><a
+        class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+        href="{% url 'activities' %}"
+        aria-current="page"
+        >Activities</a
+      >
+      <a
+        class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+        href="{% url 'gallery' %}"
+        aria-current="page"
+        >Gallery</a
+      >
+      <div class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none]">
+        <button
+          id="hs-navbar-example-dropdown"
+          type="button"
+          class="hs-dropdown-toggle flex items-center w-full md:w-fit font-medium text-center focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-label="Mega Menu">
+          About
+          <svg
+            class="hs-dropdown-open:-rotate-180 sm:hs-dropdown-open:rotate-0 duration-300 ms-1 shrink-0 size-4"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+
+        <div
+          class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="hs-navbar-example-dropdown">
           <a
-            href="{% url 'officers' %}"
-            class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-            >Officers</a
-          >
+            class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+            href="{% url 'officers' %}">
+            Officers
+          </a>
+
           <a
-            href="{% url 'about' %}"
-            class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
-            >About us</a
-          >
+            class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+            href="{% url 'about' %}">
+            About Us
+          </a>
         </div>
       </div>
     </div>
-
-    <a
-      href="{% url 'login' %}"
-      class="text-white inline-flex items-center bg-[#3f0703] border-0 px-4 focus:outline-none hover:bg-gray-200 hover:text-black rounded-2xl text-base mt-4 md:mt-0">
-      Log in
-      <svg
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        class="w-4 h-4 ml-1"
-        viewBox="0 0 24 24">
-        <path d="M5 12h14M12 5l7 7-7 7"></path>
-      </svg>
-    </a>
-  </nav>
+  </div>
+  <div class="hs-dropdown [--strategy:fixed] overflow-hidden md:mx-2 absolute w-20 right-0 top-4 md:top-0 md:right-0 md:relative">
+    <button
+      id="hs-navbar-example-dropdown"
+      type="button"
+      class="hs-dropdown-toggle justify-center flex items-center w-full font-medium py-2"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      aria-label="Mega Menu">
+      <img
+        class="w-fit h-11 rounded-full mx-auto"
+        src="{% static 'img/logo.jpg' %}" />
+    </button>
+    <div
+      class="hs-dropdown-menu text-white transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-48 z-10 bg-black bg-opacity-20 backdrop-blur-lg sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="hs-navbar-example-dropdown">
+      <div class="w-full h-fit py-2">
+        <img
+          class="w-fit h-14 rounded-full mx-auto"
+          src="{% static 'img/logo.jpg' %}" />
+        <p class="mt-2 text-center">Remark Timones</p>
+      </div>
+      <hr class="w-20 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10 dark:bg-gray-700" />
+      <a
+        href="/"
+        class="flex items-center gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          class="w-4 h-4"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            stroke="none"
+            d="M0 0h24v24H0z"
+            fill="none"></path>
+          <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+          <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+        </svg>
+        <span>Account Settings</span>
+      </a>
+      <button
+        type="button"
+        class="flex items-center w-full gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          class="w-4 h-4"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            stroke="none"
+            d="M0 0h24v24H0z"
+            fill="none"></path>
+          <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+          <path d="M9 12h12l-3 -3"></path>
+          <path d="M18 15l3 -3"></path>
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
 </div>
