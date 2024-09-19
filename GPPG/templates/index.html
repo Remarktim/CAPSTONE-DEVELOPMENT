@@ -105,7 +105,7 @@
           <div
             id="hs-navbar-example"
             :class="{'flex': open, 'hidden': !open}"
-            class="hs-collapse overflow-hidden transition-all md:bg-opacity-0 justify-end duration-300 basis-full sm:block flex-col flex-grow -black md:w-1/2"
+            class="hs-collapse overflow-hidden transition-all md:bg-opacity-0 justify-end duration-300 basis-full sm:block flex-col flex-grow md:w-1/2"
             aria-labelledby="hs-navbar-example-collapse">
             <div
               :class="{'flex': open, 'hidden': !open}"
@@ -416,16 +416,10 @@
     </section>
 
     {% include 'includes/footer.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
-    <script src="{% static 'node_modules/preline/dist/preline.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>
-    <script
-      src="{% static 'js/maps.js' %}"
-      type="text/javascript"></script>
-    <script
-      src="{% static 'js/index.js' %}"
-      type="text/javascript"></script>
-    <script
-      src="{% static 'js/navbar.js' %}"
-      type="text/javascript"></script>
+    <script src="{% static 'js/preline.js' %}"></script>
+    <script src="{% static 'js/cards.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
   </body>
 </html>
