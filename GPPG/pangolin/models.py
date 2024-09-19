@@ -25,12 +25,12 @@ class Incident(BaseModel):
         return self.description
 
 class Evidence(BaseModel):
-    incidents = models.ForeignKey(Incident, on_delete=models.CASCADE)
     evidence_type = models.CharField(max_length=150)
+    incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
     file_path = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.incident
+        return self.evidence_type
 
 class Admin(BaseModel):
     username = models.CharField(max_length=250) 
@@ -45,10 +45,10 @@ class IncidentReport(BaseModel):
     admin = models.ForeignKey(Admin, on_delete=models.CASCADE)
     incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
     evidence = models.ForeignKey(Evidence, on_delete=models.CASCADE)
-    date_joined = models.DateField()
+    date_reported = models.DateField()
 
     def __str__(self):
-        return self.incident
+        return f"{self.incident.description}"
 
 class Officer(BaseModel):
     
