@@ -199,3 +199,15 @@ body {
 .flip-card.flipped {
   transform: rotateY(180deg);
 }
+
+/* For sign in button animation */
+@keyframes borderAnimation {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* Hover effect to trigger the animation */

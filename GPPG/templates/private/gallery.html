@@ -1,0 +1,129 @@
+{% extends "private/index.html" %} {% load static %} {% block title %}GPPG - Gallery{% endblock title %}
+<header>
+  {% block nav %} {% include 'private/includes/nav.html' %}
+  <div class="container flex flex-col m-5 mt-8 ml-16">
+    <h2 class="text-xl font-bold">Gallery</h2>
+    <div class="container flex gap-5 mt-5">
+      {% block link %}
+      <a
+        href="{% url 'gallery' %}"
+        class="text-md font-bold">
+        <span>Photos</span>
+      </a>
+      <p>|</p>
+
+      <a
+        href="{% url 'gallery_video' %}"
+        class="text-md active:font-bold hover:font-bold">
+        <span>Videos</span>
+      </a>
+      {% endblock link %}
+    </div>
+  </div>
+  {% endblock nav %}
+</header>
+
+{% block content %}
+<section class="mx-16 h-fit">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango1.jpg' %}"
+        alt="Image 1"
+        class="w-full h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 1</div>
+    </div>
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango2.jpg' %}"
+        alt="Image 2"
+        class="w-full h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 2</div>
+    </div>
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango3.jpg' %}"
+        alt="Image 3"
+        class="w-full h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 3</div>
+    </div>
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango4.jpg' %}"
+        alt="Image 4"
+        class="w-full h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 4</div>
+    </div>
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango5.jpg' %}"
+        alt="Image 5"
+        class="w-full h-64 xl:h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 5</div>
+    </div>
+    <!-- Second row -->
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango6.jpg' %}"
+        alt="Image 6"
+        class="w-full h-64 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 6</div>
+    </div>
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="{% static 'img/pango7.jpg' %}"
+        alt="Image 7"
+        class="w-full h-64 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Photographer 7</div>
+    </div>
+    <div class="relative overflow-hidden rounded-lg group">
+      <img
+        src="https://via.placeholder.com/300"
+        alt="Image 8"
+        class="w-full h-64 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Photo by: Placeholder Photographer</div>
+    </div>
+    <!-- Repeat more images as needed -->
+  </div>
+</section>
+
+<!-- Modal for Fullscreen video -->
+<div
+  id="imageModal"
+  class="hidden fixed inset-0 w-screen h-screen overflow-hidden bg-black/80"
+  onclick="closeModal(event)">
+  <div
+    class="w-2/4 h-fit overflow-hidden bg-black/80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    onclick="event.stopPropagation()">
+    <img
+      id="modalImage"
+      class="w-full h-auto rounded-lg"
+      src=""
+      alt="Full Image" />
+  </div>
+</div>
+{% endblock %}
