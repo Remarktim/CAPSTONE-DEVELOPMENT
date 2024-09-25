@@ -73,5 +73,17 @@ class Event(BaseModel):
 
     def __str__(self):
         return self.name
+
+class User(BaseModel):
+
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=150)
+    password = models.CharField(max_length=150)
+    contact = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.first_name}"
+   
     
 
