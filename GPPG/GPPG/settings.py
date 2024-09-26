@@ -121,13 +121,15 @@ USE_TZ = True
 COMPRESS_ROOT = BASE_DIR / 'static'
  
 COMPRESS_ENABLED = True
- 
+
+
 STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 STATIC_URL = 'static/' 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    BASE_DIR, 'static',
+    BASE_DIR / 'node_modules',
 ]
 
 

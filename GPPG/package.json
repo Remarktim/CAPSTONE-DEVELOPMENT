@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "postcss ./static/css/index.csss -o ./static/css/main.css",
     "dev": "npx tailwindcss -i ./static/css/index.css -o ./static/css/main.css --watch"
   },
   "author": "",
@@ -19,6 +20,7 @@
     "@popperjs/core": "^2.11.8",
     "@preline/dropdown": "^2.4.1",
     "@preline/overlay": "^2.5.0",
+    "@preline/toggle-password": "^2.5.0",
     "alpinejs": "^3.14.1",
     "apexcharts": "^3.53.0",
     "autoprefixer": "^10.4.20",

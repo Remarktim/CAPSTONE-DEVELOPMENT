@@ -94,99 +94,36 @@ function closeModalsOnClickOutside(event) {
 }
 // ################################################################
 
-// JavaScript for Chart.js initialization
-const dataByRegion = {
-  mimaropa: [0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0], // Data for Mimaropa
-  region1: [1, 0, 3, 2, 1, 0, 0, 0, 1, 1, 0, 0], // Data for Region 1
-  region2: [0, 0, 0, 1, 1, 0, 2, 3, 1, 0, 0, 0], // Data for Region 2
-};
-
-// Function to dynamically update the total incidents and region incidents
-function updateIncidentCounts(chart) {
-  const totalIncidents = chart.data.datasets[0].data.reduce((acc, value) => acc + value, 0); // Sum of all data points
-  const regionIncidents = chart.data.datasets[0].data.filter((value) => value > 0).length; // Non-zero months
-
-  // Update the HTML elements dynamically
-  document.getElementById("totalIncidents").innerText = `Total Poaching Incidents: ${totalIncidents}`;
-  document.getElementById("regionIncidents").innerText = `Incidents: ${regionIncidents}`;
-}
-
-// Function to update the chart data dynamically based on selected region
-function updateChartData(region) {
-  const regionData = dataByRegion[region]; // Get the hardcoded data for the selected region
-
-  // Update chart data dynamically
-  poachingChart.data.datasets[0].data = regionData;
-  poachingChart.update();
-
-  // Update the region title
-  document.getElementById("regionTitle").innerText = region.charAt(0).toUpperCase() + region.slice(1);
-
-  // Dynamically update the total and region-specific incidents based on the chart data
-  updateIncidentCounts(poachingChart);
-}
-
-// Initialize the Chart.js chart
-const ctx = document.getElementById("poachingChart").getContext("2d");
-const poachingChart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
-      {
-        label: "Incidents",
-        data: dataByRegion.mimaropa, // Default data for Mimaropa
-        borderColor: "rgba(75, 0, 0, 1)",
-        backgroundColor: "rgba(75, 0, 0, 0.1)",
-        borderWidth: 1,
-        tension: 0.2, // Smooth the line
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 20,
-      },
-    },
-  },
-});
-
-// Event listener to change chart data when the region is selected
-document.getElementById("regionSelect").addEventListener("change", function (e) {
-  const selectedRegion = e.target.value;
-  updateChartData(selectedRegion);
-});
-
-// Load initial data for the default region (Mimaropa)
-updateChartData("mimaropa");
-
-//################################################################
-// Get the modal, buttons, and checkbox elements
-const modal = document.getElementById("terms-modal");
-const openButton = document.getElementById("terms-button");
-const agreeButton = document.getElementById("agree-button");
-const checkbox = document.getElementById("terms-checkbox");
-
-// Function to open the modal
-openButton.addEventListener("click", () => {
-  modal.classList.remove("hidden");
-  modal.classList.add("flex");
-});
-
-// Function to close the modal and check the checkbox
-agreeButton.addEventListener("click", () => {
-  modal.classList.add("hidden");
-  modal.classList.remove("flex");
-  checkbox.checked = true; // Automatically check the checkbox
-});
-
-// Optional: Close the modal if user clicks outside the modal content
-window.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
+// Show terms and conditions text when the link is clicked
+document.getElementById("termsLink").addEventListener("click", function (event) {
+  event.preventDefault();
+  var termsText = document.getElementById("termsText");
+  // Toggle the display of termsText
+  if (termsText.classList.contains("hidden")) {
+    termsText.classList.remove("hidden");
+  } else {
+    termsText.classList.add("hidden");
   }
+});
+
+// Enable or disable the submit button based on checkbox state
+document.getElementById("termsCheckbox").addEventListener("change", function () {
+  var submitButton = document.getElementById("submitButton");
+  if (this.checked) {
+    // Remove disabled attribute when checkbox is checked
+    submitButton.removeAttribute("disabled");
+    submitButton.classList.remove("bg-gray-400", "cursor-not-allowed");
+    submitButton.classList.add("bg-black", "hover:bg-gray-900");
+  } else {
+    // Set disabled attribute when checkbox is unchecked
+    submitButton.setAttribute("disabled", "true");
+    submitButton.classList.remove("bg-black", "hover:bg-gray-900");
+    submitButton.classList.add("bg-gray-400", "cursor-not-allowed");
+  }
+});
+
+const phoneInput = document.getElementById("phone");
+
+phoneInput.addEventListener("input", function () {
+  this.value = this.value.replace(/\D/g, ""); // Remove any non-numeric characters
 });

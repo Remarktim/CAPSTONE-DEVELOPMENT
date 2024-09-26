@@ -1,11 +1,14 @@
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 
-def home(request):
-    return render(request, 'private/index.html')
 
 def landing_page(request):
     return render(request, 'public/landing_page.html')
+
+def home(request):
+    return render(request, 'private/index.html')
 
 def gallery(request):
     return render(request, 'private/gallery.html')
