@@ -1,269 +1,115 @@
 {% load static %}
-
 <h2 class="text-center sm:text-left text-2xl md:text-3xl capitalize font-extrabold leading-tight font-['Bahnschrift'] my-8">Here’s the other pangolins</h2>
-<div class="relative flex items-center justify-center">
-  <div class="flex items-center">
-    <button
-      id="prev-btn"
-      class="opacity-50 hover:opacity-100 p-2 rounded-full transition-opacity duration-300 ease-in-out">
-      <svg
-        class="dark:text-neutral-900"
-        width="25"
-        height="35"
-        viewBox="0 0 8 14"
-        fill="none">
-        <path
-          d="M7 1L1 7L7 13"
-          stroke="currentColor"
-          stroke-width="0.5"
-          stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
-    </button>
-  </div>
+<div></div>
+<div class="relative flex items-center justify-center w-full h-full">
+  <!-- Prev Button -->
+  <button
+    id="prevBtn"
+    class="flex top-0 left-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none transition-opacity duration-300 ease-in-out">
+    <svg
+      class="dark:text-neutral-900"
+      width="25"
+      height="35"
+      viewBox="0 0 8 14"
+      fill="none">
+      <path
+        d="M7 1L1 7L7 13"
+        stroke="currentColor"
+        stroke-width="0.5"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+    </svg>
+  </button>
 
-  <!-- Cards Wrapper -->
+  <!-- Carousel wrapper -->
   <div
-    id="card-wrapper"
-    class="flex justify-center items-center overflow-hidden h-full mx-auto">
-    <!-- 1st card Ground Pangolin -->
-    <div class="carousel-pair gap-5">
-      <div class="h-full flex rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 text-xl title-font font-bold mb-3">Ground Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
+    id="carouselWrapper"
+    class="relative w-full overflow-hidden">
+    <!-- Carousel inner container to control animation transitions -->
+    <div
+      id="carouselInner"
+      class="flex transition-transform duration-700 ease-in-out">
+      <!-- Item 1 -->
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center">
+        <div class="h-full flex rounded-xl image-content w-full md:w-2/3 justify-center items-center mx-auto overflow-hidden">
+          <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
+            <div class="container mx-auto flex flex-wrap">
+              <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
+                <img
+                  alt="feature"
+                  class="object-cover object-center h-full w-full"
+                  src="{% static 'img/pango1.jpg' %}" />
+              </div>
+              <div class="flex flex-col flex-wrap lg:py-6 mb-5 lg:w-3/5 lg:pl-6 lg:text-left text-center">
+                <h2 class="text-gray-900 text-xl title-font font-bold mb-3">Ground Pangolin</h2>
+                <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
+                  <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
+                  <p><span class="font-bold">Scientific Name:</span> Smutsia temminckii</p>
+                  <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
+                  <p><span class="font-bold">Unique Feature:</span> Tough, overlapping scales provide armor-like protection</p>
+                  <p><span class="font-bold">Diet:</span> Ants and termites</p>
+                  <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-      <!-- 2nd card Chinese Pangolin -->
-      <div class="lg:flex hidden rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 -mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 font-bold text-xl title-font mb-3">Chinese Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
+
+      <!-- Add 6 more items with similar structure -->
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center">
+        <div class="h-full flex rounded-xl image-content w-full md:w-2/3 justify-center items-center mx-auto overflow-hidden">
+          <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
+            <div class="container mx-auto flex flex-wrap">
+              <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
+                <img
+                  alt="feature"
+                  class="object-cover object-center h-full w-full"
+                  src="{% static 'img/pango1.jpg' %}" />
+              </div>
+              <div class="flex flex-col flex-wrap lg:py-6 mb-5 lg:w-3/5 lg:pl-6 lg:text-left text-center">
+                <h2 class="text-gray-900 text-xl title-font font-bold mb-3">dasdada Pangolin</h2>
+                <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
+                  <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
+                  <p><span class="font-bold">Scientific Name:</span> Smutsia temminckii</p>
+                  <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
+                  <p><span class="font-bold">Unique Feature:</span> Tough, overlapping scales provide armor-like protection</p>
+                  <p><span class="font-bold">Diet:</span> Ants and termites</p>
+                  <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
+        >
       </div>
-    </div>
-    <div class="carousel-pair gap-5">
-      <!-- 3rd card Black-Bellied Pangolin -->
-      <div class="h-full flex rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 font-bold text-xl title-font mb-3">Black-Bellied Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-      <!-- 4th card White-Bellied Pangolin -->
-      <div class="lg:flex hidden rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 font-bold text-xl title-font mb-3">White-Bellied Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-    <div class="carousel-pair gap-5">
-      <!-- 5th card Sunda Pangolin -->
-      <div class="flex rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 font-bold text-xl title-font mb-3">Sunda Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-      <!-- 6th card Giant Pangolin -->
-      <div class="xl:flex hidden rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 font-bold text-xl title-font mb-3">Giant Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-    <div class="carousel-pair gap-5">
-      <!-- 7th card Indian Pangolin -->
-      <div class="flex rounded-xl image-content w-50 md:w-2/3 justify-center items-center md:mx-auto overflow-hidden snap-center">
-        <section class="w-full border border-gray-300 shadow-lg rounded-xl md:w-[700px] lg:h-[350px]">
-          <div class="container mx-auto flex flex-wrap">
-            <div class="w-full h-[250px] lg:w-2/5 mb-5 lg:mb-0 overflow-hidden rounded-xl object-cover lg:h-[350px]">
-              <img
-                alt="feature"
-                class="object-cover object-center h-full w-full"
-                src="{% static 'img/pango1.jpg' %}" />
-            </div>
-            <div class="flex flex-col flex-wrap lg:py-6 mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center">
-              <h2 class="text-gray-900 font-bold text-xl title-font mb-3">Indian Pangolin</h2>
-              <div class="mt-4 text-[#68717a] text-sm space-y-2 text-left mx-3">
-                <p><span class="font-bold">Known as:</span> Temminck's Pangolin, Cape Pangolin</p>
-                <p>
-                  <span class="font-bold">Scientific Name:</span>
-                  Smutsia temminckii
-                </p>
-                <p><span class="font-bold">Location:</span> Southern and Eastern Africa</p>
-                <p>
-                  <span class="font-bold">Unique Feature:</span>
-                  Tough, overlapping scales provide armor-like protection
-                </p>
-                <p><span class="font-bold">Diet:</span> Ants and termites</p>
-                <p><span class="font-bold">Behavior:</span> Solitary and nocturnal (active at night), excellent burrowers</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center"><!-- Item 3 --></div>
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center"><!-- Item 4 --></div>
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center"><!-- Item 5 --></div>
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center"><!-- Item 6 --></div>
+      <div class="carousel-item w-full flex-shrink-0 flex justify-center"><!-- Item 7 --></div>
     </div>
   </div>
 
   <!-- Next Button -->
-  <div class="flex items-center">
-    <button
-      id="next-btn"
-      class="opacity-50 hover:opacity-100 p-2 rounded-full transition-opacity duration-300 ease-in-out">
-      <svg
-        class="dark:text-neutral-900"
-        width="25"
-        height="35"
-        viewBox="0 0 8 14"
-        fill="none">
-        <path
-          d="M1 1L7 7L1 13"
-          stroke="currentColor"
-          stroke-width="0.5"
-          stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
-    </button>
-  </div>
+  <button
+    id="nextBtn"
+    class="flex top-0 right-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none transition-opacity duration-300 ease-in-out">
+    <svg
+      class="dark:text-neutral-900"
+      width="25"
+      height="35"
+      viewBox="0 0 8 14"
+      fill="none">
+      <path
+        d="M1 1L7 7L1 13"
+        stroke="currentColor"
+        stroke-width="0.5"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+    </svg>
+  </button>
 </div>
+{% block extra_js %}
+<script src="{% static 'js/private/pangolin_cards.js' %}"></script>
+{% endblock extra_js %}

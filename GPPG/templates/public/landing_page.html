@@ -1,4 +1,4 @@
-{% load static %} {% load compress %}
+{% load static %} {% load compress %} {% load widget_tweaks %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
       rel="icon"
       href="{% static 'img/logo.jpg' %}"
       type="image/x-icon" />
-    <link rel="stylesheet" href="{% static "css/main.css" %}?v={{ STATIC_VERSION }}"> <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <link rel="stylesheet" href="{% static "css/main.css" %}"> <link rel="stylesheet" href="{% static "css/style.css" %}"> <link rel="stylesheet" href="{% static "css/min.css" %}">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css"
@@ -18,7 +18,7 @@
       crossorigin="anonymous" />
     <script src="{% static 'js/popper.js' %}"></script>
   </head>
-  <body class="bg-[#eaebe6]">
+  <body class="bg-slate-50">
     {% block nav %}
     <div
       id="header_img"
@@ -29,7 +29,7 @@
           class="flex flex-col px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 w-full">
           <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
             <a
-              href="{% url 'home' %}"
+              href="{% url 'landing_page' %}"
               class="p-2 mr-4 inline-flex items-center">
               <img
                 class="w-[55px] h-[54px] rounded-[172px]"
@@ -151,18 +151,18 @@
                 </button>
 
                 <div
-                  class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+                  class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 sm:dark:border before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="hs-navbar-example-dropdown">
                   <a
-                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
                     href="{% url 'officers' %}">
                     Officers
                   </a>
 
                   <a
-                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
                     href="{% url 'about' %}">
                     About Us
                   </a>
@@ -196,9 +196,9 @@
                 <div class="p-6 flex items-center justify-center h-full w-auto rounded-lg shadow-lg relative transition-all duration-300">
                   <div class="flip-card flex">
                     <!-- signin -->
-                    <div class="flip-card-front flex items-center w-full h-auto justify-center overflow-hidden">
+                    <div class="flip-card-front flex items-center w-full h-auto justify-center top-40 overflow-hidden">
                       <!-- Left section with logo -->
-                      <div class="flex w-1/2 bg-gradient-to-b from-[#3f0703] to-[#eaebe6] max-h-fit shadow-md rounded-3xl">
+                      <div class="flex w-full md:w-1/2 bg-gradient-to-b from-[#3f0703] to-[#eaebe6] max-h-fit shadow-md rounded-3xl">
                         <div class="hidden xl:flex w-1/2 items-center justify-center p-10">
                           <img
                             src="{% static 'img/logo.jpg' %}"
@@ -231,10 +231,12 @@
                                 >Email</label
                               >
                               <input
-                                id="email"
                                 type="email"
+                                name="email"
+                                id="email"
+                                class="w-full px-4 text-black py-2 mt-2 border-b border-0 focus:outline-none duration-300 focus-within:border-indigo-500"
                                 placeholder="Email"
-                                class="w-full px-4 text-black py-2 mt-2 border-b-2 focus:outline-none duration-300 focus-within:border-indigo-500" />
+                                value="{{ form.email.value }}" />
                             </div>
 
                             <!-- Password input -->
@@ -249,11 +251,11 @@
                                   id="passwords"
                                   type="password"
                                   placeholder="Password"
-                                  class="w-full px-4 text-black py-2 mt-2 border-b-2 focus:outline-none duration-300 focus-within:border-indigo-500" />
+                                  class="w-full px-4 text-black py-2 mt-2 border-b border-0 focus:outline-none duration-300 focus-within:border-indigo-500" />
                                 <button
                                   type="button"
                                   id="togglePasswords"
-                                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                  class="absolute inset-y-0 h-fit right-0 mr-3 mt-5 flex items-center text-sm leading-5">
                                   <i
                                     class="mdi mdi-eye-off text-gray-500"
                                     id="passwordIcons"></i>
@@ -317,18 +319,18 @@
                         </div>
                         <button
                           id="closeBtn"
-                          class="absolute right-1/4 top-20 md:top-28 xl:top-40 m-5 text-gray-500 hover:text-gray-800 text-2xl">
+                          class="absolute right-0 md:right-1/4 m-5 text-gray-500 hover:text-gray-800 text-2xl">
                           &times;
                         </button>
                       </div>
                     </div>
 
                     <!-- signup -->
-                    <div class="flip-card-back flex items-center mx-auto h-auto justify-center absolute top-40 right-auto w-full">
-                      <div class="w-1/2 max-h-fit p-10 bg-white shadow-md rounded-3xl">
+                    <div class="flip-card-back flex items-center mx-auto h-auto justify-center snap-y absolute top-auto md:top-40 right-auto w-full">
+                      <div class="w-full md:w-1/2 max-h-fit p-10 bg-white shadow-md rounded-3xl">
                         <button
                           id="closeBtns"
-                          class="absolute right-1/4 top-40 m-5 mt-1 text-gray-500 hover:text-gray-800 text-2xl">
+                          class="absolute right-0 md:right-1/4 m-5 -mt-5 text-gray-500 hover:text-gray-800 text-2xl">
                           &times;
                         </button>
                         <div class="flex flex-col items-center">
@@ -353,7 +355,7 @@
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-account-outline text-gray-400 text-lg"></i></div>
                                 <input
                                   type="text"
-                                  class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-gray-200 outline-none focus:border-indigo-500"
+                                  class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
                                   placeholder="Nick" />
                               </div>
                             </div>
@@ -368,7 +370,7 @@
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-account-outline text-gray-400 text-lg"></i></div>
                                 <input
                                   type="text"
-                                  class="w-full -ml-10 pl-10 text-black pr-3 py-2 border-b-2 border-gray-200 outline-none focus:border-indigo-500"
+                                  class="w-full -ml-10 pl-10 text-black pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
                                   placeholder="Bundal" />
                               </div>
                             </div>
@@ -384,7 +386,7 @@
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-email-outline text-gray-400 text-lg"></i></div>
                                 <input
                                   type="email"
-                                  class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-gray-200 outline-none focus:border-indigo-500"
+                                  class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
                                   placeholder="nickbundal@gmal.com" />
                               </div>
                             </div>
@@ -401,7 +403,7 @@
                                   maxlength="11"
                                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                   type="tel"
-                                  class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-gray-200 outline-none focus:border-indigo-500"
+                                  class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
                                   placeholder="09223123423" />
                               </div>
                             </div>
@@ -421,13 +423,13 @@
                                 <input
                                   id="password"
                                   type="password"
-                                  class="w-full -ml-10 pl-10 text-black pr-10 py-2 border-b-2 border-gray-200 outline-none focus:border-indigo-500"
+                                  class="w-full -ml-10 pl-10 text-black pr-10 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
                                   placeholder="************" />
                                 <!-- Show/Hide Password Button -->
                                 <button
                                   type="button"
                                   id="togglePassword"
-                                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                  class="absolute inset-y-0 h-fit right-0 mr-3 mt-3 flex items-center text-sm leading-5">
                                   <i
                                     class="mdi mdi-eye-off text-gray-500"
                                     id="passwordIcon"></i>
@@ -449,12 +451,12 @@
                                 <input
                                   id="confirmPassword"
                                   type="password"
-                                  class="w-full -ml-10 pl-10 text-black pr-10 py-2 border-b-2 border-gray-200 outline-none focus:border-indigo-500"
+                                  class="w-full -ml-10 pl-10 text-black pr-10 py-2 border-b-2 border-0 border-gray-200 focus:border-black"
                                   placeholder="************" />
                                 <button
                                   type="button"
                                   id="toggleConfirmPassword"
-                                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                  class="absolute inset-y-0 h-fit right-0 mr-3 mt-3 flex items-center text-sm leading-5">
                                   <i
                                     class="mdi mdi-eye-off text-gray-500"
                                     id="confirmPasswordIcon"></i>
@@ -664,11 +666,11 @@
     </section>
 
     {% include 'public/includes/footer.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
-    <script src="{% static 'js/overlay.js' %}"></script>
-    <script src="{% static 'js/toggle.js' %}"></script>
+    <script src="{% static 'js/private/overlay.js' %}"></script>
+    <script src="{% static 'js/private/toggle.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
-    <script src="{% static 'js/flip.js' %}"></script>
+    <script src="{% static 'js/private/flip.js' %}"></script>
     <script src="{% static 'js/preline.js' %}"></script>
-    <script src="{% static 'js/cards.js' %}"></script>
+    <script src="{% static 'js/private/cards.js' %}"></script>
   </body>
 </html>

@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'compressor',
     'pangolin',
+    'compressor',
+    'widget_tweaks',
+    
 ]
 
 MIDDLEWARE = [

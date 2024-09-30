@@ -73,32 +73,6 @@ body {
   background-position: center;
 }
 
-@media (max-width: 768px) {
-  .carousel-card {
-    flex-direction: column;
-  }
-  .carousel-card img {
-    width: 100%;
-    height: auto;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
-  #carousel-container {
-    flex-direction: column;
-    width: 100%;
-  }
-  .carousel-wrapper {
-    display: block;
-    width: 100%;
-    max-width: 400px; /* Restrict card width on mobile */
-  }
-}
-
-#secondpair {
-  display: none;
-}
-
 .loader {
   text-align: center;
 }
@@ -208,4 +182,22 @@ body {
   100% {
     background-position: 0 0;
   }
+}
+
+.dt-layout-row:has(.dt-search),
+.dt-layout-row:has(.dt-length),
+.dt-layout-row:has(.dt-paging) {
+  display: none !important;
+}
+/* CSS Code */
+.swiper-wrapper {
+  width: 100%;
+  height: max-content !important;
+  padding-bottom: 64px !important;
+  -webkit-transition-timing-function: linear !important;
+  transition-timing-function: linear !important;
+  position: relative;
+}
+.swiper-pagination-bullet {
+  background: #4f46e5;
 }

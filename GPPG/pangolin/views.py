@@ -3,10 +3,11 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
 
-
+#PUBLIC
 def landing_page(request):
     return render(request, 'public/landing_page.html')
 
+#PRIVATE
 def home(request):
     return render(request, 'private/index.html')
 
@@ -36,3 +37,22 @@ def maps(request):
 
 def account_view(request):
     return render(request, 'private/account_view.html')
+
+#ADMIN
+def admin_home(request):
+    return render(request, 'admin/admin.html')
+
+def admin_database(request):
+    return render(request, 'admin/database.html')
+
+def admin_officers(request):
+    return render(request, 'admin/officers.html')
+
+def admin_map(request):
+    return render(request, 'admin/map.html')
+
+def admin_report(request):
+    return render(request, 'admin/report.html')
+
+def admin_charts(request):
+    return render(request, 'admin/charts.html')
