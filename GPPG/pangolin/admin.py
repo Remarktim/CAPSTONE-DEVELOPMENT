@@ -8,7 +8,7 @@ class IncidentAdmin(admin.ModelAdmin):
 
 @admin.register(Evidence)
 class EvidenceAdmin(admin.ModelAdmin):
-    list_display = ("incident", "evidence_type")
+    list_display = ("incident", "evidence_type", "file")
     search_fields = ("incident", "evidence_type")
 
 @admin.register(IncidentReport)

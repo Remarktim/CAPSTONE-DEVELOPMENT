@@ -1,5 +1,20 @@
 
 from django.db import models
+from django.core.exceptions import ValidationError
+import os
+
+def validate_file_type(value):
+    
+    ext = os.path.splitext(value.name)[1].lower()
+    
+    
+    valid_image_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+    valid_video_extensions = ['.mp4', '.mov', '.avi']
+    
+    
+    if ext not in valid_image_extensions and ext not in valid_video_extensions:
+        raise ValidationError('Unsupported file type. Upload an image or video.')
+
 
 class BaseModel(models. Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True) 
@@ -16,21 +31,32 @@ class Incident(BaseModel):
         ('Illegal Trade', 'Illegal Trade'),
     )
 
-    municipality = models.CharField(max_length=150)
-    city = models.CharField(max_length=150)
+    municipality = models.CharField(max_length=150, null=True, blank=True)
+    city = models.CharField(max_length=150, null=True, blank=True)
     status = models.CharField(max_length=150, choices=st_choices)
     description = models.CharField(max_length=250)
 
     def __str__(self):
-        return self.description
+
+        if self.city:
+            return f"{self.city} - {self.id} ({self.status})"
+        return f"{self.municipality} - {self.id} ({self.status})"
 
 class Evidence(BaseModel):
-    evidence_type = models.CharField(max_length=150)
+
+    ev_choices = (
+        ('Image', 'Image'),
+        ('Video', 'Video'),
+    )
+    evidence_type = models.CharField(max_length=150, choices=ev_choices)
     incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
-    file_path = models.CharField(max_length=150)
+    file = models.FileField(upload_to='media/', null=True, blank=True, validators=[validate_file_type])
 
     def __str__(self):
-        return self.evidence_type
+       
+        if self.file:
+            return self.file.name  # Returns the relative file path
+        return "No file uploaded"
 
 class Admin(BaseModel):
     username = models.CharField(max_length=250) 
