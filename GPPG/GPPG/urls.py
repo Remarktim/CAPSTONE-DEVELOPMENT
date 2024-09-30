@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin_charts/', views.admin_charts, name='admin_charts'),
     path('admin_map/', views.admin_map, name='admin_map'),
     path('admin_report/', views.admin_report, name='admin_report'),
+    path('get-poaching-trends/', views.get_poaching_trends, name='get_poaching_trends'),
 ]
