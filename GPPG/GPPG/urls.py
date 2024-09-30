@@ -15,4 +15,5 @@ urlpatterns = [
     path('officers/', views.officers, name='officers'),
     path('maps/', views.maps, name='maps'),
     path('account_view/', views.account_view, name='account_view'),
+    path('poaching-trends/', views.poaching_trends, name='poaching_trends'),
 ]
