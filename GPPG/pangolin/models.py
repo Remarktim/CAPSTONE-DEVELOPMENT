@@ -126,7 +126,7 @@ class Event(BaseModel):
     description = models.CharField(max_length=150)
     date = models.DateField()
     location = models.CharField(max_length=150)
-    officer = models.CharField(max_length=250)
+    officers = models.CharField(max_length=250)
 
     def __str__(self):
         return self.name

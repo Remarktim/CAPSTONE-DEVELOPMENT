@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin_map/', views.admin_map, name='admin_map'),
     path('admin_report/', views.admin_report, name='admin_report'),
     path('get-poaching-trends/', views.get_poaching_trends, name='get_poaching_trends'),
+    path('get-available-years/', views.get_available_years, name='get_available_years'),
 ]
