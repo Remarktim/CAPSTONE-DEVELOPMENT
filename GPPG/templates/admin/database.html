@@ -846,13 +846,14 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+            {% for incident in incidents %}
             <tr>
-              <td class="p-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">1</td>
-              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Roxas</td>
-              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">N/A</td>
-              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Illegal Trades</td>
-              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">10-03-20</td>
-              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">rdasdadadadasdadddddddd</td>
+              <td class="p-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{{ incident.id }}</td>
+              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.municipality }}</td>
+              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.city }}</td>
+              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.status }}</td>
+              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.id }}</td>
+              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.description }}</td>
               <td class="p-3 whitespace-nowrap text-start text-sm font-medium w-10">
                 <a
                   id="defaultModalButton"
@@ -870,6 +871,11 @@
                 </a>
               </td>
             </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center">No incidents found.</td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

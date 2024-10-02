@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Incident, IncidentReport
 from django.http import JsonResponse
 from datetime import datetime, timedelta
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 
 #PUBLIC
@@ -50,7 +52,9 @@ def admin_login(request):
     return render(request, 'admin/login.html')
 
 def admin_database(request):
-    return render(request, 'admin/database.html')
+
+    incidents = Incident.objects.all()
+    return render(request, 'admin/database.html', {'incidents': incidents})
 
 def admin_officers(request):
     return render(request, 'admin/officers.html')

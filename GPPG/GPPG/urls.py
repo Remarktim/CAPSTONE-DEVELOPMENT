@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
+from pangolin.views import *
 from pangolin import views
 
 urlpatterns = [
