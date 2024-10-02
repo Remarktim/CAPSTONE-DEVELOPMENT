@@ -30,7 +30,7 @@ def officers(request):
     return render(request, 'private/officers.html')
 
 def login(request):
-    return render(request, 'private/login.html')
+    return render(request, 'private/login_admin.html')
 
 def maps(request):
     return render(request, 'private/maps.html')
@@ -41,6 +41,9 @@ def account_view(request):
 #ADMIN
 def admin_home(request):
     return render(request, 'admin/admin.html')
+
+def admin_login(request):
+    return render(request, 'admin/login.html')
 
 def admin_database(request):
     return render(request, 'admin/database.html')

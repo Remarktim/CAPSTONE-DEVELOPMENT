@@ -132,8 +132,7 @@ STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',
 STATIC_URL = '/static/' 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR, 'static',
-    BASE_DIR / 'node_modules',
+    BASE_DIR, 'static'
 ]
 
 
@@ -141,9 +140,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGOUT_REDIRECT_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
-LOGIN_URL = 'login'
 
 
 MEDIA_URL = '/media/'

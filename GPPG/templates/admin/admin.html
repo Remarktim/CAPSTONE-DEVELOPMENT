@@ -10,11 +10,9 @@
       rel="icon"
       href="{% static 'img/logo.jpg' %}"
       type="image/x-icon" />
-    {% compress css%} <link rel="stylesheet" href="{% static "css/main.css" %}"> <link rel="stylesheet" href="{% static "css/style.css" %}"> <link rel="stylesheet" href="{% static "css/min.css" %}">
-    {% endcompress%}
-    <link
-      href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css"
-      rel="stylesheet" />
+    <link rel="stylesheet" href="{% static "css/main.css" %}"> <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <!--  -->
+    <link rel="stylesheet" href="{% static "css/min.css" %}"> <link rel="stylesheet" href="{% static "css/flowbite.min.css" %}"> {% block css %} {% endblock css%}
   </head>
   <body class="bg-slate-50">
     <aside
@@ -325,8 +323,9 @@
             <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Illegal Trades</p>
           </div>
         </section>
-        <section class="h-80 mb-4 bg-gray-50 dark:bg-gray-800 border-2 rounded-xl">
+        <section class="h-80 mb-4 bg-gray-50 dark:bg-gray-800 border-2 rounded-xl w-full">
           <p class="text-md text-black ml-7 mt-5 font-bold font-['Bahnschrift']">Poaching</p>
+          <p class="text-md text-black ml-7 font-bold font-['Bahnschrift']">Total: <span>00</span></p>
         </section>
         <section class="grid grid-cols-4 grid-rows-1 gap-4 h-2/5">
           <div class="col-span-2 row-span-2 border-2 bg-gray-50 h-full dark:bg-gray-800 rounded-xl">
@@ -350,10 +349,9 @@
         {% endblock%}
       </div>
     </main>
-    {% block extra_js %} {% endblock extra_js %}{% compress js %}
+    {% block extra_js %} {% endblock extra_js %}
     <script src="{% static 'js/admin/flowbite.min.js' %}"></script>
     <script src="{% static 'js/preline.js' %}"></script>
     <script src="{% static 'js/admin/index.js' %}"></script>
-    {% endcompress %}
   </body>
 </html>

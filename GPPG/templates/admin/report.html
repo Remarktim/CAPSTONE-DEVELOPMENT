@@ -1,4 +1,6 @@
 {% extends "admin/admin.html" %} {% load static %} {% block title %}Report{% endblock title %}
+<!-- css -->
+{% block css %} <link rel="stylesheet" href="{% static "css/apexcharts.css" %}"> {% endblock css%}
 
 <!-- Report menu highlight -->
 {% block aside%}
@@ -169,4 +171,97 @@
 {% endblock aside %}
 
 <!-- Report Content -->
-{% block title_content %} Report {% endblock title_content %} {% block content %} {% endblock %}
+{% block title_content %} Report {% endblock title_content %} {% block content %}
+
+<div class="bg-gray-800 p-8 rounded-lg shadow-md w-full">
+  <!-- Year Selection -->
+  <div class="mb-4">
+    <label
+      for="yearSelect"
+      class="block text-gray-300 font-medium mb-2"
+      >Select Year:</label
+    >
+    <select
+      id="yearSelect"
+      class="border border-gray-600 p-2 w-full rounded bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="2023">2023</option>
+      <option value="2022">2022</option>
+      <option value="2021">2021</option>
+    </select>
+  </div>
+
+  <!-- Dropdown Toggle Button -->
+  <div class="mb-4 text-center">
+    <button
+      id="dropdownToggle"
+      class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
+      Select Dates & Options
+    </button>
+  </div>
+
+  <!-- Dropdown Content -->
+  <div
+    id="dropdownContent"
+    class="hidden">
+    <div class="mb-4">
+      <label
+        for="startDateInput"
+        class="block text-gray-300 font-medium mb-2"
+        >Select Start Date:</label
+      >
+      <input
+        type="month"
+        id="startDateInput"
+        class="border border-gray-600 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-300" />
+    </div>
+
+    <div class="mb-4">
+      <label
+        for="endDateInput"
+        class="block text-gray-300 font-medium mb-2"
+        >Select End Date:</label
+      >
+      <input
+        type="month"
+        id="endDateInput"
+        class="border border-gray-600 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-300" />
+    </div>
+
+    <div class="flex justify-between space-x-4 mb-4">
+      <button
+        onclick="updateChart()"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 w-full">
+        Update Chart
+      </button>
+      <button
+        onclick="clearDates()"
+        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300 w-full">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-4 text-center">
+    <p
+      id="totalDisplay"
+      class="text-xl font-semibold text-gray-300">
+      Total: 0
+    </p>
+  </div>
+
+  <!-- Chart Container with Fixed Height -->
+  <div class="mt-8">
+    <canvas
+      id="barChart"
+      class="w-full"
+      height="100"></canvas>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+<script src="{% static 'js/chart.js' %}"></script>
+<script src="{% static 'js/admin/charts_pagolin.js' %}"></script>
+
+{% endblock extra_js %}
