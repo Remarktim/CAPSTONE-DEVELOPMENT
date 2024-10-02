@@ -1,162 +1,176 @@
 let chartData = function () {
-  function generateRandomData(length, min, max) {
-    return Array.from({ length }, () => Math.floor(Math.random() * (max - min + 1)) + min);
-  }
-
   function calculateCategoryTotal(category) {
     return category.reduce((sum, value) => sum + value, 0);
   }
 
   return {
-    date: "thisyear",
-    options: [
-      { label: "This Year", value: "thisyear" },
-      { label: "1 Year", value: "1year" },
-      { label: "Last 2 Years", value: "2years" },
-    ],
-    showDropdown: false,
-    selectedOption: 0,
-    selectOption: function (index) {
-      this.selectedOption = index;
-      this.date = this.options[index].value;
-
-      // Recalculate the totals based on the selected year/period
-      this.total.alive = calculateCategoryTotal(this.data[this.date].data.alive);
-      this.total.dead = calculateCategoryTotal(this.data[this.date].data.dead);
-      this.total.scales = calculateCategoryTotal(this.data[this.date].data.scales);
-      this.total.illegal_trades = calculateCategoryTotal(this.data[this.date].data.illegal_trades);
-
-      this.renderChart(); // Render the updated chart
-    },
-    data: null,
+    date: "overall", // Default to overall
+    options: [{ label: "Overall Trend", value: "overall" }], // Start with overall trend
+    selectedOption: 0, // Default selection to the first option (overall)
     total: {
       alive: 0,
       dead: 0,
       scales: 0,
-      illegal_trades: 0,
+      illegal_trade: 0,
     },
-    fetch: function () {
-      // Simulate random data for each period
-      let thisYearAlive = generateRandomData(12, 5, 30);
-      let thisYearDead = generateRandomData(12, 10, 50);
-      let thisYearScales = generateRandomData(12, 15, 40);
-      let thisYearIllegalTrades = generateRandomData(12, 5, 20);
+    data: null,
+    chart: null, // Add a property to hold the chart instance
 
-      let oneYearAgoAlive = generateRandomData(12, 20, 40);
-      let oneYearAgoDead = generateRandomData(12, 20, 60);
-      let oneYearAgoScales = generateRandomData(12, 10, 50);
-      let oneYearAgoIllegalTrades = generateRandomData(12, 10, 30);
-
-      let twoYearsAgoAlive = generateRandomData(2, 100, 200);
-      let twoYearsAgoDead = generateRandomData(2, 150, 300);
-      let twoYearsAgoScales = generateRandomData(2, 100, 250);
-      let twoYearsAgoIllegalTrades = generateRandomData(2, 50, 150);
-
-      this.data = {
-        thisyear: {
-          data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            alive: thisYearAlive,
-            dead: thisYearDead,
-            scales: thisYearScales,
-            illegal_trades: thisYearIllegalTrades,
-          },
-        },
-        "1year": {
-          data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            alive: oneYearAgoAlive,
-            dead: oneYearAgoDead,
-            scales: oneYearAgoScales,
-            illegal_trades: oneYearAgoIllegalTrades,
-          },
-        },
-        "2years": {
-          data: {
-            labels: ["Year 1", "Year 2"],
-            alive: twoYearsAgoAlive,
-            dead: twoYearsAgoDead,
-            scales: twoYearsAgoScales,
-            illegal_trades: twoYearsAgoIllegalTrades,
-          },
-        },
-      };
-
-      // Calculate totals for the initial "This Year" period
-      this.total.alive = calculateCategoryTotal(this.data[this.date].data.alive);
-      this.total.dead = calculateCategoryTotal(this.data[this.date].data.dead);
-      this.total.scales = calculateCategoryTotal(this.data[this.date].data.scales);
-      this.total.illegal_trades = calculateCategoryTotal(this.data[this.date].data.illegal_trades);
-
-      this.renderChart(); // Render the chart initially
-    },
-    renderChart: function () {
-      let c = false;
-
-      Chart.helpers.each(Chart.instances, function (instance) {
-        if (instance.chart.canvas.id == "chart") {
-          c = instance;
-        }
-      });
-
-      if (c) {
-        c.destroy();
+    selectOption: function (index) {
+      this.selectedOption = index; 
+      this.date = this.options[index].value;
+    
+      // Clear chart before fetching new data to avoid confusion
+      if (this.chart) {
+          this.chart.destroy();
+          this.chart = null; // Reset the chart instance
       }
-
-      let ctx = document.getElementById("chart").getContext("2d");
-
-      let chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: this.data[this.date].data.labels,
-          datasets: [
-            {
-              label: "Alive",
-              backgroundColor: "rgba(102, 126, 234, 0.25)",
-              borderColor: "rgba(102, 126, 234, 1)",
-              pointBackgroundColor: "rgba(102, 126, 234, 1)",
-              data: this.data[this.date].data.alive,
-            },
-            {
-              label: "Dead",
-              backgroundColor: "rgba(237, 100, 166, 0.25)",
-              borderColor: "rgba(237, 100, 166, 1)",
-              pointBackgroundColor: "rgba(237, 100, 166, 1)",
-              data: this.data[this.date].data.dead,
-            },
-            {
-              label: "Scales",
-              backgroundColor: "rgba(34, 202, 236, 0.25)",
-              borderColor: "rgba(34, 202, 236, 1)",
-              pointBackgroundColor: "rgba(34, 202, 236, 1)",
-              data: this.data[this.date].data.scales,
-            },
-            {
-              label: "Illegal Trades",
-              backgroundColor: "rgba(255, 159, 64, 0.25)",
-              borderColor: "rgba(255, 159, 64, 1)",
-              pointBackgroundColor: "rgba(255, 159, 64, 1)",
-              data: this.data[this.date].data.illegal_trades,
-            },
-          ],
-        },
-        layout: {
-          padding: {
-            right: 10,
-          },
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                gridLines: {
-                  display: false,
-                },
-              },
-            ],
-          },
-        },
-      });
+    
+      this.fetch(); 
     },
+    
+
+    // Fetch available years and set them in the dropdown
+    fetchAvailableYears: function () {
+      this.options = [{ label: "Overall Trend", value: "overall" }]; 
+
+      fetch('/get-available-years')
+        .then((response) => response.json())
+        .then((years) => {
+          // Add available years to the options
+          years.forEach(year => {
+            this.options.push({ label: year.toString(), value: year });
+          });
+
+          this.selectedOption = 0; 
+          this.fetch(); 
+        })
+        .catch((error) => {
+          console.error("Error fetching available years:", error);
+        });
+    },
+
+    // Fetch data based on selected option
+    fetch: function () {
+      let self = this;
+    
+      // Fetch data based on the selected date (year or overall)
+      fetch(`/get-poaching-trends?period=${self.date}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Fetched data:", data); // Log the fetched data
+    
+          // Clear existing data and set up new data structure
+          self.data = {
+            overall: {
+              data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                alive: data.overall_trend.alive || [],
+                dead: data.overall_trend.dead || [],
+                scales: data.overall_trend.scales || [],
+                illegal_trade: data.overall_trend.illegal_trade || [],
+              },
+            },
+          };
+    
+          // Add yearly data to self.data
+          Object.keys(data.yearly_reports).forEach(year => {
+            self.data[year] = {
+              data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                alive: data.yearly_reports[year].alive || [],
+                dead: data.yearly_reports[year].dead || [],
+                scales: data.yearly_reports[year].scales || [],
+                illegal_trade: data.yearly_reports[year].illegal_trade || [],
+              },
+            };
+          });
+    
+          // Calculate totals for the selected year
+          const selectedData = self.data[self.date];
+          if (selectedData) {
+            self.total.alive = calculateCategoryTotal(selectedData.data.alive);
+            self.total.dead = calculateCategoryTotal(selectedData.data.dead);
+            self.total.scales = calculateCategoryTotal(selectedData.data.scales);
+            self.total.illegal_trade = calculateCategoryTotal(selectedData.data.illegal_trade);
+          }
+    
+          self.renderChart(); // Render the updated chart
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+      },
+    
+
+    init: function () {
+      this.fetchAvailableYears();  // Fetch dropdown options first
+      this.fetch();  // Fetch the initial chart data
+    },
+
+    renderChart: function () {
+      if (!this.data || !this.data[this.date]) {
+          console.error("Data is not available for the selected date:", this.date);
+          return; // Exit the function if data is not available
+      }
+    
+      let ctx = document.getElementById("chart").getContext("2d");
+      if (!ctx) {
+          console.error("Canvas context not found!");
+          return;
+      }
+    
+      // Create the new chart with the selected year's data or overall
+      const selectedData = this.data[this.date].data;
+      this.chart = new Chart(ctx, {
+          type: "line",
+          data: {
+              labels: selectedData.labels,
+              datasets: [
+                  {
+                      label: "Alive",
+                      backgroundColor: "rgba(102, 126, 234, 0.25)",
+                      borderColor: "rgba(102, 126, 234, 1)",
+                      pointBackgroundColor: "rgba(102, 126, 234, 1)",
+                      data: selectedData.alive,
+                  },
+                  {
+                      label: "Dead",
+                      backgroundColor: "rgba(255, 99, 132, 0.25)",
+                      borderColor: "rgba(255, 99, 132, 1)",
+                      pointBackgroundColor: "rgba(255, 99, 132, 1)",
+                      data: selectedData.dead,
+                  },
+                  {
+                      label: "Scales",
+                      backgroundColor: "rgba(54, 162, 235, 0.25)",
+                      borderColor: "rgba(54, 162, 235, 1)",
+                      pointBackgroundColor: "rgba(54, 162, 235, 1)",
+                      data: selectedData.scales,
+                  },
+                  {
+                      label: "Illegal Trades",
+                      backgroundColor: "rgba(255, 206, 86, 0.25)",
+                      borderColor: "rgba(255, 206, 86, 1)",
+                      pointBackgroundColor: "rgba(255, 206, 86, 1)",
+                      data: selectedData.illegal_trade,
+                  },
+              ],
+          },
+          options: {
+              responsive: true,
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                  },
+              },
+          },
+      });
+    }
+    
   };
 };
+
+// Fetch available years when the chartData object is created
+let dataChart = chartData();
+dataChart.init(); // Initialize the chart data fetching and setup

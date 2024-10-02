@@ -1,6 +1,10 @@
 from django.shortcuts import render
+from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from .models import Incident, IncidentReport
+from django.http import JsonResponse
+from datetime import datetime, timedelta
 
 
 #PUBLIC
@@ -59,3 +63,74 @@ def admin_report(request):
 
 def admin_charts(request):
     return render(request, 'admin/charts.html')
+
+#QUERIES
+
+def get_poaching_trends(request):
+    period = request.GET.get('period', 'overall')  # Get period from the frontend request
+
+    # Initialize overall trend data
+    overall_trend = {
+        'alive': [0] * 12,
+        'dead': [0] * 12,
+        'scales': [0] * 12,
+        'illegal_trade': [0] * 12,  # Ensure correct key
+    }
+    
+    # Dictionary to hold yearly reports with monthly data initialized to zero
+    yearly_reports = {}
+
+    # Get all reports regardless of the year for yearly reporting
+    reports = IncidentReport.objects.all()
+
+    # Aggregate data for overall trend and yearly reports
+    aggregated_data = reports.values('date_reported__year', 'date_reported__month', 'incident__status').annotate(count=Count('id'))
+
+    for entry in aggregated_data:
+        month_index = entry['date_reported__month'] - 1  # Convert month to 0-index
+        status = entry['incident__status']  # Use status directly
+        count = entry['count']
+        
+        # Update overall trend
+        if status == 'Alive':
+            overall_trend['alive'][month_index] += count
+        elif status == 'Dead':
+            overall_trend['dead'][month_index] += count
+        elif status == 'Scales':
+            overall_trend['scales'][month_index] += count
+        elif status == 'Illegal Trade':
+            overall_trend['illegal_trade'][month_index] += count
+
+        # Update yearly reports with monthly breakdown
+        year = entry['date_reported__year']
+        if year not in yearly_reports:
+            yearly_reports[year] = {
+                'alive': [0] * 12,
+                'dead': [0] * 12,
+                'scales': [0] * 12,
+                'illegal_trade': [0] * 12,  # Ensure correct key
+            }
+        # Update counts for the specific month in the yearly report
+        if status == 'Alive':
+            yearly_reports[year]['alive'][month_index] += count
+        elif status == 'Dead':
+            yearly_reports[year]['dead'][month_index] += count
+        elif status == 'Scales':
+            yearly_reports[year]['scales'][month_index] += count
+        elif status == 'Illegal Trade':
+            yearly_reports[year]['illegal_trade'][month_index] += count
+
+    # Prepare the final response with the overall trend and yearly reports
+    response_data = {
+        'overall_trend': overall_trend,
+        'yearly_reports': yearly_reports,
+    }
+
+    return JsonResponse(response_data)
+
+
+def get_available_years(request):
+    years = IncidentReport.objects.dates('date_reported', 'year').distinct()
+    available_years = [year.year for year in years]
+    available_years.sort(reverse=True)
+    return JsonResponse(available_years, safe=False)

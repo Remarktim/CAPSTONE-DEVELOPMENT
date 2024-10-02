@@ -31,8 +31,41 @@ class Incident(BaseModel):
         ('Illegal Trade', 'Illegal Trade'),
     )
 
-    municipality = models.CharField(max_length=150, null=True, blank=True)
-    city = models.CharField(max_length=150, null=True, blank=True)
+    mun_choices = (
+        ('Aborlan', 'Aborlan'),
+        ('Agutaya', 'Agutaya'),
+        ('Araceli', 'Araceli'),
+        ('Balabac', 'Balabac'),
+        ('Bataraza', 'Bataraza'),
+        ('Brooke\'s Point', 'Brooke\'s Point'),
+        ('Busuanga', 'Busuanga'),
+        ('Cagayancillo', 'Cagayancillo'),
+        ('Coron', 'Coron'),
+        ('Culion', 'Culion'),
+        ('Cuyo', 'Cuyo'),
+        ('Dumaran', 'Dumaran'),
+        ('El Nido', 'El Nido'),
+        ('Kalayaan', 'Kalayaan'),
+        ('Linapacan', 'Linapacan'),
+        ('Magsaysay', 'Magsaysay'),
+        ('Narra', 'Narra'),
+        ('Puerto Princesa', 'Puerto Princesa'),
+        ('Quezon', 'Quezon'),
+        ('Rizal', 'Rizal'),
+        ('Roxas', 'Roxas'),
+        ('San Vicente', 'San Vicente'),
+        ('Sofronio Española', 'Sofronio Española'),
+        ('Taytay', 'Taytay'),
+
+    )
+
+    ct_choices = (
+        ('Puerto Princesa City', 'Puerto Princesa City'),
+    
+    )
+
+    municipality = models.CharField(max_length=150, choices=mun_choices, null=True, blank=True)
+    city = models.CharField(max_length=150, choices=ct_choices, null=True, blank=True)
     status = models.CharField(max_length=150, choices=st_choices)
     description = models.CharField(max_length=250)
 
@@ -93,7 +126,7 @@ class Event(BaseModel):
     description = models.CharField(max_length=150)
     date = models.DateField()
     location = models.CharField(max_length=150)
-    officer = models.CharField(max_length=250)
+    officers = models.CharField(max_length=250)
 
     def __str__(self):
         return self.name
