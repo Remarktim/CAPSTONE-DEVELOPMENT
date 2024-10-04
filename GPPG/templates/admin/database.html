@@ -852,9 +852,10 @@
               <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.municipality }}</td>
               <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.city }}</td>
               <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.status }}</td>
-              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.id }}</td>
+              <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.created_at }}</td>
               <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ incident.description }}</td>
               <td class="p-3 whitespace-nowrap text-start text-sm font-medium w-10">
+  
                 <a
                   id="defaultModalButton"
                   data-modal-target="edit_modal"
@@ -863,9 +864,9 @@
                   Edit
                 </a>
                 <a
+                  href="javascript:void(0);" 
+                  onclick="openDeleteModal({{ incident.id }})"
                   id="deleteButton"
-                  data-modal-target="delete_modal"
-                  data-modal-toggle="delete_modal"
                   class="inline-flex items-center cursor-pointer border-2 gap-x-2 text-sm font-semibold p-3 px-5 rounded-lg text-white bg-red-600">
                   Delete
                 </a>
@@ -876,6 +877,7 @@
               <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center">No incidents found.</td>
             </tr>
             {% endfor %}
+
           </tbody>
         </table>
       </div>
@@ -917,4 +919,12 @@
 <script src="{% static 'js/admin/vfs_fonts.js' %}"></script>
 <script src="{% static 'js/admin/buttons.html5.min.js' %}"></script>
 <script src="{% static 'js/admin/buttons.print.min.js' %}"></script>
+
+<script>
+  function openDeleteModal(incidentId) {
+    $('#deleteIncidentForm').attr('action', `/admin_database/${incidentId}/delete`);  
+    $('#delete_modal').removeClass('hidden');  
+  }
+</script>
+
 {% endblock extra_js %}

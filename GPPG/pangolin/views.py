@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import Incident, IncidentReport
+from .models import *
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .forms import *
 
 
 #PUBLIC
@@ -55,6 +57,26 @@ def admin_database(request):
 
     incidents = Incident.objects.all()
     return render(request, 'admin/database.html', {'incidents': incidents})
+
+class IncidentDeleteView(DeleteView):
+    model = Incident
+    template_name = 'admin/includes/modal_delete.html'
+    success_url = reverse_lazy('admin_database')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        if request.is_ajax():
+            return JsonResponse({'success': True})  
+        return super().delete(request, *args, **kwargs)
+
+class IncidentUpdateView(UpdateView):
+    model = Incident
+    form_class = IncidentForm  
+    template_name = 'admin/includes/modal_edit.html'
+    success_url = reverse_lazy('admin_database')
+
+
 
 def admin_officers(request):
     return render(request, 'admin/officers.html')
