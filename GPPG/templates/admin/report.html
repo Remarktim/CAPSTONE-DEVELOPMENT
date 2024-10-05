@@ -172,96 +172,109 @@
 
 <!-- Report Content -->
 {% block title_content %} Report {% endblock title_content %} {% block content %}
+<div class="w-full max-w-lg p-4 bg-white rounded shadow-lg">
+  <div class="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-6 text-center">Year Comparison - Horizontal Bar Chart</h2>
 
-<div class="bg-gray-800 p-8 rounded-lg shadow-md w-full">
-  <!-- Year Selection -->
-  <div class="mb-4">
-    <label
-      for="yearSelect"
-      class="block text-gray-300 font-medium mb-2"
-      >Select Year:</label
-    >
-    <select
-      id="yearSelect"
-      class="border border-gray-600 p-2 w-full rounded bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <option value="2023">2023</option>
-      <option value="2022">2022</option>
-      <option value="2021">2021</option>
-    </select>
-  </div>
-
-  <!-- Dropdown Toggle Button -->
-  <div class="mb-4 text-center">
-    <button
-      id="dropdownToggle"
-      class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition duration-300">
-      Select Dates & Options
-    </button>
-  </div>
-
-  <!-- Dropdown Content -->
-  <div
-    id="dropdownContent"
-    class="hidden">
-    <div class="mb-4">
-      <label
-        for="startDateInput"
-        class="block text-gray-300 font-medium mb-2"
-        >Select Start Date:</label
-      >
-      <input
-        type="month"
-        id="startDateInput"
-        class="border border-gray-600 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-300" />
+    <!-- Dropdown -->
+    <div class="flex justify-center mb-6">
+      <select
+        id="FoundScales_yearSelect"
+        class="block w-1/3 p-2 bg-gray-200 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300">
+        <option value="thisYearData">This Year</option>
+        <option value="lastYearData">Last Year</option>
+      </select>
     </div>
 
-    <div class="mb-4">
-      <label
-        for="endDateInput"
-        class="block text-gray-300 font-medium mb-2"
-        >Select End Date:</label
-      >
-      <input
-        type="month"
-        id="endDateInput"
-        class="border border-gray-600 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-300" />
+    <!-- Chart -->
+    <div class="relative">
+      <canvas id="FoundScales_horizontalBarChart"></canvas>
     </div>
-
-    <div class="flex justify-between space-x-4 mb-4">
-      <button
-        onclick="updateChart()"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 w-full">
-        Update Chart
-      </button>
-      <button
-        onclick="clearDates()"
-        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300 w-full">
-        Clear
-      </button>
-    </div>
-  </div>
-
-  <div class="mt-4 text-center">
-    <p
-      id="totalDisplay"
-      class="text-xl font-semibold text-gray-300">
-      Total: 0
-    </p>
-  </div>
-
-  <!-- Chart Container with Fixed Height -->
-  <div class="mt-8">
-    <canvas
-      id="barChart"
-      class="w-full"
-      height="100"></canvas>
   </div>
 </div>
 
 {% endblock %} {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
-<script src="{% static 'js/chart.js' %}"></script>
-<script src="{% static 'js/admin/charts_pagolin.js' %}"></script>
+<script src="{% static 'js/chart_3.7.1.js' %}"></script>
+<script>
+  const ctx = document.getElementById("FoundScales_horizontalBarChart").getContext("2d");
 
+  // Original Data for the year
+  const dataThisYear = [65, 0, 80, 81, 0, 55, 40, 0, 0, 50, 0, 20];
+  const dataLastYear = [0, 48, 0, 19, 86, 1, 90, 2, 0, 30, 0, 40];
+  const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // Filter function to remove months with no data
+  function filterData(data, labels) {
+    const filteredData = [];
+    const filteredLabels = [];
+
+    data.forEach((value, index) => {
+      if (value !== 0) {
+        // Only keep months with non-zero data
+        filteredData.push(value);
+        filteredLabels.push(labels[index]);
+      }
+    });
+
+    return { filteredData, filteredLabels };
+  }
+
+  // Initial data filtering for 'This Year'
+  let filteredThisYear = filterData(dataThisYear, labels);
+  let filteredLastYear = filterData(dataLastYear, labels);
+
+  // Initial chart setup with filtered data
+  let chartData = {
+    labels: filteredThisYear.filteredLabels,
+    datasets: [
+      {
+        label: "This Year",
+        data: filteredThisYear.filteredData,
+        backgroundColor: "rgba(75, 192, 192, 0.8)",
+      },
+    ],
+  };
+
+  // Chart.js configuration
+  const config = {
+    type: "bar",
+    data: chartData,
+    options: {
+      indexAxis: "y", // Horizontal bar chart
+      responsive: true,
+      scales: {
+        x: {
+          beginAtZero: true,
+        },
+      },
+    },
+  };
+
+  // Create the chart
+  const horizontalBarChart = new Chart(ctx, config);
+
+  // Function to update the chart based on the dropdown selection
+  function updateChart(selectedYear) {
+    if (selectedYear === "thisYearData") {
+      horizontalBarChart.data.labels = filteredThisYear.filteredLabels;
+      horizontalBarChart.data.datasets[0].data = filteredThisYear.filteredData;
+      horizontalBarChart.data.datasets[0].label = "This Year";
+      horizontalBarChart.data.datasets[0].backgroundColor = "rgba(75, 192, 192, 0.8)";
+    } else if (selectedYear === "lastYearData") {
+      horizontalBarChart.data.labels = filteredLastYear.filteredLabels;
+      horizontalBarChart.data.datasets[0].data = filteredLastYear.filteredData;
+      horizontalBarChart.data.datasets[0].label = "Last Year";
+      horizontalBarChart.data.datasets[0].backgroundColor = "rgba(153, 102, 255, 0.8)";
+    }
+
+    horizontalBarChart.update(); // Update the chart with new data
+  }
+
+  // Add event listener to the dropdown
+  document.getElementById("FoundScales_yearSelect").addEventListener("change", function () {
+    const selectedYear = this.value;
+    updateChart(selectedYear);
+  });
+</script>
 {% endblock extra_js %}

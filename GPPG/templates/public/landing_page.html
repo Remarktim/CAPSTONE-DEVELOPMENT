@@ -263,49 +263,24 @@
                               </div>
                             </div>
 
-                            <!-- Terms and Conditions -->
-                            <div class="flex justify-between items-center mb-4">
-                              <div class="flex items-start">
-                                <input
-                                  id="termsCheckbox"
-                                  type="checkbox"
-                                  class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
-                                  disabled />
-                                <label
-                                  for="termsCheckbox"
-                                  class="text-sm ml-3 font-medium text-gray-900">
-                                  I agree to the
-                                  <a
-                                    id="termsLink"
-                                    type="button"
-                                    class="text-blue-600 hover:underline cursor-pointer"
-                                    >terms and conditions</a
-                                  >
-                                </label>
-                              </div>
-                            </div>
-
                             <!-- Forgot password -->
                             <div class="flex justify-between items-center mb-4">
                               <a
-                                href="#"
                                 id="forgotPasswordLink"
-                                class="text-sm text-red-500 hover:underline">
+                                class="text-sm text-red-500 hover:underline cursor-pointer">
                                 Forgot your password?
                               </a>
                             </div>
 
                             <!-- Submit button -->
                             <button
-                              id="submitButton"
-                              class="w-full bg-gray-400 text-white py-2 px-4 rounded-lg transition duration-300 cursor-not-allowed"
-                              disabled>
+                              id="SignIn_Submit"
+                              class="w-full bg-black text-white py-2 px-4 rounded-lg transition duration-300">
                               Submit
                             </button>
                           </form>
 
-                          {% include 'public/includes/terms.html' %} {% include 'public/includes/forgot_pass.html' %}
-
+                          {% include 'public/includes/forgot_pass.html' %}
                           <!-- Sign up link -->
                           <p class="mt-4 text-sm text-center text-gray-600">
                             Don't have an account?
@@ -472,16 +447,16 @@
                           <div class="flex justify-between items-center mb-4">
                             <div class="flex items-start">
                               <input
-                                id="termsCheckboxs"
+                                id="termsCheckbox"
                                 type="checkbox"
                                 class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
                                 disabled />
                               <label
-                                for="termsCheckboxs"
+                                for="termsCheckbox"
                                 class="text-sm ml-3 font-medium text-gray-900">
                                 I agree to the
                                 <a
-                                  id="termsLinks"
+                                  id="termsLink"
                                   type="button"
                                   class="text-blue-600 hover:underline cursor-pointer"
                                   >terms and conditions</a
@@ -489,8 +464,14 @@
                               </label>
                             </div>
                           </div>
-                          <button class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition duration-300">Sign Up</button>
+                          <button
+                            id="submitButton"
+                            class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition duration-300"
+                            disabled>
+                            Sign Up
+                          </button>
                         </form>
+                        {% include 'public/includes/terms.html' %}
 
                         <p class="mt-4 text-sm text-center text-gray-600">
                           Already have an account?

@@ -303,55 +303,13 @@
       </div>
     </nav>
     <main class="p-3 sm:ml-64">
-      <div class="">
-        {% block content%}
-        <section class="grid grid-cols-4 gap-4 mb-4 font-['Roboto']">
-          <div class="flex flex-col items-center justify-center text-center h-full py-8 bg-gray-50 dark:bg-gray-800 shadow-md rounded-xl">
-            <p class="text-2xl font-extrabold text-black">323</p>
-            <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Website Visitors</p>
-          </div>
-          <div class="flex flex-col items-center justify-center text-center h-full py-8 bg-gray-50 dark:bg-gray-800 shadow-md rounded-xl">
-            <p class="text-2xl font-extrabold text-black">55</p>
-            <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Found Dead</p>
-          </div>
-          <div class="flex flex-col items-center justify-center text-center h-full py-8 bg-gray-50 dark:bg-gray-800 shadow-md rounded-xl">
-            <p class="text-2xl font-extrabold text-black">12</p>
-            <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Found Alive</p>
-          </div>
-          <div class="flex flex-col items-center justify-center text-center h-full py-8 bg-gray-50 dark:bg-gray-800 shadow-md rounded-xl">
-            <p class="text-2xl font-extrabold text-black">69</p>
-            <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Illegal Trades</p>
-          </div>
-        </section>
-        <section class="h-80 mb-4 bg-gray-50 dark:bg-gray-800 border-2 rounded-xl w-full">
-          <p class="text-md text-black ml-7 mt-5 font-bold font-['Bahnschrift']">Poaching</p>
-          <p class="text-md text-black ml-7 font-bold font-['Bahnschrift']">Total: <span>00</span></p>
-        </section>
-        <section class="grid grid-cols-4 grid-rows-1 gap-4 h-2/5">
-          <div class="col-span-2 row-span-2 border-2 bg-gray-50 h-full dark:bg-gray-800 rounded-xl">
-            <p class="text-md text-black ml-7 mt-5 font-bold font-['Bahnschrift']">Palawan Map</p>
-          </div>
-          <div class="col-span-2 row-span-1 border-2 bg-gray-50 h-full dark:bg-gray-800 rounded-xl">
-            <div class="text-md text-black ml-7 mt-5 font-bold font-['Bahnschrift']">
-              <p>Found Scales</p>
-              <div>
-                <p></p>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col col-span-2 row-span-1 border-2 h-32 rounded-xl">
-            <p class="text-md text-black ml-7 mt-5 font-bold font-['Bahnschrift']">Recent log in</p>
-            <div>
-              <p></p>
-            </div>
-          </div>
-        </section>
-        {% endblock%}
-      </div>
+      <div class="">{% block content%} {% include 'admin/includes/dashboard.html' %} {% endblock%}</div>
     </main>
     {% block extra_js %} {% endblock extra_js %}
     <script src="{% static 'js/admin/flowbite.min.js' %}"></script>
     <script src="{% static 'js/preline.js' %}"></script>
     <script src="{% static 'js/admin/index.js' %}"></script>
+    <script src="{% static 'js/chart_3.7.1.js' %}"></script>
+    <script src="{% static 'js/admin/ChartForDashboard.js' %}"></script>
   </body>
 </html>

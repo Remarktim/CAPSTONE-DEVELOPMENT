@@ -1,29 +1,38 @@
 {% load static %}
+
+<!-- Modal (Initially hidden) -->
 <div
   id="forgotPasswordModal"
   class="fixed inset-0 bg-opacity-50 flex items-center justify-center">
-  <div class="sm:p-7 bg-white text-black rounded-lg shadow-lg p-6 max-w-lg w-max max-h-screen">
-    <div class="text-center">
+  <div class="sm:p-7 bg-white text-black rounded-lg shadow-lg p-6 max-w-lg w-max max-h-screen relative">
+    <!-- Close Button -->
+    <button
+      id="closeModal"
+      class="absolute right-0 top-0 m-2 text-gray-500 hover:text-gray-800 text-2xl"
+      aria-label="Close modal">
+      &times;
+    </button>
+
+    <div class="text-center mt-5">
       <h1 class="block text-2xl font-bold">Forgot password?</h1>
       <p class="mt-2 text-sm">
         Remember your password?
         <a
-          class="text-[#3f0703]decoration-2 hover:underline font-medium"
+          class="text-[#3f0703] decoration-2 hover:underline font-medium"
           href="#">
           Login
         </a>
       </p>
     </div>
-
     <div class="mt-5">
       <form>
         <div class="grid gap-y-4">
           <div>
             <label
               for="email"
-              class="block text-sm font-bold ml-1 mb-2 dark:text-black"
-              >Email address</label
-            >
+              class="block text-sm font-bold ml-1 mb-2 dark:text-black">
+              Email address
+            </label>
             <div class="relative">
               <input
                 type="email"
@@ -41,7 +50,7 @@
           </div>
           <button
             type="submit"
-            class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-[#3f0703] text-white hover:bg-blackfocus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+            class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-[#3f0703] text-white hover:bg-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
             Reset password
           </button>
         </div>
@@ -62,7 +71,7 @@
     forgotPasswordModal.classList.remove("hidden");
   });
 
-  // Hide modal when "Cancel" button is clicked
+  // Hide modal when "Close" button is clicked
   closeModal.addEventListener("click", function () {
     forgotPasswordModal.classList.add("hidden");
   });
