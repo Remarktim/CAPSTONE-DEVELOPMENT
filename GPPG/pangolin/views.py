@@ -2,8 +2,11 @@ from django.shortcuts import render
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
 from .models import *
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -59,22 +62,50 @@ def admin_database(request):
     return render(request, 'admin/database.html', {'incidents': incidents})
 
 class IncidentDeleteView(DeleteView):
-    model = Incident
     template_name = 'admin/includes/modal_delete.html'
-    success_url = reverse_lazy('admin_database')
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
-        if request.is_ajax():
-            return JsonResponse({'success': True})  
-        return super().delete(request, *args, **kwargs)
-
-class IncidentUpdateView(UpdateView):
     model = Incident
-    form_class = IncidentForm  
-    template_name = 'admin/includes/modal_edit.html'
-    success_url = reverse_lazy('admin_database')
+
+    def get_object(self, pk):
+        return get_object_or_404(self.model, id=pk)
+
+    def get(self, request, pk):
+        
+        try:
+            incident = self.get_object(pk)
+            return render(request, self.template_name, {'object': incident})
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=404)
+
+    def post(self, request, pk):
+        try:
+            incident = self.get_object(pk)
+            incident.delete()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+
+
+def incident_edit(request, pk):
+    incident = get_object_or_404(Incident, pk=pk)
+    print("Incident ID:", incident.id)
+    
+    if request.method == 'POST':
+        form = IncidentForm(request.POST, instance=incident)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+    else:
+        form = IncidentForm(instance=incident)
+
+        
+        
+    return render(request, 'admin/includes/modal_edit.html', {'form': form})
 
 
 
@@ -93,28 +124,24 @@ def admin_charts(request):
 #QUERIES
 
 def get_poaching_trends(request):
-    period = request.GET.get('period', 'overall')  # Get period from the frontend request
+    period = request.GET.get('period', 'overall')  
 
     # Initialize overall trend data
     overall_trend = {
         'alive': [0] * 12,
         'dead': [0] * 12,
         'scales': [0] * 12,
-        'illegal_trade': [0] * 12,  # Ensure correct key
+        'illegal_trade': [0] * 12,  
     }
     
-    # Dictionary to hold yearly reports with monthly data initialized to zero
+    
     yearly_reports = {}
-
-    # Get all reports regardless of the year for yearly reporting
     reports = IncidentReport.objects.all()
-
-    # Aggregate data for overall trend and yearly reports
     aggregated_data = reports.values('date_reported__year', 'date_reported__month', 'incident__status').annotate(count=Count('id'))
 
     for entry in aggregated_data:
-        month_index = entry['date_reported__month'] - 1  # Convert month to 0-index
-        status = entry['incident__status']  # Use status directly
+        month_index = entry['date_reported__month'] - 1  
+        status = entry['incident__status']  
         count = entry['count']
         
         # Update overall trend
@@ -134,7 +161,7 @@ def get_poaching_trends(request):
                 'alive': [0] * 12,
                 'dead': [0] * 12,
                 'scales': [0] * 12,
-                'illegal_trade': [0] * 12,  # Ensure correct key
+                'illegal_trade': [0] * 12,  
             }
         # Update counts for the specific month in the yearly report
         if status == 'Alive':
@@ -146,7 +173,7 @@ def get_poaching_trends(request):
         elif status == 'Illegal Trade':
             yearly_reports[year]['illegal_trade'][month_index] += count
 
-    # Prepare the final response with the overall trend and yearly reports
+   
     response_data = {
         'overall_trend': overall_trend,
         'yearly_reports': yearly_reports,

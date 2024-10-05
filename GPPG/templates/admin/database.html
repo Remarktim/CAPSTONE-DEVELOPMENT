@@ -857,16 +857,17 @@
               <td class="p-3 whitespace-nowrap text-start text-sm font-medium w-10">
   
                 <a
-                  id="defaultModalButton"
-                  data-modal-target="edit_modal"
-                  data-modal-toggle="edit_modal"
+                  href="javascript:void(0);" 
+                  data-incident-id="{{ incident.id }}"
+                  onclick="openEditModal(this)"
                   class="inline-flex items-center cursor-pointer gap-x-2 text-sm font-semibold rounded-lg p-3 px-5 border-2 text-black">
                   Edit
                 </a>
-                <a
+                <a  
                   href="javascript:void(0);" 
-                  onclick="openDeleteModal({{ incident.id }})"
-                  id="deleteButton"
+                  data-incident-id="{{ incident.id }}"
+                  data-incident-name="{{ incident }}"
+                  onclick="openDeleteModal(this)"
                   class="inline-flex items-center cursor-pointer border-2 gap-x-2 text-sm font-semibold p-3 px-5 rounded-lg text-white bg-red-600">
                   Delete
                 </a>
@@ -919,12 +920,6 @@
 <script src="{% static 'js/admin/vfs_fonts.js' %}"></script>
 <script src="{% static 'js/admin/buttons.html5.min.js' %}"></script>
 <script src="{% static 'js/admin/buttons.print.min.js' %}"></script>
-
-<script>
-  function openDeleteModal(incidentId) {
-    $('#deleteIncidentForm').attr('action', `/admin_database/${incidentId}/delete`);  
-    $('#delete_modal').removeClass('hidden');  
-  }
-</script>
+<script src="{% static 'js/admin/modal.js' %}"></script>
 
 {% endblock extra_js %}

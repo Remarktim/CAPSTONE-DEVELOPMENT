@@ -72,8 +72,8 @@ class Incident(BaseModel):
     def __str__(self):
 
         if self.city:
-            return f"{self.city} - {self.id} ({self.status})"
-        return f"{self.municipality} - {self.id} ({self.status})"
+            return f"{self.city} - ID-{self.id} ({self.status})"
+        return f"{self.municipality} - ID-{self.id} ({self.status})"
 
 class Evidence(BaseModel):
 
