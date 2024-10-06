@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from .models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
@@ -92,20 +92,38 @@ class IncidentDeleteView(DeleteView):
 
 
 def incident_edit(request, pk):
-    incident = get_object_or_404(Incident, pk=pk)
-    print("Incident ID:", incident.id)
+    incident = get_object_or_404(Incident, id=pk)
     
     if request.method == 'POST':
         form = IncidentForm(request.POST, instance=incident)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
+            if request.htmx:
+                # If it's an HTMX request, return empty response to close modal
+                return HttpResponse()
+            return redirect('admin_database')  # Regular form submit redirect
     else:
         form = IncidentForm(instance=incident)
 
-        
-        
-    return render(request, 'admin/includes/modal_edit.html', {'form': form})
+    context = {
+        'incident': incident,
+        'form': form,
+    }
+    
+    return render(request, 'admin/includes/modal_edit.html', context)
+
+
+def incident_add(request):
+    if request.method == 'POST':
+        form = IncidentForm(request.POST)
+        if form.is_valid():
+            # Process the form (e.g., save to the database)
+            form.save()
+            return redirect('admin_database')  # Redirect on success
+    else:
+        form = IncidentForm()  # Instantiate an empty form for GET request
+    
+    return render(request, 'admin/includes/modal_add.html', {'form': form})
 
 
 

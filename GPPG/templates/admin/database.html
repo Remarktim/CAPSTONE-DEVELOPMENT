@@ -232,10 +232,10 @@
     <div class="flex-1 flex items-center justify-end space-x-2">
       <div class="relative inline-flex">
         <button
-          id="defaultModalButton"
-          data-modal-target="add_modal"
-          data-modal-toggle="add_modal"
-          type="button"
+          hx-get="{% url 'incident-add' %}"
+          hx-target="#modal-content"
+          hx-trigger="click"
+          onclick="addmodal.showModal()"
           class="py-2 px-5 inline-flex items-center gap-x-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
           Add
         </button>
@@ -858,8 +858,9 @@
   
                 <a
                   href="javascript:void(0);" 
-                  data-incident-id="{{ incident.id }}"
-                  onclick="openEditModal(this)"
+                  onclick="openModal('edit_modal')"
+                  hx-get="{% url 'incident-update' incident.id %}"
+                  hx-target="#edit_modal"
                   class="inline-flex items-center cursor-pointer gap-x-2 text-sm font-semibold rounded-lg p-3 px-5 border-2 text-black">
                   Edit
                 </a>
@@ -885,6 +886,7 @@
     </div>
   </div>
 
+
   <div
     class="flex items-center space-x-1 mt-4"
     data-hs-datatable-paging="">
@@ -907,8 +909,9 @@
     </button>
   </div>
 </div>
+
 <!-- Modal content -->
-{% include 'admin/includes/modal_add.html' %} {% include 'admin/includes/modal_delete.html' %} {% include 'admin/includes/modal_edit.html' %}
+{% include 'admin/includes/modal_add.html' %} {% include 'admin/includes/modal_delete.html' %} {% include 'admin/includes/modal_edit.html' %} 
 <!-- js -->
 {% endblock %} {% block extra_js %}
 <script src="{% static 'js/admin/data.js' %}"></script>
@@ -921,5 +924,6 @@
 <script src="{% static 'js/admin/buttons.html5.min.js' %}"></script>
 <script src="{% static 'js/admin/buttons.print.min.js' %}"></script>
 <script src="{% static 'js/admin/modal.js' %}"></script>
+<script src="{% static 'js/htmx.min.js'%}"></script>
 
 {% endblock extra_js %}

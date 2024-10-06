@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
     path('admin_database/', views.admin_database, name='admin_database'),
+    path('admin_database/add', views.incident_add, name='incident-add'),
     path('admin_database/<int:pk>/', views.incident_edit, name='incident-update'),
     path('admin_database/<int:pk>/delete/', IncidentDeleteView.as_view(), name='incident-delete'),
     path('admin_officers/', views.admin_officers, name='admin_officers'),
@@ -28,4 +29,8 @@ urlpatterns = [
     path('admin_report/', views.admin_report, name='admin_report'),
     path('get-poaching-trends/', views.get_poaching_trends, name='get_poaching_trends'),
     path('get-available-years/', views.get_available_years, name='get_available_years'),
+
+
+    
+
 ]

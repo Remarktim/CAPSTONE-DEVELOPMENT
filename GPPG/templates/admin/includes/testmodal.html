@@ -1,0 +1,54 @@
+{% load static %}
+
+
+<button
+  hx-get="{% url 'incident-add' %}"
+  hx-target="#modal-content"
+  hx-trigger="click"
+  onclick="testmodal.showModal()"
+  class="bg-blue-500 text-white p-2 rounded">
+  Open Form Modal
+</button>
+
+<!-- Dialog Modal -->
+<dialog id="testmodal" class="modal">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+    <!-- Content will be loaded here -->
+    <div id="modal-content">
+      <!-- Initial content or loading state -->
+    </div>
+    
+    <!-- Close button outside the loaded content -->
+    <button 
+      onclick="testmodal.close()"
+      class="absolute top-2 right-2 bg-gray-200 p-1 rounded-full hover:bg-gray-300">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+      </svg>
+    </button>
+  </div>
+</dialog>
+
+<!-- Template for the modal content (in a separate file) -->
+<!-- templates/form_modal_content.html -->
+<div class="modal-content">
+  <form 
+    hx-post="{% url 'incident-add' %}"
+    hx-target="#modal-content">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="mt-4 flex justify-end space-x-2">
+      <button 
+        type="submit" 
+        class="bg-green-500 text-white p-2 rounded hover:bg-green-600">
+        Submit
+      </button>
+      <button 
+        type="button" 
+        onclick="testmodal.close()"
+        class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
+        Close
+      </button>
+    </div>
+  </form>
+</div>

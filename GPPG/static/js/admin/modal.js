@@ -68,60 +68,25 @@ function submitDeleteForm() {
 
 //EDIT MODAL
 
-function openEditModal(element) {
-    const incidentId = element.getAttribute('data-incident-id');
-
-    console.log("Opening modal for incident:", incidentId); // Debug log
-
-    if (!incidentId) {
-        console.error("No incident ID provided");
-        alert("Error: Could not determine which incident to edit");
-        return;
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        location.reload();
+    } else {
+        console.error(`Modal with ID ${modalId} not found.`);
     }
 
-    const url = `/admin_database/${incidentId}/`; // Adjust this to your URL pattern
-
-    // Show the modal first
-    $('#edit_modal').removeClass('hidden').addClass('flex');
-
-    // Fetch the form content
-    $.ajax({
-        url: url,
-        type: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        success: function(response) {
-            console.log("Received response:", response); // Debug log
-            
-            // Inject the form HTML into the modal body
-            $('#modal_content_message').html(response.html); // Assuming your response contains the HTML
-        },
-        error: function(xhr, errmsg, err) {
-            console.error('Error:', errmsg);
-            console.error('XHR:', xhr.responseText); // More detailed error
-        }
-    });
 }
 
-
-// Close the modal function
-function closeEditModal() {
-    $('#edit_modal').removeClass('flex').addClass('hidden');
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    } else {
+        console.error(`Modal with ID ${modalId} not found.`);
+    }
 }
-
-
-
-
-// function openEditModal() {
-//     const modal = document.getElementById('edit_modal');
-//     modal.classList.remove('hidden');
-//     modal.classList.add('flex');
-// }
-
-// function closeEditModal() {
-//     const modal = document.getElementById('edit_modal');
-//     modal.classList.add('hidden');
-//     modal.classList.remove('flex');
-// }
 
