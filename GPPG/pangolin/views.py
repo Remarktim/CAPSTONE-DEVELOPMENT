@@ -2,15 +2,19 @@ from django.shortcuts import render, redirect
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import Incident, IncidentReport
-from django.http import JsonResponse
+from .models import *
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
-
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .forms import *
 
 #PUBLIC
 def landing_page(request):
@@ -96,8 +100,38 @@ def admin_home(request):
 def admin_login(request):
     return render(request, 'admin/login.html')
 
-def pangolin_database(request):
-    return render(request, 'admin/database_pangolin.html')
+class IncidentListView(ListView):
+    model = Incident 
+    context_object_name = "incident"
+    template_name = "admin/database_incident.html"
+
+def incident_add(request):
+    if request.method == 'POST':
+        form = IncidentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Incident Saved!')
+            return response
+    else:
+        form = IncidentForm()
+    
+    return render(request, 'admin/includes/modal/modal_incident_add.html', {'form': form})
+
+class IncidentUpdateView(UpdateView):
+    model = Incident
+    form_class = IncidentForm
+    template_name = "admin/includes/modal/modal_incident_edit.html"
+    success_url = reverse_lazy('admin_incident_database')
+
+class IncidentDeleteView(DeleteView):
+    model = Incident
+    template_name = "admin/includes/modal/modal_incident_delete.html"
+    success_url = reverse_lazy('admin_incident_database')
+    
+
+
 
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
