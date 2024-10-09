@@ -1,0 +1,304 @@
+{% load static %}
+<div class="flip-card flex">
+  <!-- signin -->
+  <div class="flip-card-front flex items-center w-full h-auto justify-center top-40 overflow-hidden">
+    <div class="flex w-full md:w-1/2 bg-gradient-to-b from-[#3f0703] to-[#eaebe6] max-h-fit shadow-md rounded-3xl">
+      <div class="hidden xl:flex w-1/2 items-center justify-center p-10">
+        <img
+          src="{% static 'img/logo.jpg' %}"
+          alt="Logo"
+          class="w-40 h-40 2xl:w-80 2xl:h-80 rounded-full"
+          oncontextmenu="return false;"
+          draggable="false" />
+      </div>
+      <div class="w-full mx-0 xl:w-1/2 p-10 bg-white rounded-3xl">
+        <div class="flex flex-col items-center">
+          <img
+            src="{% static 'img/pangolin_icon.png' %}"
+            alt="Logo"
+            class="w-16 h-16"
+            oncontextmenu="return false;"
+            draggable="false" />
+          <h2 class="text-xl md:text-3xl font-bold mb-4 text-gray-800">Sign in</h2>
+          <p class="text-gray-600 mb-6 text-sm">Welcome!</p>
+        </div>
+
+        <div
+          id="loginError"
+          class="text-red-500 mt-4 hidden"></div>
+        <!-- Temporary action -->
+        <form
+          id="signInForm"
+          method="POST"
+          action="{% url 'home' %}">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="email"
+              id="email_login"
+              class="w-full px-4 text-black py-2 mt-2 border-b border-0 focus:outline-none duration-300 focus-within:border-indigo-500"
+              placeholder="Email" />
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="passwords"
+              class="block text-sm font-medium text-gray-700"
+              >Password</label
+            >
+            <div class="relative">
+              <input
+                id="passwords"
+                type="password"
+                name="passwords"
+                placeholder="Password"
+                class="w-full px-4 text-black py-2 mt-2 border-b border-0 focus:outline-none duration-300 focus-within:border-indigo-500" />
+              <button
+                type="button"
+                id="togglePasswords"
+                class="absolute inset-y-0 h-fit right-0 mr-3 mt-5 flex items-center text-sm leading-5">
+                <i
+                  class="mdi mdi-eye-off text-gray-500"
+                  id="passwordIcons"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center mb-4">
+            <a
+              id="forgotPasswordLink"
+              class="text-sm text-red-500 hover:underline cursor-pointer">
+              Forgot your password?
+            </a>
+          </div>
+
+          <button
+            id="SignIn_Submit"
+            class="w-full bg-black text-white py-2 px-4 rounded-lg transition duration-300">
+            <span id="loginButtonText">Submit</span>
+            <div
+              id="loginButtonSpinner"
+              class="hidden loader ml-2"></div>
+          </button>
+        </form>
+
+        <p class="mt-4 text-sm text-center text-gray-600">
+          Don't have an account?
+          <a
+            class="text-red-500 hover:underline cursor-pointer"
+            id="flipToSignup"
+            >Sign up</a
+          >
+        </p>
+      </div>
+      <button
+        id="closeBtn"
+        class="absolute right-0 md:right-1/4 m-5 text-gray-500 hover:text-gray-800 text-2xl">
+        &times;
+      </button>
+    </div>
+  </div>
+
+  <!-- signup -->
+  <div class="flip-card-back flex items-center mx-auto h-auto justify-center snap-y absolute top-auto md:top-40 right-auto w-full">
+    <div class="w-full md:w-1/2 max-h-fit p-10 bg-white shadow-md rounded-3xl">
+      <button
+        id="closeBtns"
+        class="absolute right-0 md:right-1/4 m-5 -mt-5 text-gray-500 hover:text-gray-800 text-2xl">
+        &times;
+      </button>
+      <div class="flex flex-col items-center">
+        <img
+          src="{% static 'img/pangolin_icon.png' %}"
+          alt="Logo"
+          class="w-16 h-16"
+          oncontextmenu="return false;"
+          draggable="false" />
+        <p class="text-3xl font-bold mb-4 text-gray-800">Sign Up</p>
+        <p class="text-gray-600 mb-6">Join us today!</p>
+      </div>
+
+      <div
+        id="signUpError"
+        class="text-red-500 mt-4 hidden"></div>
+      <form
+        id="signUpForm"
+        method="POST">
+        <div class="xl:flex-row flex mx-3 gap-5 flex-col">
+          <div class="xl:w-1/2 w-full">
+            <label
+              for=""
+              class="block text-sm font-medium text-gray-700"
+              >First name</label
+            >
+            <div class="flex">
+              <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-account-outline text-gray-400 text-lg"></i></div>
+              <input
+                id="first_name"
+                type="text"
+                class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
+                placeholder="Nick" />
+            </div>
+          </div>
+
+          <div class="xl:w-1/2 w-full mb-5">
+            <label
+              for=""
+              class="block text-sm font-medium text-gray-700"
+              >Last name</label
+            >
+            <div class="flex">
+              <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-account-outline text-gray-400 text-lg"></i></div>
+              <input
+                id="last_name"
+                type="text"
+                class="w-full -ml-10 pl-10 text-black pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
+                placeholder="Bundal" />
+            </div>
+          </div>
+        </div>
+        <div class="xl:flex-row flex mx-3 gap-5 flex-col">
+          <div class="xl:w-1/2 w-full mb-5">
+            <label
+              for=""
+              class="block text-sm font-medium text-gray-700"
+              >Email</label
+            >
+            <div class="flex">
+              <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-email-outline text-gray-400 text-lg"></i></div>
+              <input
+                id="email_signup"
+                type="email"
+                class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
+                placeholder="nickbundal@gmal.com" />
+            </div>
+          </div>
+          <div class="xl:w-1/2 w-full mb-5">
+            <label
+              for="phone"
+              class="block text-sm font-medium text-gray-700"
+              >Phone number</label
+            >
+            <div class="flex">
+              <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-phone-outline text-gray-400 text-lg"></i></div>
+              <input
+                id="SignUp_phoneNum"
+                maxlength="11"
+                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                type="tel"
+                class="w-full -ml-10 text-black pl-10 pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
+                placeholder="09223123423" />
+            </div>
+          </div>
+        </div>
+        <div class="xl:flex-row flex mx-3 gap-5 flex-col">
+          <!-- Password Field -->
+          <div class="xl:w-1/2 w-full mb-5">
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700"
+              >Password</label
+            >
+            <div class="flex relative">
+              <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
+                <i class="mdi mdi-lock-outline text-gray-400 text-lg"></i>
+              </div>
+              <input
+                id="password"
+                type="password"
+                class="w-full -ml-10 pl-10 text-black pr-10 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
+                placeholder="************" />
+              <!-- Show/Hide Password Button -->
+              <button
+                type="button"
+                id="togglePassword"
+                class="absolute inset-y-0 h-fit right-0 mr-3 mt-3 flex items-center text-sm leading-5">
+                <i
+                  class="mdi mdi-eye-off text-gray-500"
+                  id="passwordIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="xl:w-1/2 w-full mb-5">
+            <label
+              for=""
+              class="block text-sm font-medium text-gray-700"
+              >Confirm password</label
+            >
+            <div class="flex relative">
+              <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
+                <i class="mdi mdi-lock-outline text-gray-400 text-lg"></i>
+              </div>
+              <input
+                id="confirmPassword"
+                type="password"
+                class="w-full -ml-10 pl-10 text-black pr-10 py-2 border-b-2 border-0 border-gray-200 focus:border-black"
+                placeholder="************" />
+              <button
+                type="button"
+                id="toggleConfirmPassword"
+                class="absolute inset-y-0 h-fit right-0 mr-3 mt-3 flex items-center text-sm leading-5">
+                <i
+                  class="mdi mdi-eye-off text-gray-500"
+                  id="confirmPasswordIcon"></i>
+              </button>
+            </div>
+            <p
+              id="passwordError"
+              class="text-sm text-red-500 hidden">
+              Passwords do not match.
+            </p>
+          </div>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-start">
+            <input
+              id="termsCheckbox"
+              type="checkbox"
+              class="bg-gray-50 border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded"
+              disabled />
+            <label
+              for="termsCheckbox"
+              class="text-sm ml-3 font-medium text-gray-900">
+              I agree to the
+              <a
+                id="termsLink"
+                type="button"
+                class="text-blue-600 hover:underline cursor-pointer"
+                >terms and conditions</a
+              >
+            </label>
+          </div>
+        </div>
+        <button
+          id="submitButton"
+          class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition duration-300"
+          disabled>
+          <span id="signUpButtonText">Sign Up</span>
+          <div
+            id="signUpButtonSpinner"
+            class="hidden loader ml-2"></div>
+        </button>
+      </form>
+      {% include 'public/includes/terms.html' %}
+
+      <p class="mt-4 text-sm text-center text-gray-600">
+        Already have an account?
+        <a
+          href="#"
+          class="text-red-500 hover:underline"
+          id="flipToSignin"
+          >Log in</a
+        >
+      </p>
+    </div>
+  </div>
+</div>

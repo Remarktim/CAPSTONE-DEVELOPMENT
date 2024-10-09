@@ -1,8 +1,6 @@
-{% extends "admin/admin.html" %} {% load static %} {% block title %}Report{% endblock title %}
-<!-- css -->
-{% block css %} <link rel="stylesheet" href="{% static "css/apexcharts.css" %}"> {% endblock css%}
+{% extends "admin/admin.html" %} {% load static %} {% block title %}Map{% endblock title %}
 
-<!-- Report menu highlight -->
+<!-- Map menu highlight -->
 {% block aside%}
 <ul class="space-y-2 font-medium">
   <li>
@@ -42,7 +40,7 @@
   <li>
     <a
       href="{% url 'admin_report' %}"
-      class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group">
+      class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
       <svg
         class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
         aria-hidden="true"
@@ -161,8 +159,7 @@
 </ul>
 {% endblock aside %}
 
-<!-- Report Content -->
-{% block title_content %} Report {% endblock title_content %} {% block content %}
-<div class="w-full h-full g p-4 bg-white rounded shadow-lg"></div>
-
-{% endblock %} {% block extra_js %} {% endblock extra_js %}
+<!-- Map Content -->
+{% block title_content %} Map {% endblock title_content %} {% block content %}
+<div class="w-full h-full bg-white rounded-2xl shadow-lg"></div>
+{% endblock %}

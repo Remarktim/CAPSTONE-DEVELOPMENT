@@ -1,5 +1,6 @@
 const modal = document.getElementById("loginModal");
 const loginBtn = document.getElementById("loginBtn");
+const Aboutss = document.getElementById("Aboutss");
 const closeBtn = document.getElementById("closeBtn");
 const closeBtns = document.getElementById("closeBtns");
 
@@ -7,6 +8,10 @@ const signInForm = document.getElementById("signInForm");
 const signUpForm = document.getElementById("signUpForm");
 
 loginBtn.addEventListener("click", function () {
+  modal.classList.remove("hidden");
+});
+
+Aboutss.addEventListener("click", function () {
   modal.classList.remove("hidden");
 });
 

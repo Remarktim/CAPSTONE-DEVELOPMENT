@@ -1,17 +1,64 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .models import Incident, IncidentReport
 from django.http import JsonResponse
 from datetime import datetime, timedelta
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_POST
 
 
 #PUBLIC
 def landing_page(request):
     return render(request, 'public/landing_page.html')
 
+@csrf_exempt
+@require_POST
+def login_view(request):
+    # Retrieve email and password from POST data
+    email = request.POST.get('email')
+    password = request.POST.get('passwords')
+
+    # Authenticate user
+    user = authenticate(request, username=email, password=password)
+
+    if user is not None:
+        login(request, user)  # Log the user in
+        return JsonResponse({'success': True, 'message': 'Login successful!'}, status=200)
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid email or password.'}, status=400)
+
+
+# Signup View
+@csrf_exempt
+@require_POST
+def signup_view(request):
+    # Retrieve form data
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')
+    email = request.POST.get('email')
+    password = request.POST.get('passwords')
+
+    # Check if the email is already registered
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({'success': False, 'error': 'Email already registered.'}, status=400)
+
+    # Password validation
+    if len(password) < 8:
+        return JsonResponse({'success': False, 'error': 'Password must be at least 8 characters long.'}, status=400)
+
+    # Create a new user
+    user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=last_name)
+    user.save()
+
+    return JsonResponse({'success': True, 'message': 'Registration successful! Please log in.'}, status=200)
+
 #PRIVATE
+
 def home(request):
     return render(request, 'private/index.html')
 
@@ -49,8 +96,17 @@ def admin_home(request):
 def admin_login(request):
     return render(request, 'admin/login.html')
 
-def admin_database(request):
-    return render(request, 'admin/database.html')
+def pangolin_database(request):
+    return render(request, 'admin/database_pangolin.html')
+
+def userAccounts_database(request):
+    return render(request, 'admin/database_userAccounts.html')
+
+def gallery_database(request):
+    return render(request, 'admin/database_gallery.html')
+
+def officers_database(request):
+    return render(request, 'admin/database_officers.html')
 
 def admin_officers(request):
     return render(request, 'admin/officers.html')
