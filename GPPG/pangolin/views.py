@@ -119,11 +119,20 @@ def incident_add(request):
     
     return render(request, 'admin/includes/modal/modal_incident_add.html', {'form': form})
 
-class IncidentUpdateView(UpdateView):
-    model = Incident
-    form_class = IncidentForm
-    template_name = "admin/includes/modal/modal_incident_edit.html"
-    success_url = reverse_lazy('admin_incident_database')
+def incident_update(request, id):
+    incident = get_object_or_404(Incident, id=id)
+    if request.method == 'POST':
+        form = IncidentForm(request.POST, instance=incident)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Incident Updated!')
+            return response
+    else:
+        form = IncidentForm(instance=incident)
+    
+    return render(request, 'admin/includes/modal/modal_incident_edit.html', {'form': form, 'incident': incident})
 
 class IncidentDeleteView(DeleteView):
     model = Incident

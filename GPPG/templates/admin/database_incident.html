@@ -542,8 +542,9 @@
                         <li>
                           <div class="flex text-center gap-2">
                             <button
-                              data-modal-target="modal_pangolin_edit"
-                              data-modal-toggle="modal_pangolin_edit"
+                              hx-get="{% url 'admin_incident_edit' incident.id %}"
+                              hx-target="#incident-edit-{{ incident.id }}"
+                              onclick="incidentedit.showModal()"
                               type="button"
                               class="text-center items-center cursor-pointer text-sm font-semibold rounded-lg p-2 px-5 border-2 text-black">
                               Edit
