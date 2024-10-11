@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from .forms import *
 
 #PUBLIC
@@ -121,6 +121,7 @@ def incident_add(request):
 
 def incident_update(request, id):
     incident = get_object_or_404(Incident, id=id)
+    
     if request.method == 'POST':
         form = IncidentForm(request.POST, instance=incident)
         if form.is_valid():
@@ -129,10 +130,19 @@ def incident_update(request, id):
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Incident Updated!')
             return response
-    else:
-        form = IncidentForm(instance=incident)
+        else:
+            
+            return render(request, 'admin/includes/modal/modal_incident_edit.html', {
+                'form': form,
+                'incident': incident,
+            })
     
-    return render(request, 'admin/includes/modal/modal_incident_edit.html', {'form': form, 'incident': incident})
+    
+    form = IncidentForm(instance=incident)
+    return render(request, 'admin/includes/modal/modal_incident_edit.html', {
+        'form': form,
+        'incident': incident
+    })
 
 class IncidentDeleteView(DeleteView):
     model = Incident

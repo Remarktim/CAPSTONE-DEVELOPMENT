@@ -14,8 +14,17 @@ function closeModal(modalId) {
 
 // reloads page after submission in modal
 document.body.addEventListener('closeAndRefresh', function() {
-    
-    document.getElementById('incidentadd').close();
-    
+    const modal = document.getElementById('modaldialog');
+    if (!modal) {
+        console.error('Modal not found in the DOM');
+        return;
+    }
+    console.log('Modal found');
+    modal.close();
     window.location.reload();
 });
+
+
+function showTitle(text) {
+  document.getElementById('title').innerText = text;
+}
