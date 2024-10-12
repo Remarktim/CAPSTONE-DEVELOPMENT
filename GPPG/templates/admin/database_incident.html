@@ -171,7 +171,9 @@
           hx-get="{% url 'admin_incident_add' %}"
           hx-target="#modal-content"
           hx-trigger="click"
-          onclick="modaldialog.showModal(); showTitle('Add Incident');"
+          data-modal-toggle="modaldialog"
+          data-modal-target="modaldialog"
+          onclick="showTitle('Add Incident');"
           type="button"
           class="py-2 px-5 inline-flex items-center gap-x-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
           Add
@@ -500,7 +502,7 @@
 
                 <th
                   scope="col"
-                  class="py-1 px-1 text-end font-semibold text-sm text-gray-500 --exclude-from-ordering dark:text-neutral-500">
+                  class="py-2 px-3 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md dark:text-neutral-500">
                   Action
                 </th>
               </tr>
@@ -546,14 +548,20 @@
                               hx-get="{% url 'admin_incident_edit' incident.id %}"
                               hx-target="#modal-content"
                               hx-trigger="click"
-                              onclick="modaldialog.showModal(); showTitle('Edit Incident &quot;{{ incident }}&quot;');"
+                              data-modal-toggle="modaldialog"
+                              data-modal-target="modaldialog"
+                              onclick="showTitle('Edit Incident &quot;{{ incident }}&quot;');"
                               type="button"
                               class="text-center items-center cursor-pointer text-sm font-semibold rounded-lg p-2 px-5 border-2 text-black">
                               Edit
                             </button>
                             <button
-                              data-modal-target="modal_pangolin_delete"
-                              data-modal-toggle="modal_pangolin_delete"
+                              hx-get="{% url 'admin_incident_delete' incident.id %}"
+                              hx-target="#modal-content"
+                              hx-trigger="click"
+                              data-modal-toggle="modaldialog"
+                              data-modal-target="modaldialog"
+                              onclick=" showTitle('Delete Incident');"
                               type="button"
                               class="text-center items-center border-2 cursor-pointer text-sm font-semibold p-2 px-5 rounded-lg text-white bg-red-600">
                               Delete

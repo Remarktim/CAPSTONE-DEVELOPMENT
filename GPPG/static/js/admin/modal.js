@@ -20,7 +20,7 @@ document.body.addEventListener('closeAndRefresh', function() {
         return;
     }
     console.log('Modal found');
-    modal.close();
+    modal.style.display = 'none';
     window.location.reload();
 });
 

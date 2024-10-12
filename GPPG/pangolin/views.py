@@ -144,10 +144,19 @@ def incident_update(request, id):
         'incident': incident
     })
 
-class IncidentDeleteView(DeleteView):
-    model = Incident
-    template_name = "admin/includes/modal/modal_incident_delete.html"
-    success_url = reverse_lazy('admin_incident_database')
+def incident_delete(request, id):
+    incident = get_object_or_404(Incident, id=id)
+    
+    if request.method == 'POST':
+        incident.delete()
+        response = HttpResponse()
+        response.headers['HX-Trigger'] = 'closeAndRefresh'
+        messages.success(request, 'Incident Deleted!')
+        return response
+    else:
+        return render(request, 'admin/includes/modal/modal_incident_delete.html', {
+            'incident': incident
+        })
     
 
 
