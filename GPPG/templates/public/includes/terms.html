@@ -2,7 +2,12 @@
 <div
   id="termsModal"
   class="fixed inset-0 bg-opacity-50 flex items-center justify-center">
-  <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-fit max-h-screen">
+  <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-fit max-h-screen relative">
+    <button
+      id="terms_exit_btn"
+      class="absolute top-2 right-2 text-black hover:text-red-600 text-xl font-bold">
+      &times;
+    </button>
     <h2 class="text-xl font-bold mb-4">Terms and Conditions</h2>
     <div class="modal-body overflow-y-auto max-h-80 text-black gap-5">
       <p>
@@ -63,7 +68,7 @@
     </div>
     <div class="mt-4">
       <button
-        id="closeModal"
+        id="terms_closeModal"
         class="bg-[#3f0703] text-white py-2 px-4 rounded-lg">
         Accept
       </button>
@@ -71,13 +76,22 @@
   </div>
 </div>
 <script>
-  document.getElementById("termsLink").addEventListener("click", function (event) {
+  const termsLink = document.getElementById("termsLink");
+  const termsModal = document.getElementById("termsModal");
+  const termsCloseModal = document.getElementById("terms_closeModal");
+  const closeModalButton = document.getElementById("terms_exit_btn");
+
+  // Show terms modal
+  termsLink.addEventListener("click", function (event) {
     event.preventDefault();
-    document.getElementById("termsModal").classList.remove("hidden");
+    termsModal.classList.remove("hidden");
   });
 
-  closeModal.addEventListener("click", function () {
+  // Hide terms modal when "Close" button is clicked
+  termsCloseModal.addEventListener("click", function () {
     termsModal.classList.add("hidden");
+    const termsCheckbox = document.getElementById("termsCheckbox");
+    const submitButton = document.getElementById("submitButton");
     termsCheckbox.disabled = false;
     termsCheckbox.checked = true;
     submitButton.disabled = false;
@@ -86,9 +100,9 @@
   });
 
   document.getElementById("termsCheckbox").addEventListener("change", function () {
-    var submitButton = document.getElementById("submitButton");
+    const submitButton = document.getElementById("submitButton");
     if (this.checked) {
-      // enabled button
+      // enable button
       submitButton.removeAttribute("disabled");
       submitButton.classList.remove("bg-gray-400", "cursor-not-allowed");
       submitButton.classList.add("bg-black", "hover:bg-gray-900");
@@ -99,6 +113,9 @@
       submitButton.classList.add("bg-gray-400", "cursor-not-allowed");
     }
   });
+  closeModalButton.addEventListener("click", function () {
+    termsModal.classList.add("hidden");
+  });
 
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("termsLink").click();
@@ -108,21 +125,21 @@
       console.error("Modal did not open.");
     }
 
-    document.getElementById("closeModal").click();
+    document.getElementById("terms_closeModal").click();
     if (document.getElementById("termsModal").classList.contains("hidden")) {
       console.log("Modal closed correctly.");
     } else {
       console.error("Modal did not close.");
     }
 
-    var submitButton = document.getElementById("submitButton");
+    const submitButton = document.getElementById("submitButton");
     if (submitButton.hasAttribute("disabled")) {
       console.log("Submit button is disabled by default.");
     } else {
       console.error("Submit button is not disabled by default.");
     }
 
-    var termsCheckbox = document.getElementById("termsCheckbox");
+    const termsCheckbox = document.getElementById("termsCheckbox");
     termsCheckbox.checked = true;
     termsCheckbox.dispatchEvent(new Event("change"));
     if (!submitButton.hasAttribute("disabled")) {

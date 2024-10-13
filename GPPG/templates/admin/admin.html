@@ -157,7 +157,7 @@
               class="hidden py-2 space-y-2">
               <li>
                 <a
-                  href="{% url 'admin_activities_database' %}"
+                  href="{% url 'admin_incident_database' %}"
                   class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   >Activities</a
                 >
@@ -320,5 +320,8 @@
     <script src="{% static 'js/admin/index.js' %}"></script>
     <script src="{% static 'js/chart_3.7.1.js' %}"></script>
     <script src="{% static 'js/admin/ChartForDashboard.js' %}"></script>
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+    <script src="{% static 'js/admin/modal.js' %}"></script>
+
   </body>
 </html>

@@ -7,7 +7,7 @@
   <div class="sm:p-7 bg-white text-black rounded-lg shadow-lg p-6 max-w-lg w-max max-h-screen relative">
     <!-- Close Button -->
     <button
-      id="closeModal"
+      id="forgot_closeModal"
       class="absolute right-0 top-0 m-2 text-gray-500 hover:text-gray-800 text-2xl"
       aria-label="Close modal">
       &times;
@@ -60,10 +60,13 @@
 </div>
 
 <script>
-  // Get elements
+  // Get elements for forgot password modal
   const forgotPasswordLink = document.getElementById("forgotPasswordLink");
   const forgotPasswordModal = document.getElementById("forgotPasswordModal");
-  const closeModal = document.getElementById("closeModal");
+  const forgotCloseModal = document.getElementById("forgot_closeModal");
+
+  // Initially hide the modal
+  forgotPasswordModal.classList.add("hidden");
 
   // Show modal when "Forgot your password?" is clicked
   forgotPasswordLink.addEventListener("click", function (event) {
@@ -72,7 +75,7 @@
   });
 
   // Hide modal when "Close" button is clicked
-  closeModal.addEventListener("click", function () {
+  forgotCloseModal.addEventListener("click", function () {
     forgotPasswordModal.classList.add("hidden");
   });
 

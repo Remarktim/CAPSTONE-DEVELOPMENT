@@ -2,15 +2,19 @@ from django.shortcuts import render, redirect
 from django.db.models import Count
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .models import Incident, IncidentReport
-from django.http import JsonResponse
+from .models import *
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
-
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse, reverse_lazy
+from .forms import *
 
 #PUBLIC
 def landing_page(request):
@@ -95,9 +99,6 @@ def admin_home(request):
 
 def admin_login(request):
     return render(request, 'admin/login.html')
-
-def admin_profile(request):
-    return render(request, 'admin/profile.html')
 
 def pangolin_database(request):
     return render(request, 'admin/database_pangolin.html')

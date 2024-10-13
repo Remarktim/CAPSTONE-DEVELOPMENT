@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from pangolin import views
+from pangolin.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,10 @@ urlpatterns = [
     path('admin_profile/', views.admin_profile, name='admin_profile'),
     path('pangolin/', views.pangolin_database, name='admin_pangolin_database'),
     path('activities_data/', views.pangolin_activities, name='admin_activities_database'),
+    path('incidents/', IncidentListView.as_view(), name='admin_incident_database'),
+    path('incidents/add', views.incident_add, name='admin_incident_add'),
+    path('incidents/<int:id>/', views.incident_update, name='admin_incident_edit'),
+    path('incidents/<int:id>/delete', views.incident_delete, name='admin_incident_delete'),
     path('useraccounts/', views.userAccounts_database, name='admin_userAccounts_database'),
     path('databasegallery/', views.gallery_database, name='admin_gallery_database'),
     path('officers_database/', views.officers_database, name='admin_officers_database'),
