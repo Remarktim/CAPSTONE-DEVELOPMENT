@@ -109,7 +109,7 @@ class IncidentListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         status_filter = self.request.GET.getlist('status')
-        
+
         if status_filter:
             query = Q()
             for status in status_filter:
@@ -117,12 +117,19 @@ class IncidentListView(ListView):
             queryset = queryset.filter(query)
 
         return queryset
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['status_options'] = ['Dead', 'Alive', 'Scales', 'Illegal Trade']
         context['selected_statuses'] = self.request.GET.getlist('status')
+
         return context
+
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('HX-Request'):  # Check for HTMX request
+            queryset = self.get_queryset()
+            return self.render_to_response({'incident': queryset})  # Return HTML response for HTMX request
+        return super().get(request, *args, **kwargs)
 
 def incident_add(request):
     if request.method == 'POST':
