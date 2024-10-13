@@ -114,14 +114,7 @@
         <a
           href="{% url 'admin_incident_database' %}"
           class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >Pangolin</a
-        >
-      </li>
-      <li>
-        <a
-          href="{% url 'admin_userAccounts_database' %}"
-          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >User Accounts</a
+          >Activities</a
         >
       </li>
       <li>
@@ -136,6 +129,20 @@
           href="{% url 'admin_officers_database' %}"
           class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
           >Officers</a
+        >
+      </li>
+      <li>
+        <a
+          href="{% url 'admin_pangolin_database' %}"
+          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          >Pangolin</a
+        >
+      </li>
+      <li>
+        <a
+          href="{% url 'admin_userAccounts_database' %}"
+          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          >User Accounts</a
         >
       </li>
     </ul>
@@ -163,6 +170,56 @@
 
 <!-- Report Content -->
 {% block title_content %} Report {% endblock title_content %} {% block content %}
-<div class="w-full h-full g p-4 bg-white rounded shadow-lg"></div>
+<div class="w-full h-full g p-4 bg-white rounded shadow-lg">
+  <div class="flex flex-col items-start space-y-4">
+    <label
+      for="datepicker-start"
+      class="text-sm font-medium text-gray-700"
+      >Select Start Date</label
+    >
+    <div class="relative w-full">
+      <input
+        datepicker
+        type="text"
+        id="datepicker-start"
+        class="w-full pl-10 p-2.5 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder="Select start date" />
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          aria-hidden="true"
+          class="w-5 h-5 text-gray-500"
+          fill="currentColor"
+          viewBox="0 0 20 20">
+          <path d="M6 2a1 1 0 0 0-1 1v1H3a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V3a1 1 0 1 0-2 0v1H7V3a1 1 0 0 0-1-1zm-3 7V7h14v2H3zm0 2h14v5H3v-5z" />
+        </svg>
+      </div>
+    </div>
+
+    <label
+      for="datepicker-end"
+      class="text-sm font-medium text-gray-700"
+      >Select End Date</label
+    >
+    <div class="relative w-full">
+      <input
+        datepicker
+        type="text"
+        id="datepicker-end"
+        class="w-full pl-10 p-2.5 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder="Select end date" />
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg
+          aria-hidden="true"
+          class="w-5 h-5 text-gray-500"
+          fill="currentColor"
+          viewBox="0 0 20 20">
+          <path d="M6 2a1 1 0 0 0-1 1v1H3a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V3a1 1 0 1 0-2 0v1H7V3a1 1 0 0 0-1-1zm-3 7V7h14v2H3zm0 2h14v5H3v-5z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.5.3/flowbite.min.js"></script>
+</div>
 
 {% endblock %} {% block extra_js %} {% endblock extra_js %}

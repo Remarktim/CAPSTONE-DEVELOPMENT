@@ -1,11 +1,33 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class",
   content: ["./templates/**/*.html", "./static/**/*.js", "./static/**/*.css", "node_modules/preline/dist/*.js", "./node_modules/flowbite/**/*.js"],
   theme: {
     extend: {
       colors: {
-        primary: { 50: "#eff6ff", 100: "#dbeafe", 200: "#bfdbfe", 300: "#93c5fd", 400: "#60a5fa", 500: "#3b82f6", 600: "#2563eb", 700: "#1d4ed8", 800: "#1e40af", 900: "#1e3a8a", 950: "#172554" },
+        warmBeige: "#F4F0E6",
+        mutedCocoa: "#A67B5B",
+        ivory: "#FFFFF0",
+        softGold: "#D1B794",
+        softGoldHover: "#C1A682",
+        pastelOrange: "#E8B97E",
+        subduedGreen: "#A4B89F",
+        darkTaupe: "#4B4843",
+        deepGreen: "#8E9E8D",
+        offWhite: "#F9F6EF",
+        lightGray: "#E2E0DD",
+        primary: {
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
+          950: "#172554",
+        },
       },
     },
     fontFamily: {

@@ -1,62 +1,75 @@
-const modal = document.getElementById("loginModal");
-const loginBtn = document.getElementById("loginBtn");
-const Aboutss = document.getElementById("Aboutss");
-const closeBtn = document.getElementById("closeBtn");
-const closeBtns = document.getElementById("closeBtns");
+document.addEventListener("DOMContentLoaded", function () {
+  const flipCard = document.querySelector(".flip-card");
+  const flipToSignup = document.getElementById("flipToSignup");
+  const flipToSignin = document.getElementById("flipToSignin");
 
-const signInForm = document.getElementById("signInForm");
-const signUpForm = document.getElementById("signUpForm");
+  flipToSignup?.addEventListener("click", (e) => {
+    e.preventDefault();
+    flipCard.classList.add("flipped");
+  });
 
-loginBtn.addEventListener("click", function () {
-  modal.classList.remove("hidden");
-});
+  flipToSignin?.addEventListener("click", (e) => {
+    e.preventDefault();
+    flipCard.classList.remove("flipped");
+  });
 
-Aboutss.addEventListener("click", function () {
-  modal.classList.remove("hidden");
-});
+  const modal = document.getElementById("authModal");
+  const loginBtn = document.getElementById("loginBtn");
+  const aboutBtn = document.getElementById("aboutBtn"); // Assuming this should be 'aboutBtn'
+  const signInCloseBtn = document.getElementById("SignIn_closeBtn");
+  const signUpCloseBtn = document.getElementById("SignUp_closeBtn");
 
-closeBtn.addEventListener("click", function () {
-  modal.classList.add("hidden");
-  resetForms();
-});
+  const signInForm = document.getElementById("signInForm");
+  const signUpForm = document.getElementById("signUpForm");
 
-closeBtns.addEventListener("click", function () {
-  modal.classList.add("hidden");
-  resetForms();
-});
+  loginBtn?.addEventListener("click", function () {
+    modal.classList.remove("hidden");
+  });
 
-window.addEventListener("click", function (event) {
-  if (event.target === modal) {
+  aboutBtn?.addEventListener("click", function () {
+    modal.classList.remove("hidden");
+  });
+
+  // Use a common function for closing modal and resetting forms
+  function closeModal() {
     modal.classList.add("hidden");
     resetForms();
   }
-});
 
-function resetForms() {
-  signInForm.reset();
-  signUpForm.reset();
-}
+  signInCloseBtn?.addEventListener("click", closeModal);
+  signUpCloseBtn?.addEventListener("click", closeModal);
 
-document.getElementById("termsLink").addEventListener("click", function (event) {
-  event.preventDefault();
-  var termsText = document.getElementById("termsText");
+  window.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
 
-  if (termsText.classList.contains("hidden")) {
-    termsText.classList.remove("hidden");
-  } else {
-    termsText.classList.add("hidden");
+  function resetForms() {
+    signInForm?.reset();
+    signUpForm?.reset();
   }
-});
 
-document.getElementById("termsCheckbox").addEventListener("change", function () {
-  var submitButton = document.getElementById("submitButton");
-  if (this.checked) {
-    submitButton.removeAttribute("disabled");
-    submitButton.classList.remove("bg-gray-400", "cursor-not-allowed");
-    submitButton.classList.add("bg-black", "hover:bg-gray-900");
-  } else {
-    submitButton.setAttribute("disabled", "true");
-    submitButton.classList.remove("bg-black", "hover:bg-gray-900");
-    submitButton.classList.add("bg-gray-400", "cursor-not-allowed");
-  }
+  const termsLink = document.getElementById("termsLink");
+  const termsText = document.getElementById("termsText");
+
+  termsLink?.addEventListener("click", function (event) {
+    event.preventDefault();
+    termsText?.classList.toggle("hidden");
+  });
+
+  const termsCheckbox = document.getElementById("termsCheckbox");
+  const submitButton = document.getElementById("submitButton");
+
+  termsCheckbox?.addEventListener("change", function () {
+    if (this.checked) {
+      submitButton?.removeAttribute("disabled");
+      submitButton?.classList.remove("bg-gray-400", "cursor-not-allowed");
+      submitButton?.classList.add("bg-black", "hover:bg-gray-900");
+    } else {
+      submitButton?.setAttribute("disabled", "true");
+      submitButton?.classList.remove("bg-black", "hover:bg-gray-900");
+      submitButton?.classList.add("bg-gray-400", "cursor-not-allowed");
+    }
+  });
 });

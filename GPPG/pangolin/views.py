@@ -144,7 +144,7 @@ def incident_add(request):
         form = IncidentForm()
     
     return render(request, 'admin/includes/modal/modal_incident_add.html', {'form': form})
-
+    
 def incident_update(request, id):
     incident = get_object_or_404(Incident, id=id)
     
@@ -186,6 +186,8 @@ def incident_delete(request, id):
     
 
 
+def pangolin_activities(request):
+    return render(request, 'admin/database_activities.html')
 
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
@@ -207,6 +209,9 @@ def admin_report(request):
 
 def admin_charts(request):
     return render(request, 'admin/charts.html')
+
+def admin_profile(request):
+    return render(request, 'admin/profile.html')
 
 #QUERIES
 

@@ -1,5 +1,6 @@
-{% extends "admin/admin.html" %} {% load static %} {% block title %}Map{% endblock title %}
-
+{% extends "admin/admin.html" %} {% load static %} {% block title %}Map{% endblock title %} {% block css %}
+<script src="{% static 'maps/ol.js' %}"></script>
+<link rel="stylesheet" href="{% static "maps/ol.css" %}"> {% endblock css%}
 <!-- Map menu highlight -->
 {% block aside%}
 <ul class="space-y-2 font-medium">
@@ -112,14 +113,7 @@
         <a
           href="{% url 'admin_incident_database' %}"
           class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >Pangolin</a
-        >
-      </li>
-      <li>
-        <a
-          href="{% url 'admin_userAccounts_database' %}"
-          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >User Accounts</a
+          >Activities</a
         >
       </li>
       <li>
@@ -134,6 +128,20 @@
           href="{% url 'admin_officers_database' %}"
           class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
           >Officers</a
+        >
+      </li>
+      <li>
+        <a
+          href="{% url 'admin_pangolin_database' %}"
+          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          >Pangolin</a
+        >
+      </li>
+      <li>
+        <a
+          href="{% url 'admin_userAccounts_database' %}"
+          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          >User Accounts</a
         >
       </li>
     </ul>
@@ -161,9 +169,11 @@
 
 <!-- Map Content -->
 {% block title_content %} Map {% endblock title_content %} {% block content %}
-<div class="w-full h-full bg-white rounded-2xl shadow-lg">
-  <div class="w-full h-auto">
-    <form class="max-w-lg mx-auto pt-5">
+<div class="w-full h-auto bg-white rounded-2xl shadow-lg">
+  <div class="w-full h-fit">
+    <form
+      class="max-w-lg md:mx-auto pt-5 mx-10"
+      onsubmit="searchMunicipality(event)">
       <div class="flex">
         <label
           for="search-dropdown"
@@ -278,7 +288,7 @@
             type="search"
             id="search-dropdown"
             class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-            placeholder="Illegal Trades, Dead, Found Scales, Alive..."
+            placeholder="Roxas, Puerto Princesa City, Taytay, Balabac...."
             required />
           <button
             type="submit"
@@ -302,5 +312,11 @@
       </div>
     </form>
   </div>
-  {% endblock %}
+
+  <div
+    id="map"
+    class="h-5/6 w-full container mx-auto"></div>
 </div>
+{% endblock %}{% block extra_js %}
+<script src="{% static 'maps/admin_map.js' %}"></script>
+{% endblock extra_js %}
