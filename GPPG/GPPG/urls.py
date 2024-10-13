@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
     path('admin_profile/', views.admin_profile, name='admin_profile'),
-    path('pangolin/', views.pangolin_database, name='admin_pangolin_database'),
     path('activities_data/', views.pangolin_activities, name='admin_activities_database'),
     path('incidents/', IncidentListView.as_view(), name='admin_incident_database'),
     path('incidents/add', views.incident_add, name='admin_incident_add'),
