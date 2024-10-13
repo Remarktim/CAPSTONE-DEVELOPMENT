@@ -15,6 +15,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from .forms import *
+from django.db.models import Q
 
 #PUBLIC
 def landing_page(request):
@@ -104,6 +105,24 @@ class IncidentListView(ListView):
     model = Incident 
     context_object_name = "incident"
     template_name = "admin/database_incident.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status_filter = self.request.GET.getlist('status')
+        
+        if status_filter:
+            query = Q()
+            for status in status_filter:
+                query |= Q(status=status)
+            queryset = queryset.filter(query)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_options'] = ['Dead', 'Alive', 'Scales', 'Illegal Trade']
+        context['selected_statuses'] = self.request.GET.getlist('status')
+        return context
 
 def incident_add(request):
     if request.method == 'POST':

@@ -244,95 +244,32 @@
         </div>
       </div>
 
-      <div class="flex-1 flex items-center justify-end space-x-2">
+      <div class="flex-1 flex items-center justify-end space-x-2 mb-4">
         <div class="relative inline-flex gap-2">
-          <p class="flex items-center text-sm font-semibold">Status:</p>
-          <button
-            id="dropdownCheckboxButton"
-            data-dropdown-toggle="dropdownDefaultCheckbox"
-            class="text-black bg-gray-50 border focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center"
-            type="button">
-            All
-            <svg
-              class="w-4 h-4 ml-2"
-              aria-hidden="true"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div
-            id="dropdownDefaultCheckbox"
-            class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-            <ul
-              class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
-              aria-labelledby="dropdownCheckboxButton">
-              <li>
-                <div class="flex items-center">
-                  <input
-                    id="checkbox-item-1"
-                    type="checkbox"
-                    value="Dead"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                  <label
-                    for="checkbox-item-1"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Dead</label
-                  >
+            <p class="flex items-center text-sm font-semibold">Filter Status:</p>
+            <div class="relative">
+                <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-black bg-gray-50 border focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button">
+                    All
+                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div id="dropdownDefaultCheckbox" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
+                    <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
+                        {% for status in status_options %}
+                        <li>
+                            <div class="flex items-center">
+                                <input id="checkbox-item-{{ forloop.counter }}" type="checkbox" name="status" value="{{ status }}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" {% if status in selected_statuses %}checked{% endif %}>
+                                <label for="checkbox-item-{{ forloop.counter }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ status }}</label>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
-              </li>
-              <li>
-                <div class="flex items-center">
-                  <input
-                    id="checkbox-item-2"
-                    type="checkbox"
-                    value="Alive"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                  <label
-                    for="checkbox-item-2"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Alive</label
-                  >
-                </div>
-              </li>
-              <li>
-                <div class="flex items-center">
-                  <input
-                    id="checkbox-item-3"
-                    type="checkbox"
-                    value="Poaching"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                  <label
-                    for="checkbox-item-3"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Poaching</label
-                  >
-                </div>
-              </li>
-              <li>
-                <div class="flex items-center">
-                  <input
-                    id="checkbox-item-4"
-                    type="checkbox"
-                    value="Illegal Trades"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                  <label
-                    for="checkbox-item-4"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Illegal Trades</label
-                  >
-                </div>
-              </li>
-            </ul>
-          </div>
+            </div>
         </div>
-      </div>
+    </div>
+      
     </div>
 
     <div class="min-h-[521px] overflow-x-auto">
@@ -502,12 +439,12 @@
 
                 <th
                   scope="col"
-                  class="py-2 px-3 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md dark:text-neutral-500">
+                  class="py-2 px-3 inline-flex items-center border border-transparent text-sm text-gray-500 --exclude-from-ordering rounded-md dark:text-neutral-500">
                   Action
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+            <tbody id="table-body" class="divide-y divide-gray-200 dark:divide-neutral-700">
               {% for incident in incident %}
               <tr>
                 <td class="p-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{{ incident.id }}</td>
