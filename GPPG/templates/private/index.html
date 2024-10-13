@@ -12,6 +12,8 @@
       href="{% static 'img/logo.jpg' %}"
       type="image/x-icon" />
     <link rel="stylesheet" href="{% static "css/main.css" %}"> <link rel="stylesheet" href="{% static "css/style.css" %}"> <link rel="stylesheet" href="{% static "css/min.css" %}">
+    <!--  -->
+    {% block css %} {% endblock css%}
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css"
@@ -253,7 +255,8 @@
 
     <section
       id="content"
-      class="container mx-auto rounded-3xl my-10 shadow-lg">
+      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[300ms] duration-[600ms] taos:translate-y-[200px] taos:opacity-0"
+      data-taos-offset="300">
       <div class="container flex flex-col mx-auto rounded-lg pt-12 pb-12 my-5">
         <div class="container flex flex-col items-center gap-16 mx-auto">
           <div class="flex flex-col gap-7">
@@ -293,7 +296,8 @@
 
     <section
       id="content"
-      class="container mx-auto rounded-3xl my-10 shadow-lg">
+      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[300ms] duration-[600ms] taos:translate-x-[200px] taos:opacity-0"
+      data-taos-offset="400">
       <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
         <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
           <div class="text-content w-full md:w-1/2 p-6">
@@ -406,6 +410,8 @@
     <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>
     <script src="{% static 'js/cdn.min.js' %}"></script>
+    <script src="{% static 'js/taos.js' %}"></script>
+    <script src="{% static 'js/admin/flowbite.min.js' %}"></script>
     <script src="{% static 'js/preline.js' %}"></script>
     <script src="{% static 'js/private/navbar.js' %}"></script>
   </body>

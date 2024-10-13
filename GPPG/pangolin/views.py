@@ -96,8 +96,14 @@ def admin_home(request):
 def admin_login(request):
     return render(request, 'admin/login.html')
 
+def admin_profile(request):
+    return render(request, 'admin/profile.html')
+
 def pangolin_database(request):
     return render(request, 'admin/database_pangolin.html')
+
+def pangolin_activities(request):
+    return render(request, 'admin/database_activities.html')
 
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')

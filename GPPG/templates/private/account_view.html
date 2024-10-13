@@ -9,6 +9,8 @@
       <div class="text-center w-full flex justify-between border-b-2 py-5">
         <h6 class="text-blueGray-700 text-xl font-bold uppercase">My Account</h6>
         <button
+          data-modal-target="modal_update_userAccount"
+          data-modal-toggle="modal_update_userAccount"
           class="bg-[#3f0703] h-fit text-white active:bg-pink-600 font-semibold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
           type="button">
           Update
@@ -66,5 +68,4 @@
     </div>
   </div>
 </section>
-
-{% endblock %}
+{% include 'private/includes/update_account_modal.html' %} {% endblock %}

@@ -17,7 +17,7 @@
   <body class="bg-blue-50">
     <aside
       id="drawer-navigation"
-      class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg-transparent h sm:translate-x-0 p-2"
+      class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full h sm:translate-x-0 p-2"
       aria-label="Sidebar">
       <div class="h-full px-3 pb-4 overflow-y-auto bg-white rounded-2xl border">
         <div class="p-14 py-10">
@@ -157,16 +157,9 @@
               class="hidden py-2 space-y-2">
               <li>
                 <a
-                  href="{% url 'admin_pangolin_database' %}"
+                  href="{% url 'admin_activities_database' %}"
                   class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  >Pangolin</a
-                >
-              </li>
-              <li>
-                <a
-                  href="{% url 'admin_userAccounts_database' %}"
-                  class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  >User Accounts</a
+                  >Activities</a
                 >
               </li>
               <li>
@@ -181,6 +174,20 @@
                   href="{% url 'admin_officers_database' %}"
                   class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   >Officers</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'admin_pangolin_database' %}"
+                  class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  >Pangolin</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'admin_userAccounts_database' %}"
+                  class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  >User Accounts</a
                 >
               </li>
             </ul>
@@ -274,7 +281,7 @@
                   role="none">
                   <li>
                     <a
-                      href="#"
+                      href="{% url 'admin_profile' %}"
                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-black"
                       role="menuitem"
                       >Profile

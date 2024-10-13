@@ -22,10 +22,12 @@ urlpatterns = [
     #ADMIN
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
+    path('admin_profile/', views.admin_profile, name='admin_profile'),
     path('pangolin/', views.pangolin_database, name='admin_pangolin_database'),
+    path('activities_data/', views.pangolin_activities, name='admin_activities_database'),
     path('useraccounts/', views.userAccounts_database, name='admin_userAccounts_database'),
     path('databasegallery/', views.gallery_database, name='admin_gallery_database'),
-     path('officers_database/', views.officers_database, name='admin_officers_database'),
+    path('officers_database/', views.officers_database, name='admin_officers_database'),
     path('admin_officers/', views.admin_officers, name='admin_officers'),
     path('admin_charts/', views.admin_charts, name='admin_charts'),
     path('admin_map/', views.admin_map, name='admin_map'),
