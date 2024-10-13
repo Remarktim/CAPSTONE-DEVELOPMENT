@@ -127,6 +127,9 @@ def admin_report(request):
 def admin_charts(request):
     return render(request, 'admin/charts.html')
 
+def admin_profile(request):
+    return render(request, 'admin/profile.html')
+
 #QUERIES
 
 def get_poaching_trends(request):
