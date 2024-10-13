@@ -34,29 +34,33 @@ document.addEventListener('DOMContentLoaded', function() {
   const dropdownButton = document.getElementById('dropdownCheckboxButton');
   const dropdownMenu = document.getElementById('dropdownDefaultCheckbox');
   const statusCheckboxes = document.querySelectorAll('#dropdownDefaultCheckbox input[type="checkbox"]');
-  
-  // Toggle dropdown on button click
-  dropdownButton.addEventListener('click', function(event) {
-      event.stopPropagation(); // Prevent the click from bubbling up
-      dropdownMenu.classList.toggle('hidden'); // Toggle visibility of the dropdown
+
+  // Load selected statuses from localStorage and set checkboxes
+  const savedStatuses = JSON.parse(localStorage.getItem('selectedStatuses')) || [];
+  statusCheckboxes.forEach(checkbox => {
+      if (savedStatuses.includes(checkbox.value)) {
+          checkbox.checked = true; // Check the checkbox if it's in localStorage
+      }
   });
 
-  // Prevent dropdown from closing when clicking inside it
-  dropdownMenu.addEventListener('click', function(event) {
-      event.stopPropagation(); // Prevent the click from closing the dropdown
+  // Open dropdown if any checkbox is checked
+  if (savedStatuses.length > 0) {
+      dropdownMenu.classList.remove('hidden');
+  }
+
+  dropdownButton.addEventListener('click', function(event) {
+      dropdownMenu.classList.toggle('hidden');
+  });
+
+  statusCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateFilters);
   });
 
   // Close dropdown when clicking outside
-  document.addEventListener('click', function() {
-      dropdownMenu.classList.add('hidden'); // Close the dropdown
-  });
-
-  // Update table based on selected checkboxes
-  statusCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', function(event) {
-          event.stopPropagation();  // Prevent click propagation
-          updateFilters();
-      });
+  document.addEventListener('click', function(event) {
+      if (!dropdownMenu.contains(event.target) && event.target !== dropdownButton) {
+          dropdownMenu.classList.add('hidden');
+      }
   });
 
   function updateFilters() {
@@ -64,22 +68,41 @@ document.addEventListener('DOMContentLoaded', function() {
           .filter(cb => cb.checked)
           .map(cb => cb.value);
 
-      const url = new URL(window.location); // Get the current URL
-      url.searchParams.delete('status');    // Clear any previous status filters
+      // Save selected statuses to localStorage
+      localStorage.setItem('selectedStatuses', JSON.stringify(selectedStatuses));
 
-      // Append selected statuses to the query parameters
+      // Fetch the updated incidents based on selected filters
+      fetchIncidents(selectedStatuses);
+  }
+
+  function fetchIncidents(selectedStatuses) {
+      const url = new URL(window.location);
+      url.searchParams.delete('status');
+
       if (selectedStatuses.length > 0) {
           selectedStatuses.forEach(status => {
               url.searchParams.append('status', status);
           });
       }
 
-      // Use HTMX to update the table dynamically without reloading the page
-      htmx.ajax('GET', url.toString(), { 
-          target: '#table-body',  // Adjust based on your table's ID
-          swap: 'innerHTML'
-      });
+      fetch(url.toString())
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.text(); // Get the response as text
+          })
+          .then(data => {
+              // Update the table body with the new content
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(data, 'text/html');
+              const newTableBody = doc.querySelector('#table-body'); // Get the new table body from the response
+              const currentTableBody = document.getElementById('table-body');
+              currentTableBody.innerHTML = newTableBody.innerHTML; // Replace the current table body content
+          })
+          .catch(error => {
+              console.error('Error fetching incidents:', error);
+          });
   }
 });
-
 
