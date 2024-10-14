@@ -125,11 +125,6 @@ class IncidentListView(ListView):
 
         return context
 
-    def get(self, request, *args, **kwargs):
-        if request.headers.get('HX-Request'):  # Check for HTMX request
-            queryset = self.get_queryset()
-            return self.render_to_response({'incident': queryset})  # Return HTML response for HTMX request
-        return super().get(request, *args, **kwargs)
 
 def incident_add(request):
     if request.method == 'POST':

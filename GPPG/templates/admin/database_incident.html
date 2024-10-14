@@ -110,13 +110,6 @@
       class="hidden py-2 space-y-2">
       <li>
         <a
-          href="{% url 'admin_incident_database' %}"
-          class="flex items-center w-full p-2 transition duration-75 pl-11 text-gray-900 rounded-lg dark:text-white bg-gray-100 group"
-          >incident</a
-        >
-      </li>
-      <li>
-        <a
           href="{% url 'admin_userAccounts_database' %}"
           class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
           >Activities</a
@@ -208,7 +201,7 @@
     id="hs-datatable-with-export"
     class="p-4 rounded-lg overflow-hidden"
     data-hs-datatable='{
-    "pageLength": 15,
+    "pageLength": 10,
     "pagingOptions": {
       "pageBtnClasses": "min-w-[40px] flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:focus:bg-neutral-700 dark:hover:bg-neutral-700"
     },
@@ -263,7 +256,7 @@
             <p class="flex items-center text-sm font-semibold">Filter Status:</p>
             <div class="relative">
                 <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-black bg-gray-50 border focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button">
-                    All
+                  
                     <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
@@ -472,7 +465,6 @@
                     <button
                       id="dropdownMenuIconButton{{ forloop.counter }}"
                       data-dropdown-toggle="dropdownDots{{ forloop.counter }}"
-                      onclick="toggleDropdown({{ forloop.counter }})"
                       data-dropdown-placement="left-start"
                       class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                       type="button">
