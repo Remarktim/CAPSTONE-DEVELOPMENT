@@ -463,8 +463,8 @@
                 <td class="p-3 whitespace-nowrap text-start text-sm font-medium w-10">
                   <div class="mr-1">
                     <button
-                      id="dropdownMenuIconButton{{ forloop.counter }}"
-                      data-dropdown-toggle="dropdownDots{{ forloop.counter }}"
+                      id="dropdownButtonIncident{{ forloop.counter }}"
+                      data-dropdown-toggle="dropdownDotsIncident{{ forloop.counter }}"
                       data-dropdown-placement="left-start"
                       class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                       type="button">
@@ -480,11 +480,11 @@
 
                     <!-- Dropdown menu -->
                     <div
-                      id="dropdownDots{{ forloop.counter }}"
+                      id="dropdownDotsIncident{{ forloop.counter }}"
                       class="z-10 hidden bg-white divide-y divide-gray-100 rounded-2xl shadow w-auto dark:bg-gray-700 dark:divide-gray-600">
                       <ul
                         class="p-4 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownMenuIconButton{{ forloop.counter }}">
+                        aria-labelledby="dropdownButtonIncident{{ forloop.counter }}">
                         <li>
                           <div class="flex text-center gap-2">
                             <button
