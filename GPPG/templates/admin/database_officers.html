@@ -367,7 +367,14 @@
                   <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer }}</td>
                   <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.date_joined }}</td>
                   <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.position }}</td>
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.officer_image }}</td>
+                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                    <a href="#" 
+                      data-modal-target="imageModal{{ officer.id }}"
+                      data-modal-toggle="imageModal{{ officer.id }}"
+                      class="text-blue-600 hover:underline">
+                      View
+                    </a>
+                  </td>
                   <td class="p-3 whitespace-nowrap text-end text-sm font-medium">
                       <div class="mr-1">
                         <button
@@ -460,7 +467,7 @@
     </div>
   </div>
 </div>
-{% include "admin/includes/modal/modal_dialogs.html" %}
+{% include "admin/includes/modal/modal_dialogs.html" %} {% include "admin/includes/modal/modal_officer_image.html" %}
 
 {% endblock %} {% block extra_js %}
 <script src="{% static 'js/admin/data.js' %}"></script>

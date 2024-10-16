@@ -3,6 +3,8 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from pangolin import views
 from pangolin.views import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,4 +44,5 @@ urlpatterns = [
     path('admin_report/', views.admin_report, name='admin_report'),
     path('get-poaching-trends/', views.get_poaching_trends, name='get_poaching_trends'),
     path('get-available-years/', views.get_available_years, name='get_available_years'),
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
