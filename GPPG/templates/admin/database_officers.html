@@ -368,12 +368,16 @@
                   <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.date_joined }}</td>
                   <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.position }}</td>
                   <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                  {% if officer.officer_image %}
                     <a href="#" 
                       data-modal-target="imageModal{{ officer.id }}"
                       data-modal-toggle="imageModal{{ officer.id }}"
                       class="text-blue-600 hover:underline">
                       View
                     </a>
+                    {% else %}
+                        <span class="text-gray-400">No Image Uploaded</span>
+                    {% endif %}
                   </td>
                   <td class="p-3 whitespace-nowrap text-end text-sm font-medium">
                       <div class="mr-1">
