@@ -3184,6 +3184,10 @@ input:checked + .toggle-bg {
   right: 0.75rem;
 }
 
+.right-3\.5 {
+  right: 0.875rem;
+}
+
 .right-32 {
   right: 8rem;
 }
@@ -3426,14 +3430,6 @@ input:checked + .toggle-bg {
 
 .top-px {
   top: 1px;
-}
-
-.top-\[5px\] {
-  top: 5px;
-}
-
-.right-3\.5 {
-  right: 0.875rem;
 }
 
 .isolate {
@@ -6141,6 +6137,10 @@ input:checked + .toggle-bg {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-\[calc\(100\%-1rem\)\] {
+  height: calc(100% - 1rem);
 }
 
 .max-h-0 {
@@ -17367,6 +17367,10 @@ input:checked + .toggle-bg {
   transition-delay: 75ms;
 }
 
+.delay-\[100ms\] {
+  transition-delay: 100ms;
+}
+
 .delay-\[200ms\] {
   transition-delay: 200ms;
 }
@@ -17697,10 +17701,6 @@ input:checked + .toggle-bg {
 .focus\:border-primary-600:focus {
   --tw-border-opacity: 1;
   border-color: rgb(37 99 235 / var(--tw-border-opacity));
-}
-
-.focus\:border-transparent:focus {
-  border-color: transparent;
 }
 
 .focus\:bg-gray-100:focus {
@@ -18103,11 +18103,6 @@ input:checked + .toggle-bg {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.dark\:text-gray-600:is(.dark *) {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity));
-}
-
 .dark\:placeholder-gray-400:is(.dark *)::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(156 163 175 / var(--tw-placeholder-opacity));
@@ -18458,10 +18453,6 @@ input:checked + .toggle-bg {
     top: 10rem;
   }
 
-  .md\:top-5 {
-    top: 1.25rem;
-  }
-
   .md\:order-last {
     order: 9999;
   }
@@ -18495,21 +18486,16 @@ input:checked + .toggle-bg {
     margin-bottom: 2.5rem;
   }
 
-  .md\:mx-1 {
-    margin-left: 0.25rem;
-    margin-right: 0.25rem;
-  }
-
   .md\:-ml-0 {
     margin-left: -0px;
   }
 
-  .md\:mb-0 {
-    margin-bottom: 0px;
-  }
-
   .md\:ml-64 {
     margin-left: 16rem;
+  }
+
+  .md\:ml-72 {
+    margin-left: 18rem;
   }
 
   .md\:mr-4 {
@@ -18518,10 +18504,6 @@ input:checked + .toggle-bg {
 
   .md\:mt-0 {
     margin-top: 0px;
-  }
-
-  .md\:ml-72 {
-    margin-left: 18rem;
   }
 
   .md\:flex {
@@ -18560,6 +18542,10 @@ input:checked + .toggle-bg {
     width: 83.333333%;
   }
 
+  .md\:w-16 {
+    width: 4rem;
+  }
+
   .md\:w-2\/3 {
     width: 66.666667%;
   }
@@ -18583,15 +18569,6 @@ input:checked + .toggle-bg {
   .md\:w-max {
     width: -moz-max-content;
     width: max-content;
-  }
-
-  .md\:w-fit {
-    width: -moz-fit-content;
-    width: fit-content;
-  }
-
-  .md\:w-16 {
-    width: 4rem;
   }
 
   .md\:grid-cols-2 {

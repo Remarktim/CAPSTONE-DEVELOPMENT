@@ -3,6 +3,8 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from pangolin import views
 from pangolin.views import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,11 +35,16 @@ urlpatterns = [
     path('incidents/<int:id>/delete', views.incident_delete, name='admin_incident_delete'),
     path('useraccounts/', views.userAccounts_database, name='admin_userAccounts_database'),
     path('databasegallery/', views.gallery_database, name='admin_gallery_database'),
-    path('officers_database/', views.officers_database, name='admin_officers_database'),
+    path('officers_database/', OfficerListView.as_view(), name='admin_officers_database'),
+    path('officers_database/add', views.officer_add, name='admin_officers_add'),
+    path('officers_database/<int:id>/', views.officer_update, name='admin_officers_edit'),
+    path('officers_database/<int:id>/delete', views.officer_delete, name='admin_officers_delete'),
+    path('canceldelete/<int:id>/', views.cancel_delete, {'action': 'close'}, name='cancel-delete'),
     path('admin_officers/', views.admin_officers, name='admin_officers'),
     path('admin_charts/', views.admin_charts, name='admin_charts'),
     path('admin_map/', views.admin_map, name='admin_map'),
     path('admin_report/', views.admin_report, name='admin_report'),
     path('get-poaching-trends/', views.get_poaching_trends, name='get_poaching_trends'),
     path('get-available-years/', views.get_available_years, name='get_available_years'),
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

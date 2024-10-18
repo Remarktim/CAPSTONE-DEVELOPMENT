@@ -4,6 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.http import JsonResponse, HttpResponse
+from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login
@@ -131,11 +132,6 @@ class IncidentListView(ListView):
 
         return context
 
-    def get(self, request, *args, **kwargs):
-        if request.headers.get('HX-Request'):  # Check for HTMX request
-            queryset = self.get_queryset()
-            return self.render_to_response({'incident': queryset})  # Return HTML response for HTMX request
-        return super().get(request, *args, **kwargs)
 
 def incident_add(request):
     if request.method == 'POST':
@@ -178,6 +174,7 @@ def incident_update(request, id):
 
 def incident_delete(request, id):
     incident = get_object_or_404(Incident, id=id)
+
     
     if request.method == 'POST':
         incident.delete()
@@ -190,7 +187,9 @@ def incident_delete(request, id):
             'incident': incident
         })
     
-
+def cancel_delete(request, id, action=None):
+    if action == 'close':
+        return HttpResponse()
 
 def pangolin_activities(request):
     return render(request, 'admin/database_activities.html')
@@ -201,8 +200,63 @@ def userAccounts_database(request):
 def gallery_database(request):
     return render(request, 'admin/database_gallery.html')
 
-def officers_database(request):
-    return render(request, 'admin/database_officers.html')
+class OfficerListView(ListView):
+    model = Officer 
+    context_object_name = "officers"
+    template_name = "admin/database_officers.html"
+
+def officer_add(request):
+    if request.method == 'POST':
+        form = OfficerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Officer Saved!')
+            return response
+    else:
+        form = OfficerForm()
+    
+    return render(request, 'admin/includes/modal/modal_officer_add.html', {'form': form})
+    
+def officer_update(request, id):
+    officer = get_object_or_404(Officer, id=id)
+    
+    if request.method == 'POST':
+        form = OfficerForm(request.POST, request.FILES, instance=officer)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Officer Updated!')
+            return response
+        else:
+            
+            return render(request, 'admin/includes/modal/modal_officer_edit.html', {
+                'form': form,
+                'officer': officer,
+            })
+    
+    
+    form = OfficerForm(instance=officer)
+    return render(request, 'admin/includes/modal/modal_officer_edit.html', {
+        'form': form,
+        'officer': officer
+    })
+
+def officer_delete(request, id):
+    officer = get_object_or_404(Officer, id=id)
+    
+    if request.method == 'POST':
+        officer.delete()
+        response = HttpResponse()
+        response.headers['HX-Trigger'] = 'closeAndRefresh'
+        messages.success(request, 'Officer Deleted!')
+        return response
+    else:
+        return render(request, 'admin/includes/modal/modal_officer_delete.html', {
+            'officer': officer
+        })
 
 def admin_officers(request):
     return render(request, 'admin/officers.html')
