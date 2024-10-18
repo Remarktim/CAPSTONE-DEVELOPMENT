@@ -176,7 +176,7 @@
   <div
     class="p-4 rounded-lg overflow-hidden"
     data-hs-datatable='{
-    "pageLength": 15,
+    "pageLength": 10,
     "pagingOptions": {
       "pageBtnClasses": "min-w-[40px] flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:focus:bg-neutral-700 dark:hover:bg-neutral-700"
     },
@@ -228,9 +228,12 @@
       <div class="flex-1 flex items-center justify-end space-x-2">
         <div class="relative inline-flex">
           <button
-            id="defaultModalButton"
-            data-modal-target="modal_gallery_add"
-            data-modal-toggle="modal_gallery_add"
+            hx-get="{% url 'admin_gallery_add' %}"
+            hx-target="#modal-content"
+            hx-trigger="click"
+            data-modal-toggle="modaldialog"
+            data-modal-target="modaldialog"
+            onclick="showTitle('Add Image for Gallery');"
             type="button"
             class="py-2 px-5 inline-flex items-center gap-x-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
             Add
@@ -250,7 +253,7 @@
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
                     class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
-                    Author Name
+                    Uploader
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
                       xmlns="http://www.w3.org/2000/svg"
@@ -276,7 +279,7 @@
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
                     class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
-                    Url
+                    Image/Video
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
                       xmlns="http://www.w3.org/2000/svg"
@@ -303,7 +306,34 @@
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
                     class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
-                    Status
+                    Media Type
+                    <svg
+                      class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path
+                        class="hs-datatable-ordering-asc:text-blue-600 dark:hs-datatable-ordering-asc:text-blue-500"
+                        d="m7 15 5 5 5-5"></path>
+                      <path
+                        class="hs-datatable-ordering-desc:text-blue-600 dark:hs-datatable-ordering-desc:text-blue-500"
+                        d="m7 9 5-5 5 5"></path>
+                    </svg>
+                  </div>
+                </th>
+
+                <th
+                  scope="col"
+                  class="py-1 group text-start font-semibold focus:outline-none">
+                  <div
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    Date Uploaded
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
                       xmlns="http://www.w3.org/2000/svg"
@@ -333,15 +363,28 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+              {% for gallery in gallery_items %}
               <tr>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Chuchuchak</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">tdasdadadim</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Video</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ gallery.uploader }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                  {% if gallery.media %}
+                    <a href="#" 
+                      data-modal-target="mediaModal{{ gallery.id }}"
+                      data-modal-toggle="mediaModal{{ gallery.id }}"
+                      class="text-blue-600 hover:underline">
+                      View
+                    </a>
+                    {% else %}
+                        <span class="text-gray-400">No Image Uploaded</span>
+                    {% endif %}
+                  </td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ gallery.media_type }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ gallery.created_at }}</td>
                 <td class="p-3 whitespace-nowrap text-end text-sm font-medium">
                   <div class="mr-1">
                     <button
-                      id="dropdownMenuIconButton"
-                      data-dropdown-toggle="dropdownDots"
+                      id="dropdownButtonGallery{{ forloop.counter }}"
+                      data-dropdown-toggle="dropdownDotsGallery{{ forloop.counter }}"
                       data-dropdown-placement="left-start"
                       class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                       type="button">
@@ -357,23 +400,31 @@
 
                     <!-- Dropdown menu -->
                     <div
-                      id="dropdownDots"
+                      id="dropdownDotsGallery{{ forloop.counter }}"
                       class="z-10 hidden bg-white divide-y divide-gray-100 rounded-2xl shadow w-auto dark:bg-gray-700 dark:divide-gray-600">
                       <ul
                         class="p-4 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownMenuIconButton">
+                        aria-labelledby="dropdownButtonGallery{{ forloop.counter }}">
                         <li>
                           <div class="flex text-center gap-2">
                             <button
-                              data-modal-target="modal_gallery_edit"
-                              data-modal-toggle="modal_gallery_edit"
+                              hx-get="{% url 'admin_gallery_edit' gallery.id %}"
+                              hx-target="#modal-content"
+                              hx-trigger="click"
+                              data-modal-toggle="modaldialog"
+                              data-modal-target="modaldialog"
+                              onclick="showTitle('Edit Gallery Media&quot');"
                               type="button"
                               class="text-center items-center cursor-pointer text-sm font-semibold rounded-lg p-2 px-5 border-2 text-black">
                               Edit
                             </button>
                             <button
-                              data-modal-target="modal_gallery_delete"
-                              data-modal-toggle="modal_gallery_delete"
+                              hx-get="{% url 'admin_gallery_delete' gallery.id %}"
+                              hx-target="#modal-content"
+                              hx-trigger="click"
+                              data-modal-toggle="modaldialog"
+                              data-modal-target="modaldialog"
+                              onclick=" showTitle('Delete Gallery Record');"
                               type="button"
                               class="text-center items-center border-2 cursor-pointer text-sm font-semibold p-2 px-5 rounded-lg text-white bg-red-600">
                               Delete
@@ -385,6 +436,11 @@
                   </div>
                 </td>
               </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center">No Records found.</td>
+            </tr>
+            {% endfor %}
             </tbody>
           </table>
         </div>
@@ -416,8 +472,9 @@
     </div>
   </div>
 </div>
-{% include 'admin/includes/modal/modal_gallery_add.html' %} {% include 'admin/includes/modal/modal_gallery_edit.html' %} {% include 'admin/includes/modal/modal_gallery_delete.html' %} {% endblock %}
-{% block extra_js %}
+ 
+{% include "admin/includes/modal/modal_dialogs.html" %} {% include "admin/includes/modal/modal_gallery_media.html" %}
+{% endblock %} {% block extra_js %}
 <script src="{% static 'js/admin/data.js' %}"></script>
 <script src="{% static 'js/admin/jquery.min.js' %}"></script>
 <script src="{% static 'js/admin/dataTables.min.js' %}"></script>

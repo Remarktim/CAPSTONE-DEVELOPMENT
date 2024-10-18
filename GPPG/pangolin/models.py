@@ -1,4 +1,4 @@
-
+import mimetypes
 from django.db import models
 from django.core.exceptions import ValidationError
 import os
@@ -9,7 +9,7 @@ def validate_file_type(value):
     
     
     valid_image_extensions = ['.jpg', '.jpeg', '.png', '.gif']
-    valid_video_extensions = ['.mp4', '.mov', '.avi']
+    valid_video_extensions = ['.mp4', '.mov', '.avi', '.mkv']
     
     
     if ext not in valid_image_extensions and ext not in valid_video_extensions:
@@ -116,7 +116,7 @@ class Officer(BaseModel):
     last_name = models.CharField(max_length=150)
     date_joined = models.DateField()
     position = models.CharField(max_length=150)
-    officer_image = models.ImageField(upload_to='media/', null=True, blank=True)
+    officer_image = models.ImageField(upload_to='officers/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.last_name}, {self.first_name}"
@@ -142,6 +142,34 @@ class User(BaseModel):
 
     def __str__(self):
         return f"{self.first_name}"
+
+
+class Gallery(BaseModel):
+
+    gal_choices = (
+        ('Image', 'Image'),
+        ('Video', 'Video'),
+    )
+    uploader = models.CharField(max_length=150)
+    media_type = models.CharField(max_length=150, blank=True, choices=gal_choices)
+    media = models.FileField(upload_to='gallery/', null=True, blank=False, validators=[validate_file_type])
+
+    def save(self, *args, **kwargs):
+        if self.media:
+            mime_type, encoding = mimetypes.guess_type(self.media.name)
+
+            if mime_type:
+                if mime_type.startswith('image/'):
+                    self.media_type = 'Image'
+                elif mime_type.startswith('video/'):
+                    self.media_type = 'Video'
+                else:
+                    raise ValueError("Unsupported file type")
+        
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.uploader} - {self.media}"
    
     
 
