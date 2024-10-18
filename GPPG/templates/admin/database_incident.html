@@ -110,13 +110,6 @@
       class="hidden py-2 space-y-2">
       <li>
         <a
-          href="{% url 'admin_incident_database' %}"
-          class="flex items-center w-full p-2 transition duration-75 pl-11 text-gray-900 rounded-lg dark:text-white bg-gray-100 group"
-          >incident</a
-        >
-      </li>
-      <li>
-        <a
           href="{% url 'admin_userAccounts_database' %}"
           class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
           >Activities</a
@@ -131,18 +124,19 @@
       </li>
       <li>
         <a
-          href="{% url 'admin_officers_database' %}"
-          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >Officers</a
-        >
-      </li>
-      <li>
-        <a
           href="{% url 'admin_incident_database' %}"
           class="flex items-center w-full p-2 transition duration-75 pl-11 text-gray-900 rounded-lg dark:text-white bg-gray-100 group"
           >Incident</a
         >
       </li>
+      <li>
+        <a
+          href="{% url 'admin_officers_database' %}"
+          class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          >Officers</a
+        >
+      </li>
+
       <li>
         <a
           href="{% url 'admin_userAccounts_database' %}"
@@ -208,7 +202,7 @@
     id="hs-datatable-with-export"
     class="p-4 rounded-lg overflow-hidden"
     data-hs-datatable='{
-    "pageLength": 15,
+    "pageLength": 11,
     "pagingOptions": {
       "pageBtnClasses": "min-w-[40px] flex justify-center items-center text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 py-2.5 text-sm rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:focus:bg-neutral-700 dark:hover:bg-neutral-700"
     },
@@ -260,30 +254,64 @@
 
       <div class="flex-1 flex items-center justify-end space-x-2 mb-4">
         <div class="relative inline-flex gap-2">
-            <p class="flex items-center text-sm font-semibold">Filter Status:</p>
-            <div class="relative">
-                <button id="dropdownCheckboxButton" data-dropdown-toggle="dropdownDefaultCheckbox" class="text-black bg-gray-50 border focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center" type="button">
-                    All
-                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <div id="dropdownDefaultCheckbox" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-                    <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownCheckboxButton">
-                        {% for status in status_options %}
-                        <li>
-                            <div class="flex items-center">
-                                <input id="checkbox-item-{{ forloop.counter }}" type="checkbox" name="status" value="{{ status }}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" {% if status in selected_statuses %}checked{% endif %}>
-                                <label for="checkbox-item-{{ forloop.counter }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ status }}</label>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+          <p class="flex items-center text-sm font-semibold">Filter Status:</p>
+          <div class="relative">
+            <button
+              id="dropdownCheckboxButton"
+              data-dropdown-toggle="dropdownDefaultCheckbox"
+              class="text-black bg-gray-50 border focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center"
+              type="button">
+              All
+              <svg
+                class="w-4 h-4 ml-2"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div
+              id="dropdownDefaultCheckbox"
+              class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
+              <ul
+                class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
+                aria-labelledby="dropdownCheckboxButton">
+                {% for status in status_options %}
+                <li>
+                  <div class="flex items-center">
+                    <input
+                      id="checkbox-item-{{ forloop.counter }}"
+                      type="checkbox"
+                      name="status"
+                      value="{{ status }}"
+                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                      {%
+                      if
+                      status
+                      in
+                      selected_statuses
+                      %}checked{%
+                      endif
+                      %} />
+                    <label
+                      for="checkbox-item-{{ forloop.counter }}"
+                      class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                      >{{ status }}</label
+                    >
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
             </div>
+          </div>
         </div>
-    </div>
-      
+      </div>
     </div>
 
     <div class="min-h-[521px] overflow-x-auto">
@@ -295,30 +323,31 @@
             <thead class="border-b border-gray-200 dark:border-neutral-700">
               <tr>
                 <th
-                scope="col"
-                class="py-1 group text-start font-normal focus:outline-none">
-                <div class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
-                  ID
-                  <svg
-                    class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path
-                      class="hs-datatable-ordering-asc:text-blue-600 dark:hs-datatable-ordering-asc:text-blue-500"
-                      d="m7 15 5 5 5-5"></path>
-                    <path
-                      class="hs-datatable-ordering-desc:text-blue-600 dark:hs-datatable-ordering-desc:text-blue-500"
-                      d="m7 9 5-5 5 5"></path>
-                  </svg>
-                </div>
-              </th>
+                  scope="col"
+                  class="py-1 group text-start font-normal focus:outline-none">
+                  <div
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    ID
+                    <svg
+                      class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path
+                        class="hs-datatable-ordering-asc:text-blue-600 dark:hs-datatable-ordering-asc:text-blue-500"
+                        d="m7 15 5 5 5-5"></path>
+                      <path
+                        class="hs-datatable-ordering-desc:text-blue-600 dark:hs-datatable-ordering-desc:text-blue-500"
+                        d="m7 9 5-5 5 5"></path>
+                    </svg>
+                  </div>
+                </th>
                 <th
                   scope="col"
                   class="py-1 group text-start font-semibold focus:outline-none">
@@ -458,7 +487,9 @@
                 </th>
               </tr>
             </thead>
-            <tbody id="table-body" class="divide-y divide-gray-200 dark:divide-neutral-700">
+            <tbody
+              id="table-body"
+              class="divide-y divide-gray-200 dark:divide-neutral-700">
               {% for incident in incident %}
               <tr>
                 <td class="p-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{{ incident.id }}</td>
@@ -526,12 +557,15 @@
               </tr>
               {% empty %}
               <tr>
-                <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center">No incidents found.</td>
+                <td
+                  colspan="4"
+                  class="px-6 py-4 whitespace-nowrap text-center">
+                  No incidents found.
+                </td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
-          
         </div>
       </div>
     </div>

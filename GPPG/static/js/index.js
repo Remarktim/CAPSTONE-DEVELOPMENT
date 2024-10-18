@@ -113,37 +113,3 @@ function closeModalsOnClickOutside(event) {
   }
 }
 // ################################################################
-
-// Show terms and conditions text when the link is clicked
-document.getElementById("termsLink").addEventListener("click", function (event) {
-  event.preventDefault();
-  var termsText = document.getElementById("termsText");
-  // Toggle the display of termsText
-  if (termsText.classList.contains("hidden")) {
-    termsText.classList.remove("hidden");
-  } else {
-    termsText.classList.add("hidden");
-  }
-});
-
-// Enable or disable the submit button based on checkbox state
-document.getElementById("termsCheckbox").addEventListener("change", function () {
-  var submitButton = document.getElementById("submitButton");
-  if (this.checked) {
-    // Remove disabled attribute when checkbox is checked
-    submitButton.removeAttribute("disabled");
-    submitButton.classList.remove("bg-gray-400", "cursor-not-allowed");
-    submitButton.classList.add("bg-black", "hover:bg-gray-900");
-  } else {
-    // Set disabled attribute when checkbox is unchecked
-    submitButton.setAttribute("disabled", "true");
-    submitButton.classList.remove("bg-black", "hover:bg-gray-900");
-    submitButton.classList.add("bg-gray-400", "cursor-not-allowed");
-  }
-});
-
-const phoneInput = document.getElementById("phone");
-
-phoneInput.addEventListener("input", function () {
-  this.value = this.value.replace(/\D/g, ""); // Remove any non-numeric characters
-});

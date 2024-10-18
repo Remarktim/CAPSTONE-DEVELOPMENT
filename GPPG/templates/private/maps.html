@@ -1,10 +1,13 @@
-{% extends "private/index.html" %} {% load static %} {% block title %}GPPG - Maps{% endblock title %}
+{% extends "private/index.html" %} {% load static %} {% block title %}GPPG - Maps{% endblock title %} {% block css %}
+<script src="{% static 'maps/ol.js' %}"></script>
+<link rel="stylesheet" href="{% static "maps/ol.css" %}"> {% endblock css%}
 
 <!-- Navigation menu -->
 {% block nav %} {% include 'private/includes/nav.html' %} {% endblock nav %}
 
 <!-- Content -->
 {% block content %}
+<!--  
 <section class="absolute right-12 mt-12 w-48 h-52 border-2 rounded-2xl shadow-lg flex items-center justify-center">
   <div class="flex flex-col items-center justify-center gap-4 w-fit">
     <div class="flex items-center w-full gap-2">
@@ -20,30 +23,36 @@
       <p class="font-['Roboto'] text-md">South</p>
     </div>
   </div>
-</section>
+</section>-->
+<div class="w-full h-screen bg-blue-200 p-5">
+  <section class="absolute right-12 mt-12 w-40 h-52 bg-white rounded-2xl shadow-lg flex items-center justify-center">
+    <div class="flex flex-col items-center justify-center gap-4 w-fit">
+      <div class="flex items-center w-full gap-2">
+        <a class="w-3 h-3 bg-[#f4ad5e] rounded-full"></a>
+        <p class="font-['Roboto'] text-md">North</p>
+      </div>
+      <div class="flex items-center w-full gap-2">
+        <div class="w-3 h-3 bg-[#9c5f32] rounded-full"></div>
+        <p class="font-['Roboto'] text-md">Central</p>
+      </div>
+      <div class="flex items-center w-full gap-2">
+        <div class="w-3 h-3 bg-[#3f0703] rounded-full"></div>
+        <p class="font-['Roboto'] text-md">South</p>
+      </div>
+    </div>
+  </section>
+  <div
+    id="map"
+    class="h-full w-full mx-auto">
+    <span id="loading-animation"></span>
+  </div>
+</div>
 
 {% endblock %}
 
 <!-- Extra Javascript you can add -->
 {% block extra_js %}
-<script>
-  var map = new Datamap({
-    element: document.getElementById("map_container"),
-    projection: "mercator", // other options are equirectangular, orthographic, etc.
-    fills: {
-      defaultFill: "#ABDDA4", // Default fill color
-      USA: "#306596",
-      RUS: "#B81B1B",
-      AUS: "#667FAF",
-      BRA: "#FF7900",
-    },
-    data: {
-      USA: { fillKey: "USA" },
-      RUS: { fillKey: "RUS" },
-      AUS: { fillKey: "AUS" },
-      BRA: { fillKey: "BRA" },
-    },
-  });
-</script>
-<script src="{% static 'js/datamaps.all.min.js' %}"></script>
+<script src="{% static 'js/chart_3.7.1.js' %}"></script>
+<script src="{% static 'js/datatables_chartjs.js' %}"></script>
+<script src="{% static 'maps/public_map.js' %}"></script>
 {% endblock extra_js %}

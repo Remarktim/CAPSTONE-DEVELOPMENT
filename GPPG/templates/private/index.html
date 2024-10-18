@@ -32,107 +32,84 @@
           <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
             <a
               href="{% url 'home' %}"
-              class="p-2 mr-4 inline-flex items-center">
+              class="p-2 -ml-5 md:-ml-0 md:mr-4 inline-flex items-center">
               <img
                 class="w-[55px] h-[54px] rounded-[172px]"
                 src="{% static 'img/logo.jpg' %}" />
               <span class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']">Guardians of the Palawan Pangolin Guild</span>
             </a>
             <button
-              type="button"
-              @click="open = !open"
-              class="md:hidden hs-collapse-toggle absolute right-20 size-7 flex justify-center items-center gap-x-2 rounded-lg"
-              id="hs-navbar-example-collapse"
+              data-collapse-toggle="NavBar_menu_home"
+              aria-controls="NavBar_menu_home"
               aria-expanded="false"
-              aria-controls="hs-navbar-example"
-              aria-label="Toggle navigation"
-              data-hs-collapse="#hs-navbar-example">
+              type="button"
+              class="md:hidden hs-collapse-toggle absolute right-16 size-7 flex justify-center items-center gap-x-2 rounded-lg">
+              <span class="sr-only">Open main menu</span>
               <svg
-                class="hs-collapse-open:hidden shrink-0 size-4"
+                class="w-3.5 h-3.5"
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="white"
-                stroke="white"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <line
-                  x1="3"
-                  x2="21"
-                  y1="6"
-                  y2="6" />
-                <line
-                  x1="3"
-                  x2="21"
-                  y1="12"
-                  y2="12" />
-                <line
-                  x1="3"
-                  x2="21"
-                  y1="18"
-                  y2="18" />
+                fill="none"
+                viewBox="0 0 17 14">
+                <path
+                  fill="white"
+                  stroke="white"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="3"
+                  d="M1 1h15M1 7h15M1 13h15" />
               </svg>
-              <svg
-                class="hs-collapse-open:block hidden shrink-0 size-4"
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="white"
-                stroke="white"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-              <span class="sr-only">Toggle navigation</span>
             </button>
           </div>
-          <div
-            id="hs-navbar-example"
-            :class="{'flex': open, 'hidden': !open}"
-            class="hs-collapse overflow-hidden transition-all md:bg-opacity-0 justify-end duration-300 basis-full sm:block flex-col flex-grow md:w-1/2"
-            aria-labelledby="hs-navbar-example-collapse">
+          <div class="overflow-hidden transition-all md:bg-opacity-0 justify-end duration-300 basis-full sm:block flex-col flex-grow md:w-1/2">
             <div
-              :class="{'flex': open, 'hidden': !open}"
-              class="flex-col flex-grow pb-4 md:pb-0 hidden md:flex md:justify-end md:flex-row xl:gap-5">
-              <a
-                class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
-                href="{% url 'home' %}"
-                aria-current="page"
-                >Home</a
-              >
-              <a
-                class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
-                href="{% url 'trend' %}"
-                aria-current="page"
-                >Trend</a
-              >
-              <a
-                class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
-                href="{% url 'maps' %}"
-                aria-current="page"
-                >Map</a
-              ><a
-                class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
-                href="{% url 'activities' %}"
-                aria-current="page"
-                >Activities</a
-              >
-              <a
-                class="font-medium focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
-                href="{% url 'gallery' %}"
-                aria-current="page"
-                >Gallery</a
-              >
+              id="NavBar_menu_home"
+              class="flex-col flex-grow md:pb-0 hidden text-center rounded-lg md:bg-transparent md:flex md:justify-end md:flex-row xl:gap-5">
+              <div class="w-full md:w-auto px-3 py-2 mx-2 animate-border">
+                <a
+                  class="font-medium focus:outline-none font-['Roboto'] text-white"
+                  href="{% url 'home' %}"
+                  aria-current="page"
+                  >Home</a
+                >
+              </div>
+              <div class="w-full md:w-auto px-3 py-2 mx-2 animate-border">
+                <a
+                  class="font-medium focus:outline-none font-['Roboto'] text-white"
+                  href="{% url 'trend' %}"
+                  aria-current="page"
+                  >Trend</a
+                >
+              </div>
+              <div class="w-full md:w-auto px-3 py-2 mx-2 animate-border">
+                <a
+                  class="font-medium focus:outline-none font-['Roboto'] text-white"
+                  href="{% url 'maps' %}"
+                  aria-current="page"
+                  >Map</a
+                >
+              </div>
+              <div class="w-full md:w-auto px-3 py-2 mx-2 animate-border">
+                <a
+                  class="font-medium focus:outline-none font-['Roboto'] text-white"
+                  href="{% url 'activities' %}"
+                  aria-current="page"
+                  >Activities</a
+                >
+              </div>
+              <div class="w-full md:w-auto px-3 py-2 mx-2 animate-border">
+                <a
+                  class="font-medium focus:outline-none font-['Roboto'] text-white"
+                  href="{% url 'gallery' %}"
+                  aria-current="page"
+                  >Gallery</a
+                >
+              </div>
               <div class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none]">
                 <button
                   id="hs-navbar-example-dropdown"
                   type="button"
-                  class="hs-dropdown-toggle flex items-center w-full md:w-fit font-medium text-center focus:outline-none px-3 py-2 mx-2 font-['Roboto'] text-white animate-border"
+                  class="hs-dropdown-toggle flex md:w-max items-center w-full font-medium justify-center focus:outline-none px-3 py-2 mx-3 font-['Roboto'] text-white animate-border"
                   aria-haspopup="menu"
                   aria-expanded="false"
                   aria-label="Mega Menu">
@@ -153,18 +130,18 @@
                 </button>
 
                 <div
-                  class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+                  class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 sm:dark:border before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="hs-navbar-example-dropdown">
                   <a
-                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
                     href="{% url 'officers' %}">
                     Officers
                   </a>
 
                   <a
-                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+                    class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
                     href="{% url 'about' %}">
                     About Us
                   </a>
@@ -172,7 +149,7 @@
               </div>
             </div>
           </div>
-          <div class="hs-dropdown [--strategy:fixed] overflow-hidden md:mx-2 absolute w-20 right-0 top-4 md:top-0 md:right-0 md:relative">
+          <div class="hs-dropdown [--strategy:fixed] overflow-hidden bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-3.5 top-6 md:top-0 md:right-0 md:relative">
             <button
               id="hs-navbar-example-dropdown"
               type="button"
@@ -180,9 +157,7 @@
               aria-haspopup="menu"
               aria-expanded="false"
               aria-label="Mega Menu">
-              <img
-                class="w-fit h-11 rounded-full mx-auto"
-                src="{% static 'img/logo.jpg' %}" />
+              <span class="font-medium text-white">JL</span>
             </button>
             <div
               class="hs-dropdown-menu border-0 text-white transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-48 z-10 bg-black bg-opacity-20 backdrop-blur-lg sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
@@ -255,8 +230,7 @@
 
     <section
       id="content"
-      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[300ms] duration-[600ms] taos:translate-y-[200px] taos:opacity-0"
-      data-taos-offset="300">
+      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[200ms] duration-[1000ms] [animation-iteration-count:infinite] taos:translate-y-[200px] taos:opacity-0">
       <div class="container flex flex-col mx-auto rounded-lg pt-12 pb-12 my-5">
         <div class="container flex flex-col items-center gap-16 mx-auto">
           <div class="flex flex-col gap-7">
@@ -296,7 +270,7 @@
 
     <section
       id="content"
-      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[300ms] duration-[600ms] taos:translate-x-[200px] taos:opacity-0"
+      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[200ms] duration-[1000ms] [animation-iteration-count:infinite] taos:translate-y-[200px] taos:opacity-0"
       data-taos-offset="400">
       <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
         <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
@@ -345,7 +319,7 @@
     </section>
     <section
       id="content"
-      class="container mx-auto rounded-3xl my-10 0 shadow-lg">
+      class="container mx-auto rounded-3xl my-10 0 shadow-lg delay-[200ms] duration-[1000ms] [animation-iteration-count:infinite] taos:translate-y-[200px] taos:opacity-0">
       <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
         <div class="text-content w-full md:w-10/12 p-6">
           <h2 class="text-center text-4xl md:text-5xl capitalize font-extrabold leading-tight font-['Bahnschrift'] mb-8">Mating Habits</h2>
@@ -402,7 +376,7 @@
       </div>
     </section>
 
-    <section class="w-full my-10 border h-max">
+    <section class="w-full my-10 border h-max delay-[200ms] duration-[1000ms] [animation-iteration-count:infinite] taos:translate-y-[200px] taos:opacity-0">
       <div class="md:mx-16 p-6 h-full">{% include 'private/includes/card_carousel.html' %}</div>
     </section>
 

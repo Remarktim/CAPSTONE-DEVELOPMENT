@@ -20,14 +20,7 @@
                 class="mt-6 space-y-2">
                 <li>
                   <a
-                    href="#"
-                    class="link"
-                    >Marketing</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="#"
+                    href="#content"
                     class="link"
                     >What is pangolin?</a
                   >
@@ -76,21 +69,21 @@
                 class="mt-6 space-y-2">
                 <li>
                   <a
-                    href="#"
+                    href="{% url 'about' %}"
                     class="link"
                     >History</a
                   >
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="{% url 'about' %}"
                     class="link"
                     >Mission and Vision</a
                   >
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="{% url 'about' %}"
                     class="link"
                     >Our goals</a
                   >
@@ -104,7 +97,7 @@
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="{% url 'officers' %}"
                     class="link"
                     >Officers</a
                   >
@@ -121,16 +114,16 @@
                 class="mt-6 space-y-2">
                 <li>
                   <a
-                    href="#"
+                    href="{% url 'gallery' %}"
                     class="link"
                     >Images</a
                   >
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="{% url 'gallery_video' %}"
                     class="link"
-                    >Photos</a
+                    >Videos</a
                   >
                 </li>
               </ul>
@@ -139,7 +132,7 @@
               <h3 class="leading-6 md font-bold font-['Bahnschrift']">Contact Us</h3>
               <ul
                 role="list"
-                class="mt-6 space-y-2">
+                class="mt-5 space-y-2">
                 <li>
                   <a
                     href="#"
@@ -176,7 +169,7 @@
         <!-- Chat Container -->
         <div
           x-show="isChatActive"
-          class="flex-1 p-2 sm:p-6 justify-between flex flex-col bg-[#eaebe6] opacity-80 rounded-xl h-96 mt-5"
+          class="flex-1 p-2 sm:p-6 justify-between flex flex-col mb-5 bg-[#eaebe6] opacity-80 rounded-xl h-96 mt-5"
           x-transition:enter="transition ease-out duration-300"
           x-transition:leave="transition ease-in duration-300">
           <div class="text-right mb-2">

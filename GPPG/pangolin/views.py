@@ -21,6 +21,12 @@ from django.db.models import Q
 def landing_page(request):
     return render(request, 'public/landing_page.html')
 
+def public_about(request):
+    return render(request, 'public/about.html')
+
+def public_officers(request):
+    return render(request, 'public/officers.html')
+
 @csrf_exempt
 @require_POST
 def login_view(request):

@@ -5,6 +5,9 @@ function searchMunicipality(event) {
   const searchValue = document.getElementById("search-dropdown").value.toLowerCase();
   let foundFeature = null;
 
+  // Show loading animation
+  showLoading();
+
   vectorLayer.getSource().forEachFeature(function (feature) {
     const properties = feature.getProperties();
     const name = properties.name || properties.NAME_2 || "";
@@ -39,6 +42,9 @@ function searchMunicipality(event) {
   } else {
     alert("Municipality not found. Please try again.");
   }
+
+  // Hide loading animation
+  hideLoading();
 }
 
 function removeHighlight() {
@@ -46,6 +52,24 @@ function removeHighlight() {
   overlay.setPosition(undefined);
   isSearching = false;
 }
+
+function showLoading() {
+  const loadingElement = document.getElementById("loading-animation");
+  if (loadingElement) {
+    loadingElement.classList.remove("hidden");
+    loadingElement.innerHTML =
+      '<div class="flex items-center  absolute inset-0  md:ml-72 justify-center "><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div></div>';
+  }
+}
+
+function hideLoading() {
+  const loadingElement = document.getElementById("loading-animation");
+  if (loadingElement) {
+    loadingElement.classList.add("hidden");
+    loadingElement.innerHTML = "";
+  }
+}
+
 var map = new ol.Map({
   target: "map",
   layers: [],
@@ -58,9 +82,17 @@ var map = new ol.Map({
   }),
 });
 
+// Show loading animation when map starts loading
+showLoading();
+
+map.on("rendercomplete", function () {
+  // Hide loading animation when map finishes rendering
+  hideLoading();
+});
+
 var vectorLayer = new ol.layer.Vector({
   source: new ol.source.Vector({
-    url: "/static/maps/Region.geojson", // Geojson file input kuno
+    url: "/static/maps/ClusterOfPalawan.geojson", // Geojson file input kuno
     format: new ol.format.GeoJSON(),
   }),
   style: function (feature) {
@@ -127,7 +159,7 @@ map.on("pointermove", function (evt) {
       const regionName = properties.name || properties.NAME_2 || "Unknown Region";
       const population = properties.population || "No data available";
       const coordinates = feature.getGeometry().getCoordinates();
-      overlay.getElement().innerHTML = `<div class="bg-white p-2  rounded ">${regionName}<br>Population: ${population}</div>`;
+      overlay.getElement().innerHTML = `<div class="bg-white p-2 rounded ">${regionName}<br>Population: ${population}</div>`;
       overlay.setPosition(evt.coordinate);
     } else {
       overlay.setPosition(undefined);

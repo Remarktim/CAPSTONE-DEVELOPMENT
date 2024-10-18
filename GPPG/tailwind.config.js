@@ -3,6 +3,15 @@ module.exports = {
   content: ["./templates/**/*.html", "./static/**/*.js", "./static/**/*.css", "node_modules/preline/dist/*.js", "./node_modules/flowbite/**/*.js"],
   theme: {
     extend: {
+      keyframes: {
+        slideIn: {
+          "0%": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+      },
+      animation: {
+        slideIn: "slideIn 0.5s ease-out forwards",
+      },
       colors: {
         warmBeige: "#F4F0E6",
         mutedCocoa: "#A67B5B",
