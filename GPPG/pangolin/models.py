@@ -116,6 +116,8 @@ class Officer(BaseModel):
     last_name = models.CharField(max_length=150)
     date_joined = models.DateField()
     position = models.CharField(max_length=150)
+    fb_url = models.CharField(max_length=150, null=True, blank=True)
+    ig_url = models.CharField(max_length=150, null=True, blank=True)
     officer_image = models.ImageField(upload_to='officers/', null=True, blank=True)
 
     def __str__(self):
