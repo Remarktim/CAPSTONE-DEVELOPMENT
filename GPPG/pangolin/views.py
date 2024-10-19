@@ -197,8 +197,65 @@ def pangolin_activities(request):
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
 
-def gallery_database(request):
-    return render(request, 'admin/database_gallery.html')
+class GalleryListView(ListView):
+    model = Gallery 
+    context_object_name = "gallery_items"
+    template_name = "admin/database_gallery.html"
+
+def gallery_add(request):
+    if request.method == 'POST':
+        form = GalleryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Gallery Record Saved!')
+            return response
+    else:
+        form = GalleryForm()
+    
+    return render(request, 'admin/includes/modal/modal_gallery_add.html', {'form': form})
+
+
+def gallery_update(request, id):
+    gallery = get_object_or_404(Gallery, id=id)
+    
+    if request.method == 'POST':
+        form = GalleryForm(request.POST, request.FILES, instance=gallery)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Gallery Updated!')
+            return response
+        else:
+            
+            return render(request, 'admin/includes/modal/modal_gallery_edit.html', {
+                'form': form,
+                'gallery': gallery,
+            })
+    
+    
+    form = GalleryForm(instance=gallery)
+    return render(request, 'admin/includes/modal/modal_gallery_edit.html', {
+        'form': form,
+        'gallery': gallery
+    })
+
+
+def gallery_delete(request, id):
+    gallery = get_object_or_404(Gallery, id=id)
+    
+    if request.method == 'POST':
+        gallery.delete()
+        response = HttpResponse()
+        response.headers['HX-Trigger'] = 'closeAndRefresh'
+        messages.success(request, 'Gallery Record Deleted!')
+        return response
+    else:
+        return render(request, 'admin/includes/modal/modal_gallery_delete.html', {
+            'gallery': gallery
+        })
 
 class OfficerListView(ListView):
     model = Officer 

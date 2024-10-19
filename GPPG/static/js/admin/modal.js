@@ -86,3 +86,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const modals = document.querySelectorAll('.modal');  // Select all modals
+    
+    modals.forEach(modal => {
+        const video = modal.querySelector('video');  // Find video element in the modal
+        const closeButton = modal.querySelector('.modal-close');  // Close button for the modal
+
+        // Function to pause and reset the video
+        const pauseVideo = () => {
+            if (video && !video.paused) {
+                video.pause();
+                video.currentTime = 0;  // Reset video to the start
+            }
+        };
+
+        // Close button listener
+        if (closeButton) {
+            closeButton.addEventListener('click', function () {
+                pauseVideo();
+            });
+        }
+
+        // Click outside modal to close
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {  // Check if clicked outside modal content
+                pauseVideo();
+            }
+        });
+
+        // Listen for data-modal-hide event if you are using a plugin
+        modal.addEventListener('hidden.bs.modal', function () {
+            pauseVideo();
+        });
+    });
+});
+

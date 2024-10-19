@@ -16,10 +16,27 @@ class IncidentReportAdmin(admin.ModelAdmin):
     list_display = ("admin", "incident", "date_reported")
     search_fields = ("admin", "incident", "date_reported")
 
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ("name", "date", "description")
+    search_fields = ("name", "date", "description")
+
+@admin.register(Gallery)
+class GalleryAdmin(admin.ModelAdmin):
+    list_display = ("uploader", "created_at", "media_type", "media")
+    search_fields = ("uploader", "created_at", "media_type", "media")
+
+@admin.register(Officer)
+class OfficerAdmin(admin.ModelAdmin):
+    list_display = ("last_name", "first_name", "date_joined", "position", "officer_image")
+    search_fields = ("last_name", "first_name", "date_joined", "position", "officer_image")
+
+
+
 
 admin.site.register(Admin)
-admin.site.register(Officer)
-admin.site.register(Event)
+admin.site.register(User)
+
 
 
 
