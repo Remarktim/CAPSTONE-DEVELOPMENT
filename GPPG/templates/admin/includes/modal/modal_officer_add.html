@@ -34,26 +34,30 @@
           {{ form.position }}
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">
-            {{ form.fb_url.label_tag }}
-        </label>
-        {{ form.fb_url }}
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">
-            {{ form.ig_url.label_tag }}
-        </label>
-        {{ form.ig_url }}
-      </div>
     
   </div>
-
-  <div>
-      <label class="block text-sm font-medium text-gray-700">
-          {{ form.officer_image.label_tag }}
-      </label>
-      {{ form.officer_image }}
+  <br>
+  <div class="grid grid-cols-1 gap-4">
+      <div>
+          <label class="block text-sm font-medium text-gray-700">
+              {{ form.fb_url.label_tag }}
+          </label>
+          {{ form.fb_url }}
+        </div>
+  
+        <div>
+          <label class="block text-sm font-medium text-gray-700">
+              {{ form.ig_url.label_tag }}
+          </label>
+          {{ form.ig_url }}
+        </div>
+  
+      <div>
+          <label class="block text-sm font-medium text-gray-700">
+              {{ form.officer_image.label_tag }}
+          </label>
+          {{ form.officer_image }}
+      </div>
   </div>
 
     <button
