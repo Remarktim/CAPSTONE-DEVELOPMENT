@@ -372,4 +372,7 @@
     </div>
   </div>
 </section>
-{% endblock %}
+{% endblock %} {% block extra_js %}
+<script src="{% static 'js/private/overlay.js' %}"></script>
+<script src="{% static 'js/private/toggle.js' %}"></script>
+{% endblock extra_js %}

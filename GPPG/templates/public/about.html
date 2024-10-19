@@ -79,4 +79,7 @@
     </div>
   </div>
 </section>
-{% include 'private/includes/footer.html' %} {% endblock %}
+{% include 'public/includes/footer.html' %} {% endblock %} {% block extra_js %}
+<script src="{% static 'js/private/overlay.js' %}"></script>
+<script src="{% static 'js/private/toggle.js' %}"></script>
+{% endblock extra_js %}

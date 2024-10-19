@@ -69,6 +69,7 @@
                 <a
                   class="font-medium w-full focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'landing_page' %}"
+                  onmouseover="prefetchPage('{% url 'landing_page' %}')"
                   aria-current="page"
                   >Home</a
                 >
@@ -105,13 +106,15 @@
                   aria-labelledby="hs-navbar-example-dropdown">
                   <a
                     class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-                    href="{% url 'public_officers' %}">
+                    href="{% url 'public_officers' %}"
+                    onmouseover="prefetchPage('{% url 'public_officers' %}')">
                     Officers
                   </a>
 
                   <a
                     class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-                    href="{% url 'public_about' %}">
+                    href="{% url 'public_about' %}"
+                    onmouseover="prefetchPage('{% url 'public_about' %}')">
                     About Us
                   </a>
                 </div>

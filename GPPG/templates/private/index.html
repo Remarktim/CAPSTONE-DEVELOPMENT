@@ -32,6 +32,7 @@
           <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
             <a
               href="{% url 'home' %}"
+              onmouseover="prefetchPage('{% url 'home' %}')"
               class="p-2 -ml-5 md:-ml-0 md:mr-4 inline-flex items-center">
               <img
                 class="w-[55px] h-[54px] rounded-[172px]"
@@ -69,6 +70,7 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'home' %}"
+                  onmouseover="prefetchPage('{% url 'home' %}')"
                   aria-current="page"
                   >Home</a
                 >
@@ -77,6 +79,7 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'trend' %}"
+                  onmouseover="prefetchPage('{% url 'trend' %}')"
                   aria-current="page"
                   >Trend</a
                 >
@@ -85,6 +88,7 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'maps' %}"
+                  onmouseover="prefetchPage('{% url 'maps' %}')"
                   aria-current="page"
                   >Map</a
                 >
@@ -93,6 +97,7 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'activities' %}"
+                  onmouseover="prefetchPage('{% url 'activities' %}')"
                   aria-current="page"
                   >Activities</a
                 >
@@ -101,6 +106,7 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'gallery' %}"
+                  onmouseover="prefetchPage('{% url 'gallery' %}')"
                   aria-current="page"
                   >Gallery</a
                 >
@@ -136,13 +142,15 @@
                   aria-labelledby="hs-navbar-example-dropdown">
                   <a
                     class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-                    href="{% url 'officers' %}">
+                    href="{% url 'officers' %}"
+                    onmouseover="prefetchPage('{% url 'officers' %}')">
                     Officers
                   </a>
 
                   <a
                     class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-                    href="{% url 'about' %}">
+                    href="{% url 'about' %}"
+                    onmouseover="prefetchPage('{% url 'about' %}')">
                     About Us
                   </a>
                 </div>
@@ -173,6 +181,7 @@
               <hr class="w-20 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10 dark:bg-gray-700" />
               <a
                 href="{% url 'account_view' %}"
+                onmouseover="prefetchPage('{% url 'account_view' %}')"
                 class="flex items-center gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

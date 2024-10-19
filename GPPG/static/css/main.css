@@ -5814,6 +5814,10 @@ input:checked + .toggle-bg {
   margin-top: 1px;
 }
 
+.-mt-3\.5 {
+  margin-top: -0.875rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }
@@ -6109,6 +6113,10 @@ input:checked + .toggle-bg {
   height: 81px;
 }
 
+.h-\[calc\(100\%-1rem\)\] {
+  height: calc(100% - 1rem);
+}
+
 .h-auto {
   height: auto;
 }
@@ -6139,8 +6147,12 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
-.h-\[calc\(100\%-1rem\)\] {
-  height: calc(100% - 1rem);
+.h-3\/5 {
+  height: 60%;
+}
+
+.h-3\/4 {
+  height: 75%;
 }
 
 .max-h-0 {
@@ -11237,6 +11249,11 @@ input:checked + .toggle-bg {
   background-color: rgb(63 7 3 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#4C1A1A\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(76 26 26 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#9c5f32\] {
   --tw-bg-opacity: 1;
   background-color: rgb(156 95 50 / var(--tw-bg-opacity));
@@ -11480,6 +11497,11 @@ input:checked + .toggle-bg {
 
 .bg-inherit {
   background-color: inherit;
+}
+
+.bg-mutedCocoa {
+  --tw-bg-opacity: 1;
+  background-color: rgb(166 123 91 / var(--tw-bg-opacity));
 }
 
 .bg-orange-100 {
@@ -18702,6 +18724,10 @@ input:checked + .toggle-bg {
     width: 66.666667%;
   }
 
+  .lg\:w-4\/5 {
+    width: 80%;
+  }
+
   .lg\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -18779,6 +18805,10 @@ input:checked + .toggle-bg {
 
   .xl\:w-2\/6 {
     width: 33.333333%;
+  }
+
+  .xl\:w-3\/4 {
+    width: 75%;
   }
 
   .xl\:grid-cols-4 {
