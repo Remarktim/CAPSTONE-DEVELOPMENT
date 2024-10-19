@@ -40,6 +40,7 @@
         <a
           class="font-medium w-full focus:outline-none font-['Roboto'] text-white"
           href="{% url 'landing_page' %}"
+          onmouseover="prefetchPage('{% url 'landing_page' %}')"
           aria-current="page"
           >Home</a
         >
@@ -76,13 +77,15 @@
           aria-labelledby="hs-navbar-example-dropdown">
           <a
             class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-            href="{% url 'public_officers' %}">
+            href="{% url 'public_officers' %}"
+            onmouseover="prefetchPage('{% url 'public_officers' %}')">
             Officers
           </a>
 
           <a
             class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-            href="{% url 'public_about' %}">
+            href="{% url 'public_about' %}"
+            onmouseover="prefetchPage('{% url 'public_about' %}')">
             About Us
           </a>
         </div>
@@ -94,7 +97,7 @@
     <div class="hs-dropdown-toggle justify-center flex items-center w-full font-medium text-white">
       <button
         id="loginBtn"
-        class="flex items-center py-2 px-3 gap-2 rounded-xl border border-white text-sm hover:bg-white hover:text-black">
+        class="flex items-center py-2 px-3 gap-2 rounded-xl text-sm hover:bg-white hover:text-black">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5"

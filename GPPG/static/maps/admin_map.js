@@ -10,7 +10,7 @@ function searchMunicipality(event) {
 
   vectorLayer.getSource().forEachFeature(function (feature) {
     const properties = feature.getProperties();
-    const name = properties.name || properties.NAME_2 || "";
+    const name = properties.name || properties.ADM3_EN || "";
     if (name.toLowerCase() === searchValue) {
       foundFeature = feature;
     }
@@ -26,7 +26,7 @@ function searchMunicipality(event) {
     featureOverlay.getSource().addFeature(foundFeature);
 
     const properties = foundFeature.getProperties();
-    const regionName = properties.name || properties.NAME_2 || "Unknown Region";
+    const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
     const population = properties.population || "No data available";
     const infoElement = document.createElement("div");
     infoElement.className = "bg-white p-2 border rounded shadow";
@@ -92,7 +92,7 @@ map.on("rendercomplete", function () {
 
 var vectorLayer = new ol.layer.Vector({
   source: new ol.source.Vector({
-    url: "/static/maps/ClusterOfPalawan.geojson", // Geojson file input kuno
+    url: "/static/maps/Municipals.geojson", // Geojson file input kuno
     format: new ol.format.GeoJSON(),
   }),
   style: function (feature) {
@@ -102,7 +102,7 @@ var vectorLayer = new ol.layer.Vector({
       Roxas: 150000,
       Taytay: 6969,
     };
-    feature.set("population", Datamap[feature.get("NAME_2")] || "No data available");
+    feature.set("population", Datamap[feature.get("ADM3_EN")] || "No data available");
 
     return new ol.style.Style({
       stroke: new ol.style.Stroke({
@@ -156,7 +156,7 @@ map.on("pointermove", function (evt) {
     if (feature) {
       featureOverlay.getSource().addFeature(feature);
       const properties = feature.getProperties();
-      const regionName = properties.name || properties.NAME_2 || "Unknown Region";
+      const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
       const population = properties.population || "No data available";
       const coordinates = feature.getGeometry().getCoordinates();
       overlay.getElement().innerHTML = `<div class="bg-white p-2 rounded ">${regionName}<br>Population: ${population}</div>`;

@@ -1,3 +1,10 @@
+function prefetchPage(url) {
+  const link = document.createElement("link");
+  link.rel = "prefetch";
+  link.href = url;
+  document.head.appendChild(link);
+}
+
 window.onload = function () {
   window.scrollTo(0, 0);
 };
