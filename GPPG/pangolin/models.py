@@ -129,10 +129,11 @@ class Event(BaseModel):
     description = models.CharField(max_length=150)
     date = models.DateField()
     location = models.CharField(max_length=150)
-    officers = models.CharField(max_length=250)
+    event_image = models.ImageField(upload_to='activities/', null=True, blank=True)
+    
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.date})"
 
 class User(BaseModel):
 
