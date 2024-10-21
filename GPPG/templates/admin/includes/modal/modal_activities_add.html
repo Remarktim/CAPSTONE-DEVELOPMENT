@@ -8,41 +8,56 @@
     novalidate>
     {% csrf_token %} 
     <div>
+        <label class="block text-sm font-medium text-gray-700">
+            {{ form.name.label_tag }}
+            {% if form.name.errors %}
+              <div class="text-red-600">{{ form.name.errors }}</div>
+            {% endif %}
+        </label>
+        {{ form.name }}
+    </div>
+      <div class="grid grid-cols-2 gap-4">
+        
+        <div>
+            <label class="block text-sm font-medium text-gray-700">
+                {{ form.date.label_tag }}
+                {% if form.date.errors %}
+                  <div class="text-red-600">{{ form.date.errors }}</div>
+                {% endif %}
+            </label>
+            {{ form.date }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">
+                {{ form.location.label_tag }}
+                {% if form.location.errors %}
+                  <div class="text-red-600">{{ form.location.errors }}</div>
+                {% endif %}
+            </label>
+            {{ form.location }}
+        </div>
+  
+    </div>
+  
+    <div>
+        <label class="block text-sm font-medium text-gray-700">
+            {{ form.description.label_tag }}
+            {% if form.description.errors %}
+              <div class="text-red-600">{{ form.description.errors }}</div>
+            {% endif %}
+        </label>
+        {{ form.description }}
+    </div>
+  
+    <div>
       <label class="block text-sm font-medium text-gray-700">
-          {{ form.name.label_tag }}
+          {{ form.event_image.label_tag }}
+          {% if form.event_image.errors %}
+              <div class="text-red-600">{{ form.event_image.errors }}</div>
+            {% endif %}
       </label>
-      {{ form.name }}
+      {{ form.event_image }}
   </div>
-    <div class="grid grid-cols-2 gap-4">
-      
-      <div>
-          <label class="block text-sm font-medium text-gray-700">
-              {{ form.date.label_tag }}
-          </label>
-          {{ form.date }}
-      </div>
-      <div>
-          <label class="block text-sm font-medium text-gray-700">
-              {{ form.location.label_tag }}
-          </label>
-          {{ form.location }}
-      </div>
-
-  </div>
-
-  <div>
-      <label class="block text-sm font-medium text-gray-700">
-          {{ form.description.label_tag }}
-      </label>
-      {{ form.description }}
-  </div>
-
-  <div>
-    <label class="block text-sm font-medium text-gray-700">
-        {{ form.event_image.label_tag }}
-    </label>
-    {{ form.event_image }}
-</div>
 
     <button
         type="submit"

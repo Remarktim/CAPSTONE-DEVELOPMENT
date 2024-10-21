@@ -253,8 +253,65 @@ def activity_delete(request, id):
         })
 
 
-def userAccounts_database(request):
-    return render(request, 'admin/database_userAccounts.html')
+class UserListView(ListView):
+    model = User
+    context_object_name = "users"
+    template_name = "admin/database_useracc.html"
+
+def user_add(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'User Saved!')
+            return response
+    else:
+        form = UserForm()
+    
+    return render(request, 'admin/includes/modal/modal_user_add.html', {'form': form})
+
+
+def user_update(request, id):
+    user = get_object_or_404(User, id=id)
+    
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'User Updated!')
+            return response
+        else:
+            
+            return render(request, 'admin/includes/modal/modal_user_edit.html', {
+                'form': form,
+                'user': user,
+            })
+    
+    
+    form = UserForm(instance=user)
+    return render(request, 'admin/includes/modal/modal_user_edit.html', {
+        'form': form,
+        'user': user
+    })
+
+
+def user_delete(request, id):
+    user = get_object_or_404(User, id=id)
+    
+    if request.method == 'POST':
+        user.delete()
+        response = HttpResponse()
+        response.headers['HX-Trigger'] = 'closeAndRefresh'
+        messages.success(request, 'User Deleted!')
+        return response
+    else:
+        return render(request, 'admin/includes/modal/modal_user_delete.html', {
+            'user': user
+        })
 
 class GalleryListView(ListView):
     model = Gallery 

@@ -11,12 +11,18 @@
       <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.first_name.label_tag }}
+              {% if form.first_name.errors %}
+                <div class="text-red-600">{{ form.first_name.errors }}</div>
+              {% endif %}
           </label>
           {{ form.first_name }}
       </div>
       <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.last_name.label_tag }}
+              {% if form.last_name.errors %}
+                <div class="text-red-600">{{ form.last_name.errors }}</div>
+              {% endif %}
           </label>
           {{ form.last_name }}
       </div>
@@ -24,12 +30,18 @@
       <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.date_joined.label_tag }}
+              {% if form.date_joined.errors %}
+                <div class="text-red-600">{{ form.date_joined.errors }}</div>
+              {% endif %}
           </label>
           {{ form.date_joined }}
       </div>
       <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.position.label_tag }}
+              {% if form.position.errors %}
+                <div class="text-red-600">{{ form.position.errors }}</div>
+              {% endif %}
           </label>
           {{ form.position }}
       </div>
@@ -41,6 +53,9 @@
       <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.fb_url.label_tag }}
+              {% if form.fb_url.errors %}
+                <div class="text-red-600">{{ form.fb_url.errors }}</div>
+              {% endif %}
           </label>
           {{ form.fb_url }}
         </div>
@@ -48,6 +63,9 @@
         <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.ig_url.label_tag }}
+              {% if form.ig_url.errors %}
+                <div class="text-red-600">{{ form.ig_url.errors }}</div>
+              {% endif %}
           </label>
           {{ form.ig_url }}
         </div>
@@ -55,6 +73,9 @@
       <div>
           <label class="block text-sm font-medium text-gray-700">
               {{ form.officer_image.label_tag }}
+              {% if form.officer_image.errors %}
+                <div class="text-red-600">{{ form.officer_image.errors }}</div>
+              {% endif %}
           </label>
           {{ form.officer_image }}
       </div>

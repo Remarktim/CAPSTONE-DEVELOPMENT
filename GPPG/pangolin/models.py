@@ -144,7 +144,7 @@ class User(BaseModel):
     contact = models.CharField(max_length=150)
 
     def __str__(self):
-        return f"{self.first_name}"
+        return f"{self.first_name} - {self.email}"
 
 
 class Gallery(BaseModel):
