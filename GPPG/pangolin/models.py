@@ -15,6 +15,11 @@ def validate_file_type(value):
     if ext not in valid_image_extensions and ext not in valid_video_extensions:
         raise ValidationError('Unsupported file type. Upload an image or video.')
 
+def validate_contact(value):
+    value_str = str(value)
+    if len(value_str) != 11 or not value_str.startswith('09'):
+        raise ValidationError('Contact number must be exactly 11 digits and start with 09.')
+
 
 class BaseModel(models. Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True) 
@@ -139,9 +144,9 @@ class User(BaseModel):
 
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
-    email = models.CharField(max_length=150)
+    email = models.EmailField(max_length=150)
     password = models.CharField(max_length=150)
-    contact = models.CharField(max_length=150)
+    contact = models.CharField(max_length=11, validators=[validate_contact])
 
     def __str__(self):
         return f"{self.first_name} - {self.email}"
