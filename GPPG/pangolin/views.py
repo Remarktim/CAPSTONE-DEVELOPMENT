@@ -254,6 +254,127 @@ def pangolin_activities(request):
 
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
+class EventListView(ListView):
+    model = Event 
+    context_object_name = "events"
+    template_name = "admin/database_activities.html"
+
+
+def activity_add(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Acitivity Saved!')
+            return response
+    else:
+        form = EventForm()
+    
+    return render(request, 'admin/includes/modal/modal_activities_add.html', {'form': form})
+
+
+def activity_update(request, id):
+    event = get_object_or_404(Event, id=id)
+    
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'Activity Updated!')
+            return response
+        else:
+            
+            return render(request, 'admin/includes/modal/modal_activities_edit.html', {
+                'form': form,
+                'event': event,
+            })
+    
+    
+    form = EventForm(instance=event)
+    return render(request, 'admin/includes/modal/modal_activities_edit.html', {
+        'form': form,
+        'event': event
+    })
+
+
+def activity_delete(request, id):
+    event = get_object_or_404(Event, id=id)
+    
+    if request.method == 'POST':
+        event.delete()
+        response = HttpResponse()
+        response.headers['HX-Trigger'] = 'closeAndRefresh'
+        messages.success(request, 'Gallery Record Deleted!')
+        return response
+    else:
+        return render(request, 'admin/includes/modal/modal_activities_delete.html', {
+            'event': event
+        })
+
+
+class UserListView(ListView):
+    model = User
+    context_object_name = "users"
+    template_name = "admin/database_useracc.html"
+
+def user_add(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'User Saved!')
+            return response
+    else:
+        form = UserForm()
+    
+    return render(request, 'admin/includes/modal/modal_user_add.html', {'form': form})
+
+
+def user_update(request, id):
+    user = get_object_or_404(User, id=id)
+    
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'User Updated!')
+            return response
+        else:
+            
+            return render(request, 'admin/includes/modal/modal_user_edit.html', {
+                'form': form,
+                'user': user,
+            })
+    
+    
+    form = UserForm(instance=user)
+    return render(request, 'admin/includes/modal/modal_user_edit.html', {
+        'form': form,
+        'user': user
+    })
+
+
+def user_delete(request, id):
+    user = get_object_or_404(User, id=id)
+    
+    if request.method == 'POST':
+        user.delete()
+        response = HttpResponse()
+        response.headers['HX-Trigger'] = 'closeAndRefresh'
+        messages.success(request, 'User Deleted!')
+        return response
+    else:
+        return render(request, 'admin/includes/modal/modal_user_delete.html', {
+            'user': user
+        })
 
 
 class GalleryListView(ListView):

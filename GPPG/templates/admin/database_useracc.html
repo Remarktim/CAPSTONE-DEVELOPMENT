@@ -223,6 +223,22 @@
           </div>
         </div>
       </div>
+
+      <div class="flex-1 flex items-center justify-end space-x-2">
+        <div class="relative inline-flex">
+          <button
+            hx-get="{% url 'admin_userAccounts_add' %}"
+            hx-target="#modal-content"
+            hx-trigger="click"
+            data-modal-toggle="modaldialog"
+            data-modal-target="modaldialog"
+            onclick="showTitle('Add User');"
+            type="button"
+            class="py-2 px-5 inline-flex items-center gap-x-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+            Add
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="min-h-[521px] overflow-x-auto">
@@ -316,6 +332,8 @@
                   <div
                     class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-black font-bold rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
                     Phone Number
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    Contact Number
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
                       xmlns="http://www.w3.org/2000/svg"
@@ -345,16 +363,17 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+              {% for user in users %}
               <tr>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Chuchuchak</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">tdasdadadim</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Video</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">32131</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.first_name }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.last_name }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.email }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.contact }}</td>
                 <td class="p-3 whitespace-nowrap text-end text-sm font-medium">
                   <div class="mr-1">
                     <button
-                      id="dropdownMenuIconButton"
-                      data-dropdown-toggle="dropdownDots"
+                      id="dropdownButtonUser{{ forloop.counter }}"
+                      data-dropdown-toggle="dropdownDotsUser{{ forloop.counter }}"
                       data-dropdown-placement="left-start"
                       class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                       type="button">
@@ -370,23 +389,31 @@
 
                     <!-- Dropdown menu -->
                     <div
-                      id="dropdownDots"
+                      id="dropdownDotsUser{{ forloop.counter }}"
                       class="z-10 hidden bg-white divide-y divide-gray-100 rounded-2xl shadow w-auto dark:bg-gray-700 dark:divide-gray-600">
                       <ul
                         class="p-4 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownMenuIconButton">
+                        aria-labelledby="dropdownButtonUser{{ forloop.counter }}">
                         <li>
                           <div class="flex text-center gap-2">
                             <button
-                              data-modal-target="modal_user_edit"
-                              data-modal-toggle="modal_user_edit"
+                              hx-get="{% url 'admin_userAccounts_edit' user.id %}"
+                              hx-target="#modal-content"
+                              hx-trigger="click"
+                              data-modal-toggle="modaldialog"
+                              data-modal-target="modaldialog"
+                              onclick="showTitle('Edit User &quot;{{ user }}&quot;');"
                               type="button"
                               class="text-center items-center cursor-pointer text-sm font-semibold rounded-lg p-2 px-5 border-2 text-black">
                               Edit
                             </button>
                             <button
-                              data-modal-target="modal_user_edit"
-                              data-modal-toggle="modal_user_edit"
+                              hx-get="{% url 'admin_userAccounts_delete' user.id %}"
+                              hx-target="#modal-content"
+                              hx-trigger="click"
+                              data-modal-toggle="modaldialog"
+                              data-modal-target="modaldialog"
+                              onclick=" showTitle('Delete User');"
                               type="button"
                               class="text-center items-center border-2 cursor-pointer text-sm font-semibold p-2 px-5 rounded-lg text-white bg-red-600">
                               Delete
@@ -398,6 +425,11 @@
                   </div>
                 </td>
               </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center">No Users Found.</td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -429,8 +461,9 @@
     </div>
   </div>
 </div>
-{% include 'admin/includes/modal/modal_user_add.html' %} {% include 'admin/includes/modal/modal_user_delete.html' %} {% include 'admin/includes/modal/modal_user_edit.html' %} {% endblock %}
-<!--  -->
+{% include 'admin/includes/modal/modal_dialogs.html' %} 
+
+{% endblock %}
 {% block extra_js %}
 <script src="{% static 'js/admin/data.js' %}"></script>
 <script src="{% static 'js/admin/jquery.min.js' %}"></script>
