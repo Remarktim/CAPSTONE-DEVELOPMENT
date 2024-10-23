@@ -10,14 +10,12 @@ class IncidentForm(forms.ModelForm):
         model = Incident
         fields = "__all__"
 
-
         labels = {
-            'municipality': 'Municipality',  
-            'city': 'City',  
+            'municipality': 'Municipality',
+            'city': 'City',
             'status': 'Status',
             'description': 'Description',
         }
-
 
         widgets = {
             'municipality': forms.Select(attrs={
@@ -37,7 +35,6 @@ class IncidentForm(forms.ModelForm):
             }),
         }
 
-        
 
 class OfficerForm(forms.ModelForm):
 
@@ -48,10 +45,11 @@ class OfficerForm(forms.ModelForm):
             'placeholder': 'Select Date',
         })
     )
+
     class Meta:
         model = Officer
         fields = "__all__"
-        
+
         labels = {
             'first_name': 'First Name',
             'last_name': 'Last Name',
@@ -61,8 +59,6 @@ class OfficerForm(forms.ModelForm):
             'ig_url': 'Instagram Link',
             'officer_image': 'Profile Image',
         }
-
-
 
         widgets = {
             'first_name': forms.TextInput(attrs={
@@ -78,13 +74,15 @@ class OfficerForm(forms.ModelForm):
                 'placeholder': 'Enter Position in the Organization'
             }),
 
-            'fb_url': forms.TextInput(attrs={
+            'fb_url': forms.URLInput(attrs={
                 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                 'placeholder': 'Enter your full Facebook profile link (e.g., https://www.facebook.com/your.custom.url)'
+                'required'
             }),
-            'ig_url': forms.TextInput(attrs={
+            'ig_url': forms.URLInput(attrs={
                 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                 'placeholder': 'Enter your full Instagram profile link (e.g., https://www.instagram.com/your.custom.url)'
+
             }),
 
             'officer_image': forms.ClearableFileInput(attrs={
@@ -95,8 +93,8 @@ class OfficerForm(forms.ModelForm):
 
 class GalleryForm(forms.ModelForm):
     class Meta:
-        model = Gallery  
-        fields = ['uploader', 'media'] 
+        model = Gallery
+        fields = ['uploader', 'media']
 
         labels = {
             'uploader': 'Uploader',
@@ -117,15 +115,16 @@ class EventForm(forms.ModelForm):
 
     date = forms.DateField(
         widget=forms.DateInput(attrs={
-            'type': 'date',  
+            'type': 'date',
             'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
             'placeholder': 'Select Date',
         })
     )
+
     class Meta:
         model = Event
         fields = "__all__"
-        
+
         labels = {
             'name': 'Name of Acitivity',
             'date': 'Date',
@@ -156,11 +155,10 @@ class EventForm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
 
-
     class Meta:
         model = User
         fields = "__all__"
-        
+
         labels = {
             'first_name': 'First Name',
             'last_name': 'Last Name',
@@ -168,8 +166,6 @@ class UserForm(forms.ModelForm):
             'contact': 'Contact Number',
             'password': 'Password',
         }
-
-
 
         widgets = {
             'first_name': forms.TextInput(attrs={
@@ -195,4 +191,3 @@ class UserForm(forms.ModelForm):
                 'placeholder': 'Use atleast 8 characters'
             }),
         }
-

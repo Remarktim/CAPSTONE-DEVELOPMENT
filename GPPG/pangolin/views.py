@@ -30,7 +30,24 @@ def public_about(request):
 
 
 def public_officers(request):
-    return render(request, 'public/officers.html')
+    presidents = Officer.objects.filter(position='President')
+    vice_presidents = Officer.objects.filter(position='Vice President')
+    secretary = Officer.objects.filter(position='Secretary')
+    treasurer = Officer.objects.filter(position='Treasurer')
+    auditor = Officer.objects.filter(position='Auditor')
+    pio_internal = Officer.objects.filter(position='Pio Internal')
+    pio_external = Officer.objects.filter(position='Pio External')
+    business_manager = Officer.objects.filter(position='Business Manager')
+    return render(request, 'public/officers.html', {
+        'president': presidents,
+        'vice_president': vice_presidents,
+        'secretary': secretary,
+        'treasurer': treasurer,
+        'auditor': auditor,
+        'pio_internal': pio_internal,
+        'pio_external': pio_external,
+        'business_manager': business_manager,
+    })
 
 
 @csrf_exempt
@@ -254,8 +271,10 @@ def pangolin_activities(request):
 
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
+
+
 class EventListView(ListView):
-    model = Event 
+    model = Event
     context_object_name = "events"
     template_name = "admin/database_activities.html"
 
@@ -271,13 +290,13 @@ def activity_add(request):
             return response
     else:
         form = EventForm()
-    
+
     return render(request, 'admin/includes/modal/modal_activities_add.html', {'form': form})
 
 
 def activity_update(request, id):
     event = get_object_or_404(Event, id=id)
-    
+
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
@@ -287,13 +306,12 @@ def activity_update(request, id):
             messages.success(request, 'Activity Updated!')
             return response
         else:
-            
+
             return render(request, 'admin/includes/modal/modal_activities_edit.html', {
                 'form': form,
                 'event': event,
             })
-    
-    
+
     form = EventForm(instance=event)
     return render(request, 'admin/includes/modal/modal_activities_edit.html', {
         'form': form,
@@ -303,7 +321,7 @@ def activity_update(request, id):
 
 def activity_delete(request, id):
     event = get_object_or_404(Event, id=id)
-    
+
     if request.method == 'POST':
         event.delete()
         response = HttpResponse()
@@ -321,6 +339,7 @@ class UserListView(ListView):
     context_object_name = "users"
     template_name = "admin/database_useracc.html"
 
+
 def user_add(request):
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES)
@@ -332,13 +351,13 @@ def user_add(request):
             return response
     else:
         form = UserForm()
-    
+
     return render(request, 'admin/includes/modal/modal_user_add.html', {'form': form})
 
 
 def user_update(request, id):
     user = get_object_or_404(User, id=id)
-    
+
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
@@ -348,13 +367,12 @@ def user_update(request, id):
             messages.success(request, 'User Updated!')
             return response
         else:
-            
+
             return render(request, 'admin/includes/modal/modal_user_edit.html', {
                 'form': form,
                 'user': user,
             })
-    
-    
+
     form = UserForm(instance=user)
     return render(request, 'admin/includes/modal/modal_user_edit.html', {
         'form': form,
@@ -364,7 +382,7 @@ def user_update(request, id):
 
 def user_delete(request, id):
     user = get_object_or_404(User, id=id)
-    
+
     if request.method == 'POST':
         user.delete()
         response = HttpResponse()
