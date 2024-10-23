@@ -422,35 +422,34 @@
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer }}</td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.date_joined }}</td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.position }}</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.fb_url }}</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.ig_url }}</td>
+
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer }}</td>
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.date_joined }}</td>
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ officer.position }}</td>
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                    {% if officer.fb_url %}
-                      <a href="{{ officer.fb_url }}" 
-                        target="_blank" rel="noopener noreferrer"
-                        class="text-blue-600 hover:underline">
-                        Visit Profile
-                      </a>
-                      {% else %}
-                          <span class="text-gray-400">No Link Uploaded</span>
-                      {% endif %}
-                  </td>
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                      {% if officer.ig_url %}
-                        <a href="{{ officer.ig_url }}" 
-                          target="_blank" rel="noopener noreferrer"
-                          class="text-blue-600 hover:underline">
-                          Visit Profile
-                        </a>
-                        {% else %}
-                            <span class="text-gray-400">No Link Uploaded</span>
-                        {% endif %}
-                      </td>
-                  <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                  {% if officer.fb_url %}
+                  <a
+                    href="{{ officer.fb_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 hover:underline">
+                    Visit Profile
+                  </a>
+                  {% else %}
+                  <span class="text-gray-400">No Link Uploaded</span>
+                  {% endif %}
+                </td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                  {% if officer.ig_url %}
+                  <a
+                    href="{{ officer.ig_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 hover:underline">
+                    Visit Profile
+                  </a>
+                  {% else %}
+                  <span class="text-gray-400">No Link Uploaded</span>
+                  {% endif %}
+                </td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
                   {% if officer.officer_image %}
                   <a
                     href="#"
@@ -526,7 +525,11 @@
                   class="px-6 py-4 whitespace-nowrap text-center">
                   No Officers found.
                 </td>
-                  <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center">No Officers Found.</td>
+                <td
+                  colspan="5"
+                  class="px-6 py-4 whitespace-nowrap text-center">
+                  No Officers Found.
+                </td>
               </tr>
               {% endfor %}
             </tbody>

@@ -331,8 +331,6 @@
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
                     class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-black font-bold rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
-                    Phone Number
-                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
                     Contact Number
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
@@ -427,7 +425,11 @@
               </tr>
               {% empty %}
               <tr>
-                  <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center">No Users Found.</td>
+                <td
+                  colspan="5"
+                  class="px-6 py-4 whitespace-nowrap text-center">
+                  No Users Found.
+                </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -461,10 +463,7 @@
     </div>
   </div>
 </div>
-{% include 'admin/includes/modal/modal_dialogs.html' %} 
-
-{% endblock %}
-{% block extra_js %}
+{% include 'admin/includes/modal/modal_dialogs.html' %} {% endblock %} {% block extra_js %}
 <script src="{% static 'js/admin/data.js' %}"></script>
 <script src="{% static 'js/admin/jquery.min.js' %}"></script>
 <script src="{% static 'js/admin/dataTables.min.js' %}"></script>

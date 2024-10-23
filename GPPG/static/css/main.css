@@ -6147,6 +6147,10 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
+.h-\[400px\] {
+  height: 400px;
+}
+
 .max-h-0 {
   max-height: 0px;
 }
@@ -6493,6 +6497,10 @@ input:checked + .toggle-bg {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-\[400px\] {
+  width: 400px;
 }
 
 .min-w-0 {
