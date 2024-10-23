@@ -1,7 +1,7 @@
-{% extends "private/index.html" %} {% load static %} {% block title %}GPPG - Officers{% endblock title %}
+{% extends "public/landing_page.html" %} {% load static %} {% block title %}GPPG - Officers{% endblock title %}
 <header>
   {% block nav %} {% include 'public/includes/nav.html' %}
-  <div class="container flex flex-col m-5 mt-8 ml-16">
+  <div class="flex flex-col m-5 mt-8 ml-16">
     <h2 class="text-xl font-bold">GGPG Officers</h2>
   </div>
   {% endblock nav %}
@@ -372,7 +372,4 @@
     </div>
   </div>
 </section>
-{% endblock %} {% block extra_js %}
-<script src="{% static 'js/private/overlay.js' %}"></script>
-<script src="{% static 'js/private/toggle.js' %}"></script>
-{% endblock extra_js %}
+{% endblock %}

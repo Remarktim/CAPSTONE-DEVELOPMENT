@@ -18,15 +18,20 @@ from django.urls import reverse, reverse_lazy
 from .forms import *
 from django.db.models import Q
 
-#PUBLIC
+# PUBLIC
+
+
 def landing_page(request):
     return render(request, 'public/landing_page.html')
+
 
 def public_about(request):
     return render(request, 'public/about.html')
 
+
 def public_officers(request):
     return render(request, 'public/officers.html')
+
 
 @csrf_exempt
 @require_POST
@@ -64,52 +69,101 @@ def signup_view(request):
         return JsonResponse({'success': False, 'error': 'Password must be at least 8 characters long.'}, status=400)
 
     # Create a new user
-    user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=last_name)
+    user = User.objects.create_user(
+        username=email, email=email, password=password, first_name=first_name, last_name=last_name)
     user.save()
 
     return JsonResponse({'success': True, 'message': 'Registration successful! Please log in.'}, status=200)
 
-#PRIVATE
+# PRIVATE
+
 
 def home(request):
     return render(request, 'private/index.html')
 
+
 def gallery(request):
-    return render(request, 'private/gallery.html')
+    latest_images = Gallery.objects.filter(
+        media_type='Image').order_by('-created_at')[:5]
+    next_images = Gallery.objects.filter(
+        media_type='Image').order_by('-created_at')[5:10]
+
+    context = {
+        'latest_images': latest_images,
+        'next_images': next_images,
+    }
+    return render(request, 'private/gallery.html', context)
+
 
 def gallery_video(request):
-    return render(request, 'private/gallery_video.html')
+    latest_videos = Gallery.objects.filter(
+        media_type='Video').order_by('-created_at')[:5]
+    next_videos = Gallery.objects.filter(
+        media_type='Video').order_by('-created_at')[5:10]
+    context = {
+        'latest_videos': latest_videos,
+        'next_videos': next_videos,
+    }
+    return render(request, 'private/gallery_video.html', context)
+
 
 def about(request):
     return render(request, 'private/about.html')
 
+
 def activities(request):
     return render(request, 'private/activities.html')
+
 
 def trend(request):
     return render(request, 'private/trend.html')
 
+
 def officers(request):
-    return render(request, 'private/officers.html')
+    presidents = Officer.objects.filter(position='President')
+    vice_presidents = Officer.objects.filter(position='Vice President')
+    secretary = Officer.objects.filter(position='Secretary')
+    treasurer = Officer.objects.filter(position='Treasurer')
+    auditor = Officer.objects.filter(position='Auditor')
+    pio_internal = Officer.objects.filter(position='Pio Internal')
+    pio_external = Officer.objects.filter(position='Pio External')
+    business_manager = Officer.objects.filter(position='Business Manager')
+    return render(request, 'private/officers.html', {
+        'president': presidents,
+        'vice_president': vice_presidents,
+        'secretary': secretary,
+        'treasurer': treasurer,
+        'auditor': auditor,
+        'pio_internal': pio_internal,
+        'pio_external': pio_external,
+        'business_manager': business_manager,
+    })
+
 
 def login(request):
     return render(request, 'private/login_admin.html')
 
+
 def maps(request):
     return render(request, 'private/maps.html')
+
 
 def account_view(request):
     return render(request, 'private/account_view.html')
 
-#ADMIN
+# ADMIN
+
+
 def admin_home(request):
     return render(request, 'admin/admin.html')
+
 
 def admin_login(request):
     return render(request, 'admin/login.html')
 
+
 class IncidentListView(ListView):
-    model = Incident 
+    model = Incident
     context_object_name = "incident"
     template_name = "admin/database_incident.html"
 
@@ -124,10 +178,11 @@ class IncidentListView(ListView):
             queryset = queryset.filter(query)
 
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['status_options'] = ['Dead', 'Alive', 'Scales', 'Illegal Trade']
+        context['status_options'] = [
+            'Dead', 'Alive', 'Scales', 'Illegal Trade']
         context['selected_statuses'] = self.request.GET.getlist('status')
 
         return context
@@ -144,12 +199,13 @@ def incident_add(request):
             return response
     else:
         form = IncidentForm()
-    
+
     return render(request, 'admin/includes/modal/modal_incident_add.html', {'form': form})
-    
+
+
 def incident_update(request, id):
     incident = get_object_or_404(Incident, id=id)
-    
+
     if request.method == 'POST':
         form = IncidentForm(request.POST, instance=incident)
         if form.is_valid():
@@ -159,23 +215,22 @@ def incident_update(request, id):
             messages.success(request, 'Incident Updated!')
             return response
         else:
-            
+
             return render(request, 'admin/includes/modal/modal_incident_edit.html', {
                 'form': form,
                 'incident': incident,
             })
-    
-    
+
     form = IncidentForm(instance=incident)
     return render(request, 'admin/includes/modal/modal_incident_edit.html', {
         'form': form,
         'incident': incident
     })
 
+
 def incident_delete(request, id):
     incident = get_object_or_404(Incident, id=id)
 
-    
     if request.method == 'POST':
         incident.delete()
         response = HttpResponse()
@@ -186,21 +241,26 @@ def incident_delete(request, id):
         return render(request, 'admin/includes/modal/modal_incident_delete.html', {
             'incident': incident
         })
-    
+
+
 def cancel_delete(request, id, action=None):
     if action == 'close':
         return HttpResponse()
 
+
 def pangolin_activities(request):
     return render(request, 'admin/database_activities.html')
+
 
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
 
+
 class GalleryListView(ListView):
-    model = Gallery 
+    model = Gallery
     context_object_name = "gallery_items"
     template_name = "admin/database_gallery.html"
+
 
 def gallery_add(request):
     if request.method == 'POST':
@@ -213,13 +273,13 @@ def gallery_add(request):
             return response
     else:
         form = GalleryForm()
-    
+
     return render(request, 'admin/includes/modal/modal_gallery_add.html', {'form': form})
 
 
 def gallery_update(request, id):
     gallery = get_object_or_404(Gallery, id=id)
-    
+
     if request.method == 'POST':
         form = GalleryForm(request.POST, request.FILES, instance=gallery)
         if form.is_valid():
@@ -229,13 +289,12 @@ def gallery_update(request, id):
             messages.success(request, 'Gallery Updated!')
             return response
         else:
-            
+
             return render(request, 'admin/includes/modal/modal_gallery_edit.html', {
                 'form': form,
                 'gallery': gallery,
             })
-    
-    
+
     form = GalleryForm(instance=gallery)
     return render(request, 'admin/includes/modal/modal_gallery_edit.html', {
         'form': form,
@@ -245,7 +304,7 @@ def gallery_update(request, id):
 
 def gallery_delete(request, id):
     gallery = get_object_or_404(Gallery, id=id)
-    
+
     if request.method == 'POST':
         gallery.delete()
         response = HttpResponse()
@@ -257,10 +316,33 @@ def gallery_delete(request, id):
             'gallery': gallery
         })
 
+
 class OfficerListView(ListView):
-    model = Officer 
+    model = Officer
     context_object_name = "officers"
     template_name = "admin/database_officers.html"
+
+
+def admin_officers(request):
+    presidents = Officer.objects.filter(position='President')
+    vice_presidents = Officer.objects.filter(position='Vice President')
+    secretary = Officer.objects.filter(position='Secretary')
+    treasurer = Officer.objects.filter(position='Treasurer')
+    auditor = Officer.objects.filter(position='Auditor')
+    pio_internal = Officer.objects.filter(position='Pio Internal')
+    pio_external = Officer.objects.filter(position='Pio External')
+    business_manager = Officer.objects.filter(position='Business Manager')
+    return render(request, 'admin/officers.html', {
+        'president': presidents,
+        'vice_president': vice_presidents,
+        'secretary': secretary,
+        'treasurer': treasurer,
+        'auditor': auditor,
+        'pio_internal': pio_internal,
+        'pio_external': pio_external,
+        'business_manager': business_manager,
+    })
+
 
 def officer_add(request):
     if request.method == 'POST':
@@ -273,12 +355,13 @@ def officer_add(request):
             return response
     else:
         form = OfficerForm()
-    
+
     return render(request, 'admin/includes/modal/modal_officer_add.html', {'form': form})
-    
+
+
 def officer_update(request, id):
     officer = get_object_or_404(Officer, id=id)
-    
+
     if request.method == 'POST':
         form = OfficerForm(request.POST, request.FILES, instance=officer)
         if form.is_valid():
@@ -288,22 +371,22 @@ def officer_update(request, id):
             messages.success(request, 'Officer Updated!')
             return response
         else:
-            
+
             return render(request, 'admin/includes/modal/modal_officer_edit.html', {
                 'form': form,
                 'officer': officer,
             })
-    
-    
+
     form = OfficerForm(instance=officer)
     return render(request, 'admin/includes/modal/modal_officer_edit.html', {
         'form': form,
         'officer': officer
     })
 
+
 def officer_delete(request, id):
     officer = get_object_or_404(Officer, id=id)
-    
+
     if request.method == 'POST':
         officer.delete()
         response = HttpResponse()
@@ -315,25 +398,28 @@ def officer_delete(request, id):
             'officer': officer
         })
 
-def admin_officers(request):
-    return render(request, 'admin/officers.html')
 
 def admin_map(request):
     return render(request, 'admin/map.html')
 
+
 def admin_report(request):
     return render(request, 'admin/report.html')
+
 
 def admin_charts(request):
     return render(request, 'admin/charts.html')
 
+
 def admin_profile(request):
     return render(request, 'admin/profile.html')
 
-#QUERIES
+# QUERIES
+
 
 def get_poaching_trends(request):
-    period = request.GET.get('period', 'overall')  # Get period from the frontend request
+    # Get period from the frontend request
+    period = request.GET.get('period', 'overall')
 
     # Initialize overall trend data
     overall_trend = {
@@ -342,7 +428,7 @@ def get_poaching_trends(request):
         'scales': [0] * 12,
         'illegal_trade': [0] * 12,  # Ensure correct key
     }
-    
+
     # Dictionary to hold yearly reports with monthly data initialized to zero
     yearly_reports = {}
 
@@ -350,13 +436,15 @@ def get_poaching_trends(request):
     reports = IncidentReport.objects.all()
 
     # Aggregate data for overall trend and yearly reports
-    aggregated_data = reports.values('date_reported__year', 'date_reported__month', 'incident__status').annotate(count=Count('id'))
+    aggregated_data = reports.values(
+        'date_reported__year', 'date_reported__month', 'incident__status').annotate(count=Count('id'))
 
     for entry in aggregated_data:
-        month_index = entry['date_reported__month'] - 1  # Convert month to 0-index
+        month_index = entry['date_reported__month'] - \
+            1  # Convert month to 0-index
         status = entry['incident__status']  # Use status directly
         count = entry['count']
-        
+
         # Update overall trend
         if status == 'Alive':
             overall_trend['alive'][month_index] += count

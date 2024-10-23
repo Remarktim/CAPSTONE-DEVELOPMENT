@@ -110,12 +110,21 @@ class IncidentReport(BaseModel):
         return f"{self.incident.description}"
 
 class Officer(BaseModel):
-    
+    pos_choices = [
+        ('President', 'President'),
+        ('Vice President', 'Vice President'),
+        ('Secretary', 'Secretary'),
+        ('Treasurer', 'Treasurer'),
+        ('Auditor', 'Auditor'),
+        ('Pio Internal', 'Pio Internal'),
+        ('Pio External', 'Pio External'),
+        ('Business Manager', 'Business Manager'),
+    ]
 
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     date_joined = models.DateField()
-    position = models.CharField(max_length=150)
+    position = models.CharField(max_length=150, choices=pos_choices)
     fb_url = models.CharField(max_length=150, null=True, blank=True)
     ig_url = models.CharField(max_length=150, null=True, blank=True)
     officer_image = models.ImageField(upload_to='officers/', null=True, blank=True)

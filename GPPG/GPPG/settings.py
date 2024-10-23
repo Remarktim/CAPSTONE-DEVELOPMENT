@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'pangolin',
     'compressor',
     'widget_tweaks',
-    
+
 ]
 
 MIDDLEWARE = [
@@ -116,21 +116,19 @@ TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
 
 
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 COMPRESS_ROOT = BASE_DIR / 'static'
- 
+
 COMPRESS_ENABLED = True
 
 
 STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",)
+                       "django.contrib.staticfiles.finders.FileSystemFinder",
+                       "django.contrib.staticfiles.finders.AppDirectoriesFinder",)
 
-STATIC_URL = '/static/' 
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR, 'static'

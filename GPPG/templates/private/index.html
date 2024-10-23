@@ -88,7 +88,13 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'maps' %}"
+                  {%
+                  comment
+                  %}
                   onmouseover="prefetchPage('{% url 'maps' %}')"
+                  {%
+                  endcomment
+                  %}
                   aria-current="page"
                   >Map</a
                 >
@@ -97,7 +103,13 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'activities' %}"
+                  {%
+                  comment
+                  %}
                   onmouseover="prefetchPage('{% url 'activities' %}')"
+                  {%
+                  endcomment
+                  %}
                   aria-current="page"
                   >Activities</a
                 >
@@ -244,7 +256,7 @@
         <div class="container flex flex-col items-center gap-16 mx-auto">
           <div class="flex flex-col gap-7">
             <div class="flex flex-col gap-5 px-6 text-center w-10/12 mx-auto justify-start">
-              <h2 class="text-4xl md:text-5xl capitalize font-extrabold leading-tight font-['Bahnschrift']">What is a Palawan pangolin?</h2>
+              <h2 class="text-4xl md:text-5xl font-extrabold leading-tight font-['Bahnschrift']">What is a Palawan Pangolin?</h2>
               <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">
                 The Philippine pangolin or Palawan pangolin (
                 <i>Manis culionensis</i>
@@ -284,7 +296,7 @@
       <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
         <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
           <div class="text-content w-full md:w-1/2 p-6">
-            <h2 class="text-left text-4xl md:text-5xl capitalize font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">Appearance</h2>
+            <h2 class="text-left text-4xl md:text-5xl font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">Appearance</h2>
             <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">
               The Philippine pangolin is a medium-sized mammal covered in small triangular scales made of keratin everywhere except the underbelly and face. It regrows new scales when they are lost
               and always has the same number of scales throughout its lifespan. The scales come in shades of brown, yellow, and olive, making for adequate camouflage at night. Areas of the body
@@ -302,7 +314,7 @@
             <img src="{% static "img/pango4.jpg" %}" alt="Sample Image" class="max-w-full h-auto border border-gray-300 rounded-lg shadow-lg" />
           </div>
           <div class="text-content w-full md:w-1/2 p-6">
-            <h2 class="text-left text-4xl md:text-5xl capitalize font-extrabold leading-tight font-['Bahnschrift'] mb-5">Habits and Lifestyle</h2>
+            <h2 class="text-left text-4xl md:text-5xl font-extrabold leading-tight font-['Bahnschrift'] mb-5">Habits and Lifestyle</h2>
             <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">
               Philippine pangolins are nocturnal and reclusive and are usually seen singly or in pairs. Because they are mainly active at night, their eyesight is below average. While their hearing is
               still only about average, they make up for their lack of vision with their extraordinary sense of smell. Pangolins generally travel slowly but can move in a short burst towards safety
@@ -314,7 +326,7 @@
         <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-1 dark:bg-gray-700" />
         <div class="container mx-auto flex flex-wrap justify-center gap-10 p-6">
           <div class="text-content w-full md:w-1/2 p-6">
-            <h2 class="text-left text-4xl md:text-5xl capitalize font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">Diet and Nutrition</h2>
+            <h2 class="text-left text-4xl md:text-5xl font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">Diet and Nutrition</h2>
             <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">
               Philippine pangolins are carnivores (insectivores), more specifically myrmecophages. They feed mainly on termites and ants and will also consume other insects.
             </p>

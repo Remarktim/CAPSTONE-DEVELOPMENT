@@ -12,7 +12,8 @@ function showLoading() {
   const mapElement = document.getElementById("map");
   if (loadingElement && mapElement) {
     loadingElement.classList.remove("hidden");
-    loadingElement.innerHTML = '<div class="flex items-center absolute inset-0 justify-center "><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div></div>';
+    loadingElement.innerHTML =
+      '<div class="flex items-center absolute mt-10 inset-1 justify-center "><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div></div>';
   }
 }
 
@@ -52,7 +53,7 @@ const Datamap = {
 
 var vectorLayer = new ol.layer.Vector({
   source: new ol.source.Vector({
-    url: "/static/maps/ClusterOfPalawan.geojson", // GeoJSON file input
+    url: "/static/maps/ClusterOfPalawan_filtereds.geojson", // GeoJSON file input
     format: new ol.format.GeoJSON(),
   }),
   style: function (feature) {

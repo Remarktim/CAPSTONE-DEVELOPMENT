@@ -94,8 +94,8 @@ let barChart = new Chart(barChartCtx, {
     datasets: [
       {
         data: initialData,
-        backgroundColor: "rgba(255, 159, 64, 0.6)",
-        borderColor: "rgba(255, 159, 64, 1)",
+        backgroundColor: "#C1A682",
+        borderColor: "#C1A682",
         borderWidth: 1,
         barThickness: getBarThickness(),
         borderRadius: 10,

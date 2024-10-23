@@ -13,48 +13,45 @@
 {% endblock link %} {% block content %}
 <section class="mx-16 h-fit">
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
-    <!-- First row -->
+    {% for video in latest_videos %}
     <div class="relative overflow-hidden rounded-lg group">
       <video
-        src="{% static 'video/video.mp4' %}"
-        alt=""
+        src="{{ video.media.url }}"
+        alt="Video "
         class="w-full h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
         onclick="openFullScreen(this)"
         oncontextmenu="return false;"
         draggable="false"></video>
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Uploaded by: {{ video.uploader }}</div>
     </div>
-
+    {% endfor %} {% for video in next_videos %}
     <div class="relative overflow-hidden rounded-lg group">
-      <video
-        src="{% static 'video/video.mp4' %}"
-        alt=""
-        class="w-full h-40 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
+      <img
+        src="{{ video.media.url }}"
+        alt="Image 6"
+        class="w-full h-64 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 cursor-pointer"
         onclick="openFullScreen(this)"
         oncontextmenu="return false;"
-        draggable="false"></video>
+        draggable="false" />
+      <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Uploaded by: {{ video.uploader }}</div>
     </div>
-
-    <!-- Repeat similar structure for other videos -->
+    {% endfor %}
   </div>
 </section>
 
-<!-- Modal for Fullscreen video -->
 <div
   id="videoModal"
   class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center w-full h-full overflow-hidden"
   onclick="closeModalsOnClickOutside(event)">
-  <!-- Video container, centered -->
   <div
     class="relative w-auto h-1/2 bg-black rounded-xl overflow-hidden"
     onclick="event.stopPropagation()">
-    <!-- Close button, positioned inside the video container -->
     <button
       class="absolute top-4 right-4 text-white text-4xl z-10"
       onclick="closeModals()">
       ×
     </button>
 
-    <!-- Video element -->
     <video
       id="modalVideo"
       controls

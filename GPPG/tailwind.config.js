@@ -13,6 +13,11 @@ module.exports = {
         slideIn: "slideIn 0.5s ease-out forwards",
       },
       colors: {
+        blueshade: "#3498db",
+        greenshade: "#2ecc71",
+        backgroundshade: "#ecf0f1",
+        accentshade: "##e74c3c",
+        yellowshade: "##f1c40f",
         warmBeige: "#F4F0E6",
         mutedCocoa: "#A67B5B",
         ivory: "#FFFFF0",

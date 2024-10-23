@@ -1,5 +1,5 @@
 {% load static %}
-<div class="flex flex-col bg-[#3f0703] px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 w-full">
+<div class="flex flex-col bg-[#3f0703] relative z-50 px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 w-full">
   <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
     <a
       href="{% url 'home' %}"
@@ -41,7 +41,13 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'home' %}"
+          {%
+          comment
+          %}
           onmouseover="prefetchPage('{% url 'home' %}')"
+          {%
+          endcomment
+          %}
           aria-current="page"
           >Home</a
         >
@@ -50,7 +56,13 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'trend' %}"
+          {%
+          comment
+          %}
           onmouseover="prefetchPage('{% url 'trend' %}')"
+          {%
+          endcomment
+          %}
           aria-current="page"
           >Trend</a
         >
@@ -59,7 +71,13 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'maps' %}"
+          {%
+          comment
+          %}
           onmouseover="prefetchPage('{% url 'maps' %}')"
+          {%
+          endcomment
+          %}
           aria-current="page"
           >Map</a
         >
@@ -68,7 +86,13 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'activities' %}"
+          {%
+          comment
+          %}
           onmouseover="prefetchPage('{% url 'activities' %}')"
+          {%
+          endcomment
+          %}
           aria-current="page"
           >Activities</a
         >
@@ -77,7 +101,13 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'gallery' %}"
+          {%
+          comment
+          %}
           onmouseover="prefetchPage('{% url 'gallery' %}')"
+          {%
+          endcomment
+          %}
           aria-current="page"
           >Gallery</a
         >
@@ -114,14 +144,26 @@
           <a
             class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
             href="{% url 'officers' %}"
-            onmouseover="prefetchPage('{% url 'officers' %}')">
+            {%
+            comment
+            %}
+            onmouseover="prefetchPage('{% url 'officers' %}')"
+            {%
+            endcomment
+            %}>
             Officers
           </a>
 
           <a
             class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
             href="{% url 'about' %}"
-            onmouseover="prefetchPage('{% url 'about' %}')">
+            {%
+            comment
+            %}
+            onmouseover="prefetchPage('{% url 'about' %}')"
+            {%
+            endcomment
+            %}>
             About Us
           </a>
         </div>

@@ -1,4 +1,4 @@
-{% extends "private/index.html" %} {% load static %} {% block title %}GPPG - About Us{% endblock title %}
+{% extends "public/landing_page.html" %} {% load static %} {% block title %}GPPG - About Us{% endblock title %}
 <header>
   {% block nav %} {% include 'public/includes/nav.html' %}
   <div
@@ -10,7 +10,7 @@
 </header>
 {% block content %}
 <section class="container mx-auto rounded-3xl my-16">
-  <div class="container p-2 flex flex-col sm:flex-row items-center mx-auto gap-8 sm:gap-28 justify-center w-full h-full">
+  <div class="container p-2 flex flex-col sm:flex-row items-center mx-auto gap-8 sm:gap-28 justify-center w-full h-fit">
     <img
       class="w-[240px] h-[240px] sm:w-[360px] sm:h-[358px] rounded-full"
       src="{% static 'img/logo.jpg' %}" />
@@ -79,7 +79,4 @@
     </div>
   </div>
 </section>
-{% include 'public/includes/footer.html' %} {% endblock %} {% block extra_js %}
-<script src="{% static 'js/private/overlay.js' %}"></script>
-<script src="{% static 'js/private/toggle.js' %}"></script>
-{% endblock extra_js %}
+{% include 'public/includes/footer.html' %} {% endblock %}

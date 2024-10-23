@@ -139,7 +139,7 @@
       <li>
         <a
           href="{% url 'admin_userAccounts_database' %}"
-          class="flex items-center w-full p-2 transition duration-75 pl-11 text-gray-900 rounded-lg dark:text-white bg-gray-100 group"
+          class="flex items-center w-full p-2 transition duration-75 pl-11 text-white rounded-lg dark:text-white bg-[#3f0703] group"
           >User Accounts</a
         >
       </li>
@@ -223,19 +223,6 @@
           </div>
         </div>
       </div>
-
-      <div class="flex-1 flex items-center justify-end space-x-2">
-        <div class="relative inline-flex">
-          <button
-            id="defaultModalButton"
-            data-modal-target="modal_user_add"
-            data-modal-toggle="modal_user_add"
-            type="button"
-            class="py-2 px-5 inline-flex items-center gap-x-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-            Add
-          </button>
-        </div>
-      </div>
     </div>
 
     <div class="min-h-[521px] overflow-x-auto">
@@ -248,7 +235,7 @@
                   scope="col"
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
-                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-black font-bold rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
                     First Name
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
@@ -274,7 +261,7 @@
                   scope="col"
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
-                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-black font-bold rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
                     Last Name
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
@@ -301,7 +288,7 @@
                   scope="col"
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
-                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-black font-bold rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
                     Email
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
@@ -327,7 +314,7 @@
                   scope="col"
                   class="py-1 group text-start font-semibold focus:outline-none">
                   <div
-                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
+                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-black font-bold rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700">
                     Phone Number
                     <svg
                       class="size-3.5 ms-1 -me-0.5 text-gray-400 dark:text-neutral-500"
@@ -352,7 +339,7 @@
 
                 <th
                   scope="col"
-                  class="py-2 px-3 text-end font-semibold text-sm text-gray-500 --exclude-from-ordering dark:text-neutral-500">
+                  class="py-2 px-3 text-end text-sm text-black font-bold --exclude-from-ordering dark:text-neutral-500">
                   Action
                 </th>
               </tr>
