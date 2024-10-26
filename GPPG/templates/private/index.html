@@ -20,7 +20,7 @@
       integrity="sha256-x8PYmLKD83R9T/sYmJn1j3is/chhJdySyhet/JuHnfY="
       crossorigin="anonymous" />
   </head>
-  <body class="bg-slate-50">
+  <body class="bg-backgroundshade">
     {% block nav %}
     <div
       id="header_img"
@@ -28,7 +28,7 @@
       <div class="w-full text-gray-700 bg-transparent dark-mode:text-gray-200 dark-mode:bg-gray-800 h-screen bg-cover bg-no-repeat bg-center items-center">
         <div
           x-data="{ open: false }"
-          class="flex flex-col px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 w-full">
+          class="flex flex-col px-7 mx-auto md:items-center md:justify-between md:flex-row lg:px-5 lg:pr-8 w-full">
           <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
             <a
               href="{% url 'home' %}"
@@ -44,7 +44,7 @@
               aria-controls="NavBar_menu_home"
               aria-expanded="false"
               type="button"
-              class="md:hidden hs-collapse-toggle absolute right-16 size-7 flex justify-center items-center gap-x-2 rounded-lg">
+              class="md:hidden hs-collapse-toggle absolute right-20 size-7 flex justify-center items-center gap-x-2 rounded-lg">
               <span class="sr-only">Open main menu</span>
               <svg
                 class="w-3.5 h-3.5"
@@ -88,13 +88,6 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'maps' %}"
-                  {%
-                  comment
-                  %}
-                  onmouseover="prefetchPage('{% url 'maps' %}')"
-                  {%
-                  endcomment
-                  %}
                   aria-current="page"
                   >Map</a
                 >
@@ -103,13 +96,6 @@
                 <a
                   class="font-medium focus:outline-none font-['Roboto'] text-white"
                   href="{% url 'activities' %}"
-                  {%
-                  comment
-                  %}
-                  onmouseover="prefetchPage('{% url 'activities' %}')"
-                  {%
-                  endcomment
-                  %}
                   aria-current="page"
                   >Activities</a
                 >
@@ -169,7 +155,7 @@
               </div>
             </div>
           </div>
-          <div class="hs-dropdown [--strategy:fixed] overflow-hidden bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-3.5 top-6 md:top-0 md:right-0 md:relative">
+          <div class="hs-dropdown [--strategy:fixed] overflow-hidden bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-5 top-6 md:top-0 md:right-0 md:relative">
             <button
               id="hs-navbar-example-dropdown"
               type="button"
@@ -177,7 +163,7 @@
               aria-haspopup="menu"
               aria-expanded="false"
               aria-label="Mega Menu">
-              <span class="font-medium text-white">JL</span>
+              <span class="font-medium text-white">{{ initials }}</span>
             </button>
             <div
               class="hs-dropdown-menu border-0 text-white transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-48 z-10 bg-black bg-opacity-20 backdrop-blur-lg sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
@@ -188,7 +174,7 @@
                 <img
                   class="w-fit h-14 rounded-full mx-auto"
                   src="{% static 'img/logo.jpg' %}" />
-                <p class="mt-2 text-center">Remark Timones</p>
+                <p class="mt-2 text-center">{{ name }}</p>
               </div>
               <hr class="w-20 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10 dark:bg-gray-700" />
               <a
@@ -217,7 +203,7 @@
                 <span>Account Settings</span>
               </a>
               <a
-                href="{% url 'landing_page' %}"
+                href="{% url 'logout' %}"
                 class="flex items-center w-full gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

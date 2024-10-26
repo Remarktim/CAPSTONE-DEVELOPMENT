@@ -7,7 +7,7 @@ from django.http import JsonResponse, HttpResponse
 from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
@@ -17,12 +17,105 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from .forms import *
 from django.db.models import Q
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.decorators.cache import cache_page
+from django.contrib.auth.hashers import make_password, check_password
+import json
+from .models import User
+from .decorator import *
 
 # PUBLIC
 
 
+@guest_only
 def landing_page(request):
     return render(request, 'public/landing_page.html')
+
+
+@csrf_exempt
+@guest_only
+def signup(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            if User.objects.filter(email=data['email']).exists():
+                return JsonResponse({'status': 'error', 'message': 'Email already exists'}, status=400)
+
+            user = User.objects.create(
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                email=data['email'],
+                password=make_password(data['password']),
+                contact=data['contact']
+            )
+
+            request.session['user_id'] = user.id
+            request.session['user_email'] = user.email
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'User created successfully',
+                'user': {
+                    'first_name': user.first_name,
+                    'email': user.email
+                }
+            })
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@csrf_exempt
+@guest_only
+def login(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            password = data.get('password')
+
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Invalid credentials'}, status=400)
+
+            if check_password(password, user.password):
+
+                request.session['user_id'] = user.id
+                request.session['user_email'] = user.email
+
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Login successful',
+                    'user': {
+                        'first_name': user.first_name,
+                        'email': user.email
+                    }
+                })
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Invalid credentials'}, status=400)
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+def logout(request):
+    request.session.flush()
+    return redirect('landing_page')
+
+
+class CustomPasswordResetView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'landingPage/password_reset.html'  # Use your custom template here
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('landing_page')
+    success_message = "A password reset link has been sent to your email."
+
+    def form_valid(self, form):
+        messages.success(self.request, self.success_message)
+        return super().form_valid(form)
 
 
 def public_about(request):
@@ -50,55 +143,18 @@ def public_officers(request):
     })
 
 
-@csrf_exempt
-@require_POST
-def login_view(request):
-    # Retrieve email and password from POST data
-    email = request.POST.get('email')
-    password = request.POST.get('passwords')
-
-    # Authenticate user
-    user = authenticate(request, username=email, password=password)
-
-    if user is not None:
-        login(request, user)  # Log the user in
-        return JsonResponse({'success': True, 'message': 'Login successful!'}, status=200)
-    else:
-        return JsonResponse({'success': False, 'error': 'Invalid email or password.'}, status=400)
-
-
-# Signup View
-@csrf_exempt
-@require_POST
-def signup_view(request):
-    # Retrieve form data
-    first_name = request.POST.get('first_name')
-    last_name = request.POST.get('last_name')
-    email = request.POST.get('email')
-    password = request.POST.get('passwords')
-
-    # Check if the email is already registered
-    if User.objects.filter(email=email).exists():
-        return JsonResponse({'success': False, 'error': 'Email already registered.'}, status=400)
-
-    # Password validation
-    if len(password) < 8:
-        return JsonResponse({'success': False, 'error': 'Password must be at least 8 characters long.'}, status=400)
-
-    # Create a new user
-    user = User.objects.create_user(
-        username=email, email=email, password=password, first_name=first_name, last_name=last_name)
-    user.save()
-
-    return JsonResponse({'success': True, 'message': 'Registration successful! Please log in.'}, status=200)
-
 # PRIVATE
 
-
+@login_required
 def home(request):
-    return render(request, 'private/index.html')
+    try:
+        return render(request, 'private/index.html')
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('landing_page')
 
 
+@login_required
 def gallery(request):
     latest_images = Gallery.objects.filter(
         media_type='Image').order_by('-created_at')[:5]
@@ -112,6 +168,7 @@ def gallery(request):
     return render(request, 'private/gallery.html', context)
 
 
+@login_required
 def gallery_video(request):
     latest_videos = Gallery.objects.filter(
         media_type='Video').order_by('-created_at')[:5]
@@ -124,18 +181,29 @@ def gallery_video(request):
     return render(request, 'private/gallery_video.html', context)
 
 
+@login_required
 def about(request):
     return render(request, 'private/about.html')
 
 
+@login_required
 def activities(request):
-    return render(request, 'private/activities.html')
+    # Get latest 5 events
+    latest_events = Event.objects.all().order_by('-date')[:5]
+    # Get all events for the alternating sections
+    all_events = Event.objects.all().order_by('-date')
+    return render(request, 'private/activities.html', {
+        'latest_events': latest_events,
+        'all_events': all_events
+    })
 
 
+@login_required
 def trend(request):
     return render(request, 'private/trend.html')
 
 
+@login_required
 def officers(request):
     presidents = Officer.objects.filter(position='President')
     vice_presidents = Officer.objects.filter(position='Vice President')
@@ -157,14 +225,12 @@ def officers(request):
     })
 
 
-def login(request):
-    return render(request, 'private/login_admin.html')
-
-
+@login_required
 def maps(request):
     return render(request, 'private/maps.html')
 
 
+@login_required
 def account_view(request):
     return render(request, 'private/account_view.html')
 

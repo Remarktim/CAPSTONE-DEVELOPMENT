@@ -3164,10 +3164,6 @@ input:checked + .toggle-bg {
   right: 0.5rem;
 }
 
-.right-2\.5 {
-  right: 0.625rem;
-}
-
 .right-20 {
   right: 5rem;
 }
@@ -3326,10 +3322,6 @@ input:checked + .toggle-bg {
 
 .top-2 {
   top: 0.5rem;
-}
-
-.top-2\.5 {
-  top: 0.625rem;
 }
 
 .top-20 {
@@ -6105,6 +6097,10 @@ input:checked + .toggle-bg {
   height: 250px;
 }
 
+.h-\[400px\] {
+  height: 400px;
+}
+
 .h-\[54px\] {
   height: 54px;
 }
@@ -6147,8 +6143,8 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
-.h-\[400px\] {
-  height: 400px;
+.h-3\/4 {
+  height: 75%;
 }
 
 .max-h-0 {
@@ -6456,6 +6452,10 @@ input:checked + .toggle-bg {
   width: 240px;
 }
 
+.w-\[400px\] {
+  width: 400px;
+}
+
 .w-\[55px\] {
   width: 55px;
 }
@@ -6497,10 +6497,6 @@ input:checked + .toggle-bg {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[400px\] {
-  width: 400px;
 }
 
 .min-w-0 {
@@ -14824,11 +14820,6 @@ input:checked + .toggle-bg {
   letter-spacing: 0.1em;
 }
 
-.text-\[\#3f0703\] {
-  --tw-text-opacity: 1;
-  color: rgb(63 7 3 / var(--tw-text-opacity));
-}
-
 .text-\[\#68717a\] {
   --tw-text-opacity: 1;
   color: rgb(104 113 122 / var(--tw-text-opacity));
@@ -18356,10 +18347,6 @@ input:checked + .toggle-bg {
 }
 
 @media (min-width: 640px) {
-  .sm\:col-span-2 {
-    grid-column: span 2 / span 2;
-  }
-
   .sm\:mb-0 {
     margin-bottom: 0px;
   }
@@ -18594,6 +18581,14 @@ input:checked + .toggle-bg {
     height: 100%;
   }
 
+  .md\:h-1\/2 {
+    height: 50%;
+  }
+
+  .md\:h-96 {
+    height: 24rem;
+  }
+
   .md\:w-1\/2 {
     width: 50%;
   }
@@ -18731,6 +18726,11 @@ input:checked + .toggle-bg {
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
+
+  .md\:text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -18810,6 +18810,10 @@ input:checked + .toggle-bg {
     padding-left: 1.5rem;
   }
 
+  .lg\:pr-8 {
+    padding-right: 2rem;
+  }
+
   .lg\:text-left {
     text-align: left;
   }
@@ -18845,20 +18849,12 @@ input:checked + .toggle-bg {
     display: flex;
   }
 
-  .xl\:h-40 {
-    height: 10rem;
-  }
-
   .xl\:w-1\/2 {
     width: 50%;
   }
 
   .xl\:w-2\/6 {
     width: 33.333333%;
-  }
-
-  .xl\:flex-grow {
-    flex-grow: 1;
   }
 
   .xl\:grid-cols-4 {
@@ -18929,10 +18925,6 @@ input:checked + .toggle-bg {
 
 .rtl\:text-right:where([dir="rtl"], [dir="rtl"] *) {
   text-align: right;
-}
-
-.\[\&\:\:-webkit-scrollbar-thumb\]\:rounded-full::-webkit-scrollbar-thumb {
-  border-radius: 9999px;
 }
 
 .\[\&\>\.active\]\:bg-gray-100>.active {

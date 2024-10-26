@@ -2,103 +2,82 @@
 <header>
   {% block nav %} {% include 'private/includes/nav.html' %}
   <div class="flex flex-col m-5 mt-8 ml-16">
-    <h2 class="text-xl font-bold">Activities</h2>
+    <h2 class="text-2xl font-bold">Activities</h2>
   </div>
   {% endblock nav %}
 </header>
 {% block content %}
 <section class="mx-16 h-fit">
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-    <div class="overflow-hidden rounded-xl group bg-white shadow-lg">
-      <img
-        src="{% static 'img/pango1.jpg' %}"
-        alt="Image 1"
-        class="w-full h-60 object-cover"
-        onclick="openModal(this)"
-        oncontextmenu="return false;"
-        draggable="false" />
-      <p class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">Awarding for "Best Booths”. "Most Recruited Organization award"</p>
-    </div>
-    <div class="overflow-hidden rounded-xl group bg-white shadow-lg">
-      <img
-        src="{% static 'img/pango1.jpg' %}"
-        alt="Image 1"
-        class="w-full h-60 object-cover"
-        onclick="openModal(this)"
-        oncontextmenu="return false;"
-        draggable="false" />
-      <p
-        style
-        class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">
-        Awarding for "Best Booths”. "Most Recruited Organization award"
-      </p>
-    </div>
-    <div class="overflow-hidden rounded-xl group bg-white shadow-lg">
-      <img
-        src="{% static 'img/pango1.jpg' %}"
-        alt="Image 1"
-        class="w-full h-60 object-cover"
-        onclick="openModal(this)"
-        oncontextmenu="return false;"
-        draggable="false" />
-      <p
-        style
-        class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">
-        Awarding for "Best Booths”. "Most Recruited Organization award"
-      </p>
-    </div>
-    <div class="overflow-hidden rounded-xl group bg-white shadow-lg">
-      <img
-        src="{% static 'img/pango1.jpg' %}"
-        alt="Image 1"
-        class="w-full h-60 object-cover"
-        onclick="openModal(this)"
-        oncontextmenu="return false;"
-        draggable="false" />
-      <p
-        style
-        class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">
-        Awarding for "Best Booths”. "Most Recruited Organization award"
-      </p>
-    </div>
+    {% for event in latest_events %} {% if forloop.last and forloop.counter == 6 %}
     <div class="overflow-hidden hidden 2xl:flex 2xl:flex-col rounded-xl group bg-white shadow-lg">
+      {% if event.event_image %}
       <img
-        src="{% static 'img/pango1.jpg' %}"
-        alt="Image 1"
+        src="{{ event.event_image.url }}"
+        alt="{{ event.name }}"
         class="w-full h-60 object-cover"
         onclick="openModal(this)"
         oncontextmenu="return false;"
         draggable="false" />
-      <p
-        style
-        class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">
-        Awarding for "Best Booths”. "Most Recruited Organization award"
-      </p>
+      {% endif %}
+      <p class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">{{ event.name }}</p>
     </div>
+    {% else %}
+    <div class="overflow-hidden rounded-xl group bg-white shadow-lg">
+      {% if event.event_image %}
+      <img
+        src="{{ event.event_image.url }}"
+        alt="{{ event.name }}"
+        class="w-full h-60 object-cover"
+        onclick="openModal(this)"
+        oncontextmenu="return false;"
+        draggable="false" />
+      {% endif %}
+      <p class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">{{ event.name }}</p>
+    </div>
+    {% endif %} {% endfor %}
   </div>
 </section>
-
-<section class="rounded-3xl my-10 shadow-lg mx-16 h-fit overflow-hidden">
-  <div class="mx-auto flex flex-wrap justify-center">
-    <div class="mx-auto flex flex-wrap md:flex-nowrap justify-center gap-10 p-6 bg-[#3f0703] py-16">
-      <!-- Text content -->
+<section class="mt-8 mb-5 mx-16 h-screen scroll-thin overflow-y-auto">
+  <div class="mx-auto flex flex-wrap justify-center gap-10">
+    {% for event in all_events %} {% if forloop.counter|divisibleby:2 %}
+    <div class="mx-auto flex flex-wrap md:flex-nowrap justify-center gap-10 w-full p-6 bg-[#3f0703] py-16 shadow-xl rounded-3xl">
       <div class="text-content w-full md:w-1/2 p-6 text-white">
-        <h2 class="text-left text-4xl md:text-5xl capitalize font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">Appearance</h2>
-        <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">
-          The Philippine pangolin is a medium-sized mammal covered in small triangular scales made of keratin everywhere except the underbelly and face. It regrows new scales when they are lost and
-          always has the same number of scales throughout its lifespan. The scales come in shades of brown, yellow, and olive, making for adequate camouflage at night. Areas of the body without scales
-          are covered in a layer of hair.
-        </p>
+        <h2 class="text-left text-3xl md:text-4xl capitalize font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">{{ event.name }}</h2>
+        <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">{{ event.description }}</p>
+        <div class="mt-4">
+          <p class="text-left text-lg font-normal leading-7">{{ event.date }}</p>
+        </div>
       </div>
-
-      <!-- Image content -->
       <div class="image-content w-full md:w-1/4 flex justify-center items-center md:order-last order-first">
+        {% if event.event_image %}
         <img
-          src="{% static 'img/pango3.jpg' %}"
-          alt="Sample Image"
-          class="max-w-full h-auto rounded-lg shadow-lg" />
+          src="{{ event.event_image.url }}"
+          alt="{{ event.name }}"
+          class="w-auto h-72 rounded-lg shadow-lg" />
+        {% endif %}
       </div>
     </div>
+    {% else %}
+    <div class="mx-auto flex flex-wrap justify-center gap-10 p-6 w-full bg-[#3f0703] py-16 shadow-xl rounded-3xl">
+      <div class="image-content w-full md:w-1/4 flex justify-center items-center">
+        {% if event.event_image %}
+        <img
+          src="{{ event.event_image.url }}"
+          alt="{{ event.name }}"
+          class="w-auto h-72 rounded-lg shadow-lg" />
+        {% endif %}
+      </div>
+      <div class="text-content w-full md:w-1/2 p-6 text-white">
+        <h2 class="text-left text-3xl md:text-4xl capitalize font-extrabold leading-tight text-dark-grey-900 font-['Bahnschrift'] mb-5">{{ event.name }}</h2>
+        <p class="text-left text-lg md:text-lg font-normal leading-7 font-['Roboto']">{{ event.description }}</p>
+        <div class="mt-4">
+          <p class="text-left text-lg font-normal leading-7">{{ event.date }}</p>
+        </div>
+      </div>
+    </div>
+    {% endif %} {% endfor %}
   </div>
 </section>
-{% endblock %}
+
+{% include 'private/includes/footer.html' %} {% endblock %}

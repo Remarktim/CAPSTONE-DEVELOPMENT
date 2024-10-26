@@ -2,7 +2,7 @@
 <header>
   {% block nav %} {% include 'private/includes/nav.html' %}
   <div class="flex flex-col m-5 mt-8 ml-16">
-    <h2 class="text-xl font-bold">Gallery</h2>
+    <h2 class="text-2xl font-bold">Gallery</h2>
     <div class="container flex gap-5 mt-5">
       {% block link %}
       <a
@@ -37,6 +37,7 @@
         draggable="false" />
       <div class="absolute bottom-0 left-0 bg-black/70 text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Uploaded by: {{ image.uploader }}</div>
     </div>
+
     {% endfor %}
 
     <!-- Second row -->
@@ -60,7 +61,7 @@
   class="hidden fixed inset-0 w-screen h-screen overflow-hidden bg-black/80"
   onclick="closeModal(event)">
   <div
-    class="w-2/4 h-fit overflow-hidden bg-black/80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    class="w-2/4 h-fit overflow-hidden rounded-lg bg-black/80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
     onclick="event.stopPropagation()">
     <img
       oncontextmenu="return false;"

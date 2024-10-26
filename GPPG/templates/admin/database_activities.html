@@ -407,7 +407,15 @@
                 </td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ event.date }}</td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ event.location }}</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ event.description }}</td>
+                <td class="p-3 text-sm text-gray-800 dark:text-neutral-200">
+                  <div class="max-w-xs">
+                    <div
+                      class="truncate"
+                      id="shortDesc{{ event.id }}">
+                      {{ event.description }}
+                    </div>
+                  </div>
+                </td>
                 <td class="p-3 whitespace-nowrap text-end text-sm font-medium">
                   <div class="mr-1">
                     <button
@@ -452,7 +460,7 @@
                               hx-trigger="click"
                               data-modal-toggle="modaldialog"
                               data-modal-target="modaldialog"
-                              onclick=" showTitle('Delete Activity');"
+                              onclick="showTitle('Delete Activity');"
                               type="button"
                               class="text-center items-center border-2 cursor-pointer text-sm font-semibold p-2 px-5 rounded-lg text-white bg-red-600">
                               Delete

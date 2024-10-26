@@ -1,5 +1,5 @@
 {% load static %}
-<div class="flex flex-col bg-[#3f0703] relative z-50 px-4 mx-auto md:items-center md:justify-between md:flex-row lg:px-2 w-full">
+<div class="flex flex-col bg-[#3f0703] relative z-50 px-7 mx-auto md:items-center md:justify-between md:flex-row lg:px-5 lg:pr-8 w-full">
   <div class="flex-row justify-between flex items-center bg-yellow-2 p-3 flex-wrap w-1/2">
     <a
       href="{% url 'home' %}"
@@ -15,7 +15,7 @@
       aria-controls="NavBar_menu_home"
       aria-expanded="false"
       type="button"
-      class="absolute md:hidden right-16 size-7 flex justify-center items-center gap-x-2 rounded-lg">
+      class="absolute md:hidden right-20 size-7 flex justify-center items-center gap-x-2 rounded-lg">
       <span class="sr-only">Open main menu</span>
       <svg
         class="w-3.5 h-3.5"
@@ -41,13 +41,6 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'home' %}"
-          {%
-          comment
-          %}
-          onmouseover="prefetchPage('{% url 'home' %}')"
-          {%
-          endcomment
-          %}
           aria-current="page"
           >Home</a
         >
@@ -56,13 +49,6 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'trend' %}"
-          {%
-          comment
-          %}
-          onmouseover="prefetchPage('{% url 'trend' %}')"
-          {%
-          endcomment
-          %}
           aria-current="page"
           >Trend</a
         >
@@ -71,13 +57,6 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'maps' %}"
-          {%
-          comment
-          %}
-          onmouseover="prefetchPage('{% url 'maps' %}')"
-          {%
-          endcomment
-          %}
           aria-current="page"
           >Map</a
         >
@@ -86,13 +65,6 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'activities' %}"
-          {%
-          comment
-          %}
-          onmouseover="prefetchPage('{% url 'activities' %}')"
-          {%
-          endcomment
-          %}
           aria-current="page"
           >Activities</a
         >
@@ -101,13 +73,6 @@
         <a
           class="font-medium focus:outline-none font-['Roboto'] text-white"
           href="{% url 'gallery' %}"
-          {%
-          comment
-          %}
-          onmouseover="prefetchPage('{% url 'gallery' %}')"
-          {%
-          endcomment
-          %}
           aria-current="page"
           >Gallery</a
         >
@@ -143,27 +108,13 @@
           aria-labelledby="hs-navbar-example-dropdown">
           <a
             class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-            href="{% url 'officers' %}"
-            {%
-            comment
-            %}
-            onmouseover="prefetchPage('{% url 'officers' %}')"
-            {%
-            endcomment
-            %}>
+            href="{% url 'officers' %}">
             Officers
           </a>
 
           <a
             class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-black hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black dark:hover:bg-neutral-200 dark:hover:text-black"
-            href="{% url 'about' %}"
-            {%
-            comment
-            %}
-            onmouseover="prefetchPage('{% url 'about' %}')"
-            {%
-            endcomment
-            %}>
+            href="{% url 'about' %}">
             About Us
           </a>
         </div>
@@ -171,7 +122,7 @@
     </div>
   </div>
 
-  <div class="hs-dropdown [--strategy:fixed] overflow-hidden border bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-3.5 top-6 md:top-0 md:right-0 md:relative">
+  <div class="hs-dropdown [--strategy:fixed] overflow-hidden border bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-5 top-6 md:top-0 md:right-0 md:relative">
     <button
       id="hs-navbar-example-dropdown"
       type="button"
@@ -179,7 +130,7 @@
       aria-haspopup="menu"
       aria-expanded="false"
       aria-label="Mega Menu">
-      <span class="font-medium text-white">JL</span>
+      <span class="font-medium text-white">{{ initials }}</span>
     </button>
     <div
       class="hs-dropdown-menu border-0 text-white transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-48 z-10 bg-black bg-opacity-20 backdrop-blur-lg sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
