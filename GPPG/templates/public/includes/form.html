@@ -81,11 +81,29 @@
 
             <button
               id="SignIn_Submit"
-              class="w-full bg-black text-white py-2 px-4 rounded-lg transition duration-300">
+              class="w-full bg-black text-white flex flex-col items-center justify-center py-2 px-4 rounded-lg transition duration-300">
               <span id="loginButtonText">Submit</span>
               <div
                 id="loginButtonSpinner"
-                class="hidden loader ml-2"></div>
+                class="justify-center hidden text-center items-center">
+                <svg
+                  class="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24">
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
             </button>
           </form>
           {% include 'public/includes/forgot_pass.html' %}
@@ -103,6 +121,28 @@
           id="SignIn_closeBtn"
           class="absolute right-0 md:right-1/4 m-5 text-gray-500 hover:text-gray-800 text-2xl">
           &times;
+          <span
+            id="loginButtonSpinner"
+            class="hidden">
+            <svg
+              class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading...
+          </span>
         </button>
       </div>
     </div>
@@ -190,6 +230,9 @@
                   id="SignUp_phoneNum"
                   maxlength="11"
                   type="tel"
+                  pattern="^\+?[0-9\s\-().]*$"
+                  inputmode="numeric"
+                  oninput="this.value = this.value.replace(/[^0-9\s\-().]/g, '')"
                   class="w-full text-black pr-3 py-2 border-b-2 border-0 border-gray-200 outline-none focus:border-indigo-500"
                   placeholder="09223123423" />
               </div>
@@ -272,12 +315,30 @@
           </div>
           <button
             id="submitButton"
-            class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition duration-300"
+            class="w-full bg-black text-white py-2 px-4 rounded-lg flex flex-col items-center hover:bg-gray-900 transition duration-300"
             disabled>
             <span id="signUpButtonText">Sign Up</span>
             <div
               id="signUpButtonSpinner"
-              class="hidden loader ml-2"></div>
+              class="justify-center hidden text-center items-center">
+              <svg
+                class="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
           </button>
         </form>
         {% include 'public/includes/terms.html' %}

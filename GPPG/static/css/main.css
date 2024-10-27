@@ -3180,10 +3180,6 @@ input:checked + .toggle-bg {
   right: 0.75rem;
 }
 
-.right-3\.5 {
-  right: 0.875rem;
-}
-
 .right-32 {
   right: 8rem;
 }
@@ -6141,10 +6137,6 @@ input:checked + .toggle-bg {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-3\/4 {
-  height: 75%;
 }
 
 .max-h-0 {
@@ -18581,14 +18573,6 @@ input:checked + .toggle-bg {
     height: 100%;
   }
 
-  .md\:h-1\/2 {
-    height: 50%;
-  }
-
-  .md\:h-96 {
-    height: 24rem;
-  }
-
   .md\:w-1\/2 {
     width: 50%;
   }
@@ -18700,6 +18684,11 @@ input:checked + .toggle-bg {
     line-height: 2.25rem;
   }
 
+  .md\:text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+
   .md\:text-5xl {
     font-size: 3rem;
     line-height: 1;
@@ -18725,11 +18714,6 @@ input:checked + .toggle-bg {
   .md\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .md\:text-4xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
   }
 }
 
@@ -18785,11 +18769,6 @@ input:checked + .toggle-bg {
   .lg\:px-10 {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
-  }
-
-  .lg\:px-2 {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
   }
 
   .lg\:px-5 {

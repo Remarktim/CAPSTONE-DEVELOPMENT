@@ -73,22 +73,31 @@ class OfficerForm(forms.ModelForm):
                 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                 'placeholder': 'Enter Position in the Organization'
             }),
-
             'fb_url': forms.URLInput(attrs={
                 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
-                'placeholder': 'Enter your full Facebook profile link (e.g., https://www.facebook.com/your.custom.url)'
-                'required'
+                'placeholder': 'Enter your full Facebook profile link (e.g., https://www.facebook.com/your.custom.url)',
+                'required': 'required'
             }),
             'ig_url': forms.URLInput(attrs={
                 'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                 'placeholder': 'Enter your full Instagram profile link (e.g., https://www.instagram.com/your.custom.url)'
-
             }),
-
             'officer_image': forms.ClearableFileInput(attrs={
                 'class': 'block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer',
             }),
         }
+
+    def clean_fb_url(self):
+        fb_url = self.cleaned_data.get('fb_url')
+        if fb_url and not fb_url.startswith('https://'):
+            raise ValidationError('The Facebook URL must start with https.')
+        return fb_url
+
+    def clean_ig_url(self):
+        ig_url = self.cleaned_data.get('ig_url')
+        if ig_url and not ig_url.startswith('https://'):
+            raise ValidationError('The Instagram URL must start with https.')
+        return ig_url
 
 
 class GalleryForm(forms.ModelForm):
