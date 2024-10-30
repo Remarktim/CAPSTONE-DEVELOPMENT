@@ -219,3 +219,45 @@ body {
 .scroll-thin::-webkit-scrollbar-thumb:hover {
   background: #666;
 }
+@keyframes slideFromUp {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromDown {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-from-up {
+  animation: slideFromUp 1s ease-out forwards;
+}
+
+.animate-slide-from-down {
+  animation: slideFromDown 1s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}

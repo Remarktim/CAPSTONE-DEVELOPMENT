@@ -1,50 +1,36 @@
-document.addEventListener("DOMContentLoaded", function () {
+$(document).ready(function () {
   const elements = {
-    modal: document.getElementById("authModal"),
-    flipCard: document.querySelector(".flip-card"),
-    flipToSignup: document.getElementById("flipToSignup"),
-    flipToSignin: document.getElementById("flipToSignin"),
-    loginBtn: document.getElementById("loginBtn"),
-    aboutBtn: document.getElementById("aboutBtn"),
-    signInCloseBtn: document.getElementById("SignIn_closeBtn"),
-    signUpCloseBtn: document.getElementById("SignUp_closeBtn"),
-    signInForm: document.getElementById("signInForm"),
-    signUpForm: document.getElementById("signUpForm"),
-    termsLink: document.getElementById("termsLink"),
-    termsText: document.getElementById("termsText"),
-    termsCheckbox: document.getElementById("termsCheckbox"),
-    submitButton: document.getElementById("submitButton"),
-    passwordInput: document.getElementById("password"),
-    confirmPasswordInput: document.getElementById("confirmPassword"),
-    passwordError: document.getElementById("passwordError"),
-    signUpError: document.getElementById("signUpError"),
-    firstNameInput: document.getElementById("firstName"),
-    lastNameInput: document.getElementById("lastName"),
-    emailSignupInput: document.getElementById("email_signup"),
-    phoneInput: document.getElementById("SignUp_phoneNum"),
-    loginError: document.getElementById("loginError"),
-    email_login: document.getElementById("email_login"),
-    passwords: document.getElementById("passwords"),
-    buttonText: document.getElementById("signUpButtonText"),
-    buttonSpinner: document.getElementById("signUpButtonSpinner"),
-    loginButtonText: document.getElementById("loginButtonText"),
-    loginButtonSpinner: document.getElementById("loginButtonSpinner"),
-    loginSubmitBtn: document.querySelector("#signInForm button[type='submit']"),
+    modal: $("#authModal"),
+    flipCard: $(".flip-card"),
+    flipToSignup: $("#flipToSignup"),
+    flipToSignin: $("#flipToSignin"),
+    loginBtn: $("#loginBtn"),
+    aboutBtn: $("#aboutBtn"),
+    signInCloseBtn: $("#SignIn_closeBtn"),
+    signUpCloseBtn: $("#SignUp_closeBtn"),
+    signInForm: $("#signInForm"),
+    signUpForm: $("#signUpForm"),
+    termsLink: $("#termsLink"),
+    termsText: $("#termsText"),
+    termsCheckbox: $("#termsCheckbox"),
+    submitButton: $("#submitButton"),
+    passwordInput: $("#password"),
+    confirmPasswordInput: $("#confirmPassword"),
+    passwordError: $("#passwordError"),
+    signUpError: $("#signUpError"),
+    firstNameInput: $("#firstName"),
+    lastNameInput: $("#lastName"),
+    emailSignupInput: $("#email_signup"),
+    phoneInput: $("#SignUp_phoneNum"),
+    loginError: $("#loginError"),
+    email_login: $("#email_login"),
+    passwords: $("#passwords"),
+    buttonText: $("#signUpButtonText"),
+    buttonSpinner: $("#signUpButtonSpinner"),
+    loginButtonText: $("#loginButtonText"),
+    loginButtonSpinner: $("#loginButtonSpinner"),
+    loginSubmitBtn: $("#signInForm button[type='submit']"),
   };
-
-  //######################################################################################
-  // Sign in
-  elements.email_login?.addEventListener("input", function () {
-    this.classList.remove("border-red-500");
-    clearError(elements.loginError);
-    validateLoginFields();
-  });
-
-  elements.passwords?.addEventListener("input", function () {
-    this.classList.remove("border-red-500");
-    clearError(elements.loginError);
-    validateLoginFields();
-  });
 
   const validators = {
     email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
@@ -52,163 +38,164 @@ document.addEventListener("DOMContentLoaded", function () {
     password: (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(password),
   };
 
+  // Error handling timeout variable
+  let errorTimeout;
+
+  // Helper functions
   function showError(message, errorElement = elements.signUpError) {
-    errorElement.textContent = message;
-    errorElement.classList.remove("hidden");
+    // Clear any existing timeout
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+    }
+
+    errorElement.text(message).removeClass("hidden").fadeIn(300); // Smooth fade in
+
+    // Set new timeout to hide error after 3 seconds
+    errorTimeout = setTimeout(() => {
+      errorElement.fadeOut(300, function () {
+        $(this).addClass("hidden").show();
+      });
+    }, 3000);
   }
 
   function clearError(errorElement = elements.signUpError) {
-    errorElement.textContent = "";
-    errorElement.classList.add("hidden");
+    if (errorTimeout) {
+      clearTimeout(errorTimeout);
+    }
+    errorElement.text("").addClass("hidden");
   }
 
   function resetForms() {
-    elements.signInForm?.reset();
-    elements.signUpForm?.reset();
+    elements.signInForm.trigger("reset");
+    elements.signUpForm.trigger("reset");
     clearError();
     clearError(elements.loginError);
-    elements.email_login?.classList.remove("border-red-500");
-    elements.passwords?.classList.remove("border-red-500");
+    elements.email_login.removeClass("border-red-500");
+    elements.passwords.removeClass("border-red-500");
   }
 
   function closeModal() {
-    elements.modal?.classList.add("hidden");
+    elements.modal.addClass("hidden");
     resetForms();
   }
 
+  // Sign in event handlers
+  elements.email_login.on("input", function () {
+    $(this).removeClass("border-red-500");
+    clearError(elements.loginError);
+    validateLoginFields();
+  });
+
+  elements.passwords.on("input", function () {
+    $(this).removeClass("border-red-500");
+    clearError(elements.loginError);
+    validateLoginFields();
+  });
+
+  // Sign up field validation with auto-hide errors
   const signUpFields = [elements.firstNameInput, elements.lastNameInput, elements.emailSignupInput, elements.phoneInput, elements.passwordInput, elements.confirmPasswordInput];
 
-  signUpFields.forEach((field) => {
-    field?.addEventListener("input", function () {
-      this.classList.remove("border-red-500");
+  $.each(signUpFields, function (_, field) {
+    field.on("input", function () {
+      const $this = $(this);
+      $this.removeClass("border-red-500");
 
-      if (signUpFields.every((f) => f?.value.trim())) {
+      if (signUpFields.every((f) => $(f).val().trim())) {
         clearError();
       }
 
-      if (this === elements.emailSignupInput && this.value && !validators.email(this.value)) {
+      // Show errors with auto-hide
+      if ($this.is(elements.emailSignupInput) && $this.val() && !validators.email($this.val())) {
         showError("Please enter a valid email address");
-        this.classList.add("border-red-500");
-      } else if (this === elements.phoneInput && this.value && !validators.phone(this.value)) {
+        $this.addClass("border-red-500");
+      } else if ($this.is(elements.phoneInput) && $this.val() && !validators.phone($this.val())) {
         showError("Please enter a valid 11-digit phone number");
-        this.classList.add("border-red-500");
-      } else if (this === elements.passwordInput && this.value && !validators.password(this.value)) {
+        $this.addClass("border-red-500");
+      } else if ($this.is(elements.passwordInput) && $this.val() && !validators.password($this.val())) {
         showError("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number");
-        this.classList.add("border-red-500");
-      } else if (this === elements.confirmPasswordInput) {
+        $this.addClass("border-red-500");
+      } else if ($this.is(elements.confirmPasswordInput)) {
         validatePasswords();
       }
     });
+
+    // Clear error and red border when field gains focus
+    field.on("focus", function () {
+      $(this).removeClass("border-red-500");
+      clearError();
+    });
   });
 
-  elements.flipToSignup?.addEventListener("click", (e) => {
+  // Modal and card flip handlers
+  elements.flipToSignup.on("click", function (e) {
     e.preventDefault();
-    elements.flipCard?.classList.add("flipped");
+    elements.flipCard.addClass("flipped");
   });
 
-  elements.flipToSignin?.addEventListener("click", (e) => {
+  elements.flipToSignin.on("click", function (e) {
     e.preventDefault();
-    elements.flipCard?.classList.remove("flipped");
+    elements.flipCard.removeClass("flipped");
   });
 
-  elements.loginBtn?.addEventListener("click", () => elements.modal?.classList.remove("hidden"));
-  elements.aboutBtn?.addEventListener("click", () => elements.modal?.classList.remove("hidden"));
-  elements.signInCloseBtn?.addEventListener("click", closeModal);
-  elements.signUpCloseBtn?.addEventListener("click", closeModal);
+  elements.loginBtn.on("click", () => elements.modal.removeClass("hidden"));
+  elements.aboutBtn.on("click", () => elements.modal.removeClass("hidden"));
+  elements.signInCloseBtn.on("click", closeModal);
+  elements.signUpCloseBtn.on("click", closeModal);
 
-  window.addEventListener("click", (event) => {
-    if (event.target === elements.modal) closeModal();
+  $(window).on("click", function (event) {
+    if ($(event.target).is(elements.modal)) closeModal();
   });
 
-  elements.termsLink?.addEventListener("click", (e) => {
+  // Terms and conditions handlers
+  elements.termsLink.on("click", function (e) {
     e.preventDefault();
-    elements.termsText?.classList.toggle("hidden");
+    elements.termsText.toggleClass("hidden");
   });
 
-  elements.termsCheckbox?.addEventListener("change", function () {
+  elements.termsCheckbox.on("change", function () {
+    const $submitButton = elements.submitButton;
     if (this.checked) {
-      elements.submitButton?.removeAttribute("disabled");
-      elements.submitButton?.classList.remove("bg-gray-400", "cursor-not-allowed");
-      elements.submitButton?.classList.add("bg-black", "hover:bg-gray-900");
+      $submitButton.prop("disabled", false).removeClass("bg-gray-400 cursor-not-allowed").addClass("bg-black hover:bg-gray-900");
     } else {
-      elements.submitButton?.setAttribute("disabled", "true");
-      elements.submitButton?.classList.remove("bg-black", "hover:bg-gray-900");
-      elements.submitButton?.classList.add("bg-gray-400", "cursor-not-allowed");
+      $submitButton.prop("disabled", true).removeClass("bg-black hover:bg-gray-900").addClass("bg-gray-400 cursor-not-allowed");
     }
   });
 
   function validateLoginFields() {
-    const emailFilled = elements.email_login?.value.trim();
-    const passwordFilled = elements.passwords?.value.trim();
+    const emailFilled = elements.email_login.val().trim();
+    const passwordFilled = elements.passwords.val().trim();
 
-    if (emailFilled && passwordFilled) {
-      elements.loginSubmitBtn?.removeAttribute("disabled");
-      elements.loginSubmitBtn?.classList.remove("opacity-50", "cursor-not-allowed");
-    } else {
-      elements.loginSubmitBtn?.setAttribute("disabled", "true");
-      elements.loginSubmitBtn?.classList.add("opacity-50", "cursor-not-allowed");
-    }
+    elements.loginSubmitBtn.prop("disabled", !(emailFilled && passwordFilled)).toggleClass("opacity-50 cursor-not-allowed", !(emailFilled && passwordFilled));
   }
 
   function validatePasswords() {
-    if (!elements.passwordInput || !elements.confirmPasswordInput) return false;
-    const isValid = elements.passwordInput.value === elements.confirmPasswordInput.value;
-    elements.passwordError?.classList.toggle("hidden", isValid);
-    elements.confirmPasswordInput.classList.toggle("border-red-500", !isValid);
+    const isValid = elements.passwordInput.val() === elements.confirmPasswordInput.val();
+    if (!isValid) {
+      showError("Passwords do not match");
+    }
+    elements.passwordError.toggleClass("hidden", isValid);
+    elements.confirmPasswordInput.toggleClass("border-red-500", !isValid);
     return isValid;
   }
 
-  elements.passwordInput?.addEventListener("input", function () {
-    if (this.value && !validators.password(this.value)) {
-      this.classList.add("border-red-500");
-      showError("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number");
-    } else {
-      this.classList.remove("border-red-500");
-      clearError();
-    }
-    validatePasswords();
-  });
-
-  elements.phoneInput?.addEventListener("input", function () {
-    if (this.value && !validators.phone(this.value)) {
-      this.classList.add("border-red-500");
-      showError("Please enter a valid 11-digit phone number");
-    } else {
-      this.classList.remove("border-red-500");
-      clearError();
-    }
-  });
-
-  elements.emailSignupInput?.addEventListener("input", function () {
-    if (this.value && !validators.email(this.value)) {
-      this.classList.add("border-red-500");
-      showError("Please enter a valid email address");
-    } else {
-      this.classList.remove("border-red-500");
-      clearError();
-    }
-  });
-
   // Form validation
-  // Validate login form
   function validateLoginForm() {
     clearError(elements.loginError);
 
-    // Reset border colors
-    elements.email_login.classList.remove("border-red-500");
-    elements.passwords.classList.remove("border-red-500");
+    elements.email_login.removeClass("border-red-500");
+    elements.passwords.removeClass("border-red-500");
 
     let isValid = true;
     let errorMessage = [];
 
-    if (!elements.email_login.value.trim()) {
-      elements.email_login.classList.add("border-red-500");
+    if (!elements.email_login.val().trim()) {
+      elements.email_login.addClass("border-red-500");
       errorMessage.push("Email is required");
       isValid = false;
     }
 
-    if (!elements.passwords.value.trim()) {
-      elements.passwords.classList.add("border-red-500");
+    if (!elements.passwords.val().trim()) {
+      elements.passwords.addClass("border-red-500");
       errorMessage.push("Password is required");
       isValid = false;
     }
@@ -219,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return isValid;
   }
-  // Validate Sign Up form
+
   function validateForm() {
     clearError();
 
@@ -232,37 +219,36 @@ document.addEventListener("DOMContentLoaded", function () {
       { field: elements.confirmPasswordInput, name: "Confirm password" },
     ];
 
-    // Check required fields
     for (const { field, name } of requiredFields) {
-      if (!field?.value.trim()) {
+      if (!field.val().trim()) {
         showError(`${name} is required`);
-        field.classList.add("border-red-500");
+        field.addClass("border-red-500");
         return false;
       }
-      field.classList.remove("border-red-500");
+      field.removeClass("border-red-500");
     }
 
-    if (!validators.email(elements.emailSignupInput?.value)) {
+    if (!validators.email(elements.emailSignupInput.val())) {
       showError("Please enter a valid email address");
-      elements.emailSignupInput?.classList.add("border-red-500");
+      elements.emailSignupInput.addClass("border-red-500");
       return false;
     }
 
-    if (!validators.phone(elements.phoneInput?.value)) {
+    if (!validators.phone(elements.phoneInput.val())) {
       showError("Please enter a valid 11-digit phone number");
-      elements.phoneInput?.classList.add("border-red-500");
+      elements.phoneInput.addClass("border-red-500");
       return false;
     }
 
-    if (!validators.password(elements.passwordInput?.value)) {
+    if (!validators.password(elements.passwordInput.val())) {
       showError("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number");
-      elements.passwordInput?.classList.add("border-red-500");
+      elements.passwordInput.addClass("border-red-500");
       return false;
     }
 
     if (!validatePasswords()) return false;
 
-    if (!elements.termsCheckbox?.checked) {
+    if (!elements.termsCheckbox.prop("checked")) {
       showError("Please accept the terms and conditions");
       return false;
     }
@@ -270,96 +256,73 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  elements.signUpForm?.addEventListener("submit", async function (e) {
+  // Form submissions
+  elements.signUpForm.on("submit", async function (e) {
     e.preventDefault();
     if (!validateForm()) return;
 
-    elements.buttonText?.classList.add("hidden");
-    elements.buttonSpinner?.classList.remove("hidden");
-    elements.submitButton.disabled = true;
+    elements.buttonText.addClass("hidden");
+    elements.buttonSpinner.removeClass("hidden");
+    elements.submitButton.prop("disabled", true);
 
     try {
-      const response = await fetch("/signup/", {
+      const response = await $.ajax({
+        url: "/signup/",
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          first_name: elements.firstNameInput?.value.trim(),
-          last_name: elements.lastNameInput?.value.trim(),
-          email: elements.emailSignupInput?.value.trim(),
-          password: elements.passwordInput?.value,
-          contact: elements.phoneInput?.value.trim(),
+        contentType: "application/json",
+        data: JSON.stringify({
+          first_name: elements.firstNameInput.val().trim(),
+          last_name: elements.lastNameInput.val().trim(),
+          email: elements.emailSignupInput.val().trim(),
+          password: elements.passwordInput.val(),
+          contact: elements.phoneInput.val().trim(),
         }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        elements.signUpForm?.reset();
-        window.location.href = "/home/";
-      } else {
-        showError(data.message || "An error occurred during signup");
-      }
+      elements.signUpForm.trigger("reset");
+      window.location.href = "/home/";
     } catch (error) {
-      showError("An error occurred. Please try again.");
+      showError(error.responseJSON?.message || "An error occurred during signup");
     } finally {
-      elements.buttonText?.classList.remove("hidden");
-      elements.buttonSpinner?.classList.add("hidden");
-      elements.submitButton.disabled = false;
+      elements.buttonText.removeClass("hidden");
+      elements.buttonSpinner.addClass("hidden");
+      elements.submitButton.prop("disabled", false);
     }
   });
 
-  elements.signInForm?.addEventListener("submit", async function (e) {
+  elements.signInForm.on("submit", async function (e) {
     e.preventDefault();
-
-    if (!validateLoginForm()) {
-      return;
-    }
+    if (!validateLoginForm()) return;
 
     function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === name + "=") {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
-        }
-      }
-      return cookieValue;
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
     }
-    const csrftoken = getCookie("csrftoken");
 
-    elements.loginButtonText.classList.add("hidden");
-    elements.loginButtonSpinner.classList.remove("hidden");
+    elements.loginButtonText.addClass("hidden");
+    elements.loginButtonSpinner.removeClass("hidden");
 
     try {
-      const response = await fetch("/login/", {
+      const response = await $.ajax({
+        url: "/login/",
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrftoken,
+          "X-CSRFToken": getCookie("csrftoken"),
         },
-        credentials: "include",
-        body: JSON.stringify({
-          email: elements.email_login.value,
-          password: elements.passwords.value,
+        contentType: "application/json",
+        data: JSON.stringify({
+          email: elements.email_login.val(),
+          password: elements.passwords.val(),
         }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        window.location.href = "/home/";
-      } else {
-        showError("Check your email and password", elements.loginError);
-      }
+      window.location.href = "/home/";
     } catch (error) {
-      showError("Check your email and password.", elements.loginError);
+      showError("Check your email and password", elements.loginError);
     } finally {
-      elements.loginButtonText.classList.remove("hidden");
-      elements.loginButtonSpinner.classList.add("hidden");
+      elements.loginButtonText.removeClass("hidden");
+      elements.loginButtonSpinner.addClass("hidden");
     }
   });
 });

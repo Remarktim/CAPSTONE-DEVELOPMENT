@@ -93,12 +93,27 @@ let barChart = new Chart(barChartCtx, {
     labels: initialLabels,
     datasets: [
       {
+        type: "bar",
         data: initialData,
         backgroundColor: "#C1A682",
         borderColor: "#C1A682",
         borderWidth: 1,
         barThickness: getBarThickness(),
         borderRadius: 10,
+        order: 2,
+      },
+      {
+        type: "line",
+        data: initialData,
+        borderColor: "#C1A682",
+        borderWidth: 2,
+        pointBackgroundColor: "#C1A682",
+        pointBorderColor: "#C1A682",
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        fill: false,
+        tension: 0.3,
+        order: 1,
       },
     ],
   },
@@ -110,6 +125,8 @@ let barChart = new Chart(barChartCtx, {
         beginAtZero: true,
         ticks: {
           color: "black",
+          maxTicksLimit: 5,
+          stepSize: Math.ceil(Math.max(...initialData) / 4),
         },
         grid: {
           display: false,
@@ -136,11 +153,18 @@ let barChart = new Chart(barChartCtx, {
   },
 });
 
+const totalElement = document.getElementById("totalDisplay");
+let initialTotal = initialData.reduce((acc, curr) => acc + curr, 0);
+if (totalElement) {
+  totalElement.textContent = `Total: ${initialTotal}`;
+}
+
 function updateChart() {
   const startDateInput = document.getElementById("startDateInput").value;
   const endDateInput = document.getElementById("endDateInput").value;
   const startDate = new Date(startDateInput);
   const endDate = new Date(endDateInput);
+  const totalElement = document.getElementById("totalDisplay");
 
   if (startDateInput && endDateInput && startDate <= endDate) {
     const startMonthIndex = startDate.getMonth();
@@ -149,34 +173,48 @@ function updateChart() {
     const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
     const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
 
-    let totalSum = 0;
-    for (let i = 0; i < filteredData.length; i++) {
-      totalSum += filteredData[i];
-    }
+    const totalSum = filteredData.reduce((acc, curr) => acc + curr, 0);
 
     barChart.data.labels = filteredLabels;
     barChart.data.datasets[0].data = filteredData;
+    barChart.data.datasets[1].data = filteredData;
+
+    barChart.options.scales.y.ticks.stepSize = Math.ceil(Math.max(...filteredData) / 4);
+
     barChart.update();
 
-    document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
-  } else {
-    document.getElementById("totalDisplay").innerText = `Invalid Date Range`;
+    if (totalElement) {
+      totalElement.textContent = `Total: ${totalSum}`;
+    }
+  } else if (totalElement) {
+    totalElement.textContent = "Invalid Date Range";
   }
 }
 
 function clearDates() {
+  const totalElement = document.getElementById("totalDisplay");
+
   barChart.data.labels = initialLabels;
   barChart.data.datasets[0].data = initialData;
+  barChart.data.datasets[1].data = initialData;
+
+  barChart.options.scales.y.ticks.stepSize = Math.ceil(Math.max(...initialData) / 4);
+
   barChart.update();
 
-  let totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
+  const totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
+  if (totalElement) {
+    totalElement.textContent = `Total: ${totalSum}`;
+  }
 
   document.getElementById("startDateInput").value = "";
   document.getElementById("endDateInput").value = "";
 }
 
 window.onload = function () {
-  let totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
+  const totalElement = document.getElementById("totalDisplay");
+  const totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
+  if (totalElement) {
+    totalElement.textContent = `Total: ${totalSum}`;
+  }
 };
