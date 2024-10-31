@@ -1,6 +1,7 @@
 import mimetypes
 from django.db import models
 from django.core.exceptions import ValidationError
+from .utils import *
 import os
 
 
@@ -143,7 +144,18 @@ class Officer(BaseModel):
     fb_url = models.CharField(max_length=150, null=True, blank=True)
     ig_url = models.CharField(max_length=150, null=True, blank=True)
     officer_image = models.ImageField(
-        upload_to='officers/', null=True, blank=True)
+        upload_to='officers/', null=True, blank=True
+    )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            delete_old_file(self, self.officer_image, 'officer_image')
+
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        delete_file(self.officer_image)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.last_name}, {self.first_name}"
@@ -155,7 +167,18 @@ class Event(BaseModel):
     date = models.DateField()
     location = models.CharField(max_length=150)
     event_image = models.ImageField(
-        upload_to='activities/', null=True, blank=True)
+        upload_to='activities/', null=True, blank=True
+    )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            delete_old_file(self, self.event_image, 'event_image')
+
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        delete_file(self.event_image)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} ({self.date})"
@@ -173,30 +196,39 @@ class User(BaseModel):
 
 
 class Gallery(BaseModel):
-
     gal_choices = (
         ('Image', 'Image'),
         ('Video', 'Video'),
     )
     uploader = models.CharField(max_length=150)
     media_type = models.CharField(
-        max_length=150, blank=True, choices=gal_choices)
+        max_length=150, blank=True, choices=gal_choices
+    )
     media = models.FileField(
-        upload_to='gallery/', null=True, blank=False, validators=[validate_file_type])
+        upload_to='gallery/', null=True, blank=False, validators=[validate_file_type]
+    )
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            # Delete the old file if a new file is uploaded
+            delete_old_file(self, self.media, 'media')
+
+        # Set media_type based on MIME type
         if self.media:
             mime_type, encoding = mimetypes.guess_type(self.media.name)
-
             if mime_type:
                 if mime_type.startswith('image/'):
                     self.media_type = 'Image'
                 elif mime_type.startswith('video/'):
                     self.media_type = 'Video'
                 else:
-                    raise ValueError("Unsupported file type")
+                    raise ValidationError("Unsupported file type")
 
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        delete_file(self.media)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.uploader} - {self.media}"

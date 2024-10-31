@@ -21,7 +21,7 @@
       id="drawer-navigation"
       class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full h sm:translate-x-0 p-2"
       aria-label="Sidebar">
-      <div class="h-full px-3 pb-4 overflow-y-auto bg-white rounded-2xl border">
+      <div class="h-full px-3 pb-4 overflow-y-auto border bg-white rounded-2xl">
         <div class="p-14 py-10">
           <a
             href="{% url 'admin_home' %}"
@@ -327,5 +327,6 @@
     <script src="{% static 'maps/adminDash_map.js' %}"></script>
     <script src="{% static 'js/htmx.min.js' %}"></script>
     <script src="{% static 'js/admin/modal.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
   </body>
 </html>

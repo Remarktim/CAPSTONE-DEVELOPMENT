@@ -120,3 +120,11 @@ function closeModalsOnClickOutside(event) {
   }
 }
 // ################################################################
+document.addEventListener("DOMContentLoaded", function () {
+  const element = document.getElementById("animated-number");
+  element.classList.add("animate-slide-from-up");
+
+  setTimeout(() => {
+    element.classList.remove("animate-slide-from-up");
+  }, 1000);
+});
