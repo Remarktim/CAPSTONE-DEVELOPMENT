@@ -240,39 +240,27 @@ window.addEventListener('resize', function() {
 
 //############################################################################################################
 // Line Chart Code for Illegal Trades
-const userAccountCtx = document.getElementById("IllegalTrade_Chart").getContext("2d");
-
-const dataByYear = {
-  "This Year": [65, 59, 80, 81, 56, 55, 40, 45, 60, 75, 82, 90],
-  "Last Year": [28, 48, 40, 19, 86, 27, 90, 55, 70, 85, 89, 95],
-};
+const IllegalTradeChart_ctx = document.getElementById("IllegalTrade_Chart").getContext("2d");
 
 const IllegalTrade_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const yearSelect = document.getElementById("yearSelect");
-Object.keys(dataByYear).forEach((year) => {
-  const option = document.createElement("option");
-  option.value = year;
-  option.textContent = year;
-  yearSelect.appendChild(option);
-});
 
-let selectedYear = Object.keys(dataByYear)[0];
+// Initialize the chart
+let IllegalTradeGradient =  IllegalTradeChart_ctx.createLinearGradient(0, 0, 0, 400);
+IllegalTradeGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
+IllegalTradeGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
 
-let userAccountGradient = userAccountCtx.createLinearGradient(0, 0, 0, 400);
-userAccountGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
-userAccountGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
-
-const userAccountChartConfig = {
+const IllegalTradeChartConfig = {
   type: "line",
   data: {
     labels: IllegalTrade_labels,
     datasets: [
       {
-        label: selectedYear,
-        data: dataByYear[selectedYear],
+        label: "", // Will be set dynamically
+        data: [], // Will be set dynamically
         fill: true,
-        backgroundColor: userAccountGradient,
+        backgroundColor: IllegalTradeGradient,
         borderColor: "rgba(255, 159, 64, 1)",
         tension: 0.4,
         pointRadius: 5,
@@ -309,14 +297,76 @@ const userAccountChartConfig = {
   },
 };
 
-let userAccountChart = new Chart(userAccountCtx, userAccountChartConfig);
+let IllegalTradeChart = new Chart( IllegalTradeChart_ctx, IllegalTradeChartConfig);
+
+function fetchData() {
+  fetch(`/get-chart-data?period=overall&status=Illegal Trade`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched Data:", data); // Log the full fetched data
+
+      // Check the response structure
+      if (!data || typeof data !== 'object') {
+        console.error("Fetched data is not an object:", data);
+        return;
+      }
+
+      // Access the correct key with bracket notation
+      const trends = data["illegal trade_trend"];
+      if (!trends || !trends.yearly) {
+        console.error("Invalid data format. Expected 'illegal trade_trend':", data);
+        return; // Exit the function if the data structure is not as expected
+      }
+
+      // Extract the years from the data response
+      const years = Object.keys(trends.yearly);
+
+      // Populate the year dropdown
+      years.forEach((year) => {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
+
+      const selectedYear = years[0]; // Set the default selected year
+      updateChart(selectedYear, trends); // Update the chart with the initial year data
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+}
+
+// Function to update the chart with data for the selected year
+function updateChart(year, trends) {
+  const chartData = trends.yearly[year];
+
+  if (!chartData) {
+    console.error("No data available for the selected year:", year);
+    return; // Exit the function if there's no data for the selected year
+  }
+
+  IllegalTradeChart.data.datasets[0].data = chartData;
+  IllegalTradeChart.data.datasets[0].label = year; // Update label to show selected year
+  IllegalTradeChart.update();
+}
+
+// Initialize the fetch on page load
+fetchData();
+
 
 yearSelect.addEventListener("change", function () {
-  selectedYear = this.value;
-  userAccountChart.data.datasets[0].data = dataByYear[selectedYear];
-  userAccountChart.data.datasets[0].label = selectedYear;
-  userAccountChart.update();
+  const selectedYear = this.value;
+  fetch(`/get-chart-data?period=${selectedYear}&status=Illegal Trade`)
+    .then((response) => response.json())
+    .then((data) => {
+      updateChart(selectedYear, data); // Update the chart with the new year data
+    })
+    .catch((error) => {
+      console.error("Error fetching data for the selected year:", error);
+    });
 });
+
 
 //############################################################################################################
 // Bar two Chart Code for Dead and alive
