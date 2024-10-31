@@ -234,6 +234,31 @@ def maps(request):
 def account_view(request):
     return render(request, 'private/account_view.html')
 
+@login_required
+def user_update_private(request, id):
+    user = get_object_or_404(User, id=id)
+
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse()
+            response.headers['HX-Trigger'] = 'closeAndRefresh'
+            messages.success(request, 'User Updated!')
+            return response
+        else:
+
+            return render(request, 'admin/includes/modal/modal_user_edit.html', {
+                'form': form,
+                'user': user,
+            })
+
+    form = UserForm(instance=user)
+    return render(request, 'admin/includes/modal/modal_user_edit.html', {
+        'form': form,
+        'user': user
+    })
+
 # ADMIN
 
 
@@ -638,16 +663,16 @@ def get_poaching_trends(request):
     yearly_reports = {}
 
     # Get all reports regardless of the year for yearly reporting
-    reports = IncidentReport.objects.all()
+    reports = Incident.objects.all()
 
     # Aggregate data for overall trend and yearly reports
     aggregated_data = reports.values(
-        'date_reported__year', 'date_reported__month', 'incident__status').annotate(count=Count('id'))
+        'created_at__year', 'created_at__month', 'status').annotate(count=Count('id'))
 
     for entry in aggregated_data:
-        month_index = entry['date_reported__month'] - \
+        month_index = entry['created_at__month'] - \
             1  # Convert month to 0-index
-        status = entry['incident__status']  # Use status directly
+        status = entry['status']  # Use status directly
         count = entry['count']
 
         # Update overall trend
@@ -661,7 +686,7 @@ def get_poaching_trends(request):
             overall_trend['illegal_trade'][month_index] += count
 
         # Update yearly reports with monthly breakdown
-        year = entry['date_reported__year']
+        year = entry['created_at__year']
         if year not in yearly_reports:
             yearly_reports[year] = {
                 'alive': [0] * 12,
@@ -689,7 +714,7 @@ def get_poaching_trends(request):
 
 
 def get_available_years(request):
-    years = IncidentReport.objects.dates('date_reported', 'year').distinct()
+    years = Incident.objects.dates('created_at', 'year').distinct()
     available_years = [year.year for year in years]
     available_years.sort(reverse=True)
     return JsonResponse(available_years, safe=False)

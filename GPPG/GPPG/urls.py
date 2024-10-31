@@ -26,6 +26,8 @@ urlpatterns = [
     path('officers/', views.officers, name='officers'),
     path('maps/', views.maps, name='maps'),
     path('account_view/', views.account_view, name='account_view'),
+    path('account_view/<int:id>/edit', views.user_update_private,
+         name='private_userAccounts_edit'),
     # ADMIN
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
