@@ -75,105 +75,168 @@ const WebsiteViews_pieChart = new Chart(WebsiteViews_ctx, {
 // Bar Chart for Poaching
 const PoachingChart_ctx = document.getElementById("PoachingChart").getContext("2d");
 
-const initialData = [180, 70, 120, 50, 40, 80, 150, 110, 140, 80, 40, 60];
-const initialLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+// Function to get responsive bar thickness
 function getBarThickness() {
-  return window.innerWidth <= 600 ? 20 : 50;
+    return window.innerWidth <= 600 ? 15 : 30;
 }
 
-let barChart = new Chart(PoachingChart_ctx, {
-  type: "bar",
-  data: {
-    labels: initialLabels,
-    datasets: [
-      {
-        data: initialData,
-        backgroundColor: "rgba(255, 159, 64, 0.6)",
-        borderColor: "rgba(255, 159, 64, 1)",
-        borderWidth: 1,
-        barThickness: getBarThickness(),
-        borderRadius: 10,
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: "black",
-        },
-        grid: {
-          display: false,
-        },
-      },
-      x: {
-        ticks: {
-          color: "black",
-        },
-        grid: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-    animation: {
-      duration: 1000,
-      easing: "easeInOutQuart",
-    },
-  },
-});
+// Global chart instance
+let barChart = null;
 
-function updateChart() {
-  const startDateInput = document.getElementById("startDateInput").value;
-  const endDateInput = document.getElementById("endDateInput").value;
-  const startDate = new Date(startDateInput);
-  const endDate = new Date(endDateInput);
+// Initial data and labels
+let initialData, initialLabels;
 
-  if (startDateInput && endDateInput && startDate <= endDate) {
-    const startMonthIndex = startDate.getMonth();
-    const endMonthIndex = endDate.getMonth();
-
-    const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
-    const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
-
-    let totalSum = 0;
-    for (let i = 0; i < filteredData.length; i++) {
-      totalSum += filteredData[i];
+// Function to initialize or update the chart
+function initializeChart(chartData, labels) {
+    // Create or update the chart
+    if (!barChart) {
+        // Create new chart
+        barChart = new Chart(PoachingChart_ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: "rgba(255, 159, 64, 0.6)",
+                    borderColor: "rgba(255, 159, 64, 1)",
+                    borderWidth: 1,
+                    barThickness: getBarThickness(),
+                    borderRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                    padding: {
+                        top: 20,
+                        right: 20,
+                        bottom: 20,
+                        left: 20
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { 
+                            color: "black",
+                            precision: 0
+                        },
+                        grid: { 
+                            display: false 
+                        },
+                    },
+                    x: {
+                        ticks: { 
+                            color: "black" 
+                        },
+                        grid: { 
+                            display: false 
+                        },
+                    },
+                },
+                plugins: {
+                    legend: { 
+                        display: false
+                    },
+                },
+                animation: {
+                    duration: 1000,
+                    easing: "easeInOutQuart",
+                },
+            },
+        });
+    } else {
+        // Update existing chart
+        barChart.data.labels = labels;
+        barChart.data.datasets[0].data = chartData;
+        barChart.update();
     }
 
-    barChart.data.labels = filteredLabels;
-    barChart.data.datasets[0].data = filteredData;
-    barChart.update();
-
+    // Calculate and display total
+    const totalSum = chartData.reduce((acc, curr) => acc + curr, 0);
     document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
-  } else {
-    document.getElementById("totalDisplay").innerText = `Invalid Date Range`;
-  }
 }
 
-function clearDates() {
-  barChart.data.labels = initialLabels;
-  barChart.data.datasets[0].data = initialData;
-  barChart.update();
+// Function to fetch chart data
+async function fetchChartData() {
+    try {
+        const response = await fetch('/get-chart-data/');
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
 
-  let totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
+        const data = await response.json();
+        
+        // Sum up incidents for each month across all statuses
+        const monthlyTotals = data.alive_trend.overall.map((_, monthIndex) => 
+            Object.values(data).reduce((total, statusData) => 
+                total + statusData.overall[monthIndex], 0)
+        );
 
-  document.getElementById("startDateInput").value = "";
-  document.getElementById("endDateInput").value = "";
+        // Store initial data and labels
+        initialData = monthlyTotals;
+        initialLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        return monthlyTotals;
+    } catch (error) {
+        console.error('Error fetching chart data:', error);
+        return new Array(12).fill(0);
+    }
 }
 
-window.onload = function () {
-  let totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
-};
+// Function to update chart with date filtering
+async function updateChart() {
+    const startDateInput = document.getElementById("startDateInput").value;
+    const endDateInput = document.getElementById("endDateInput").value;
+    const startDate = new Date(startDateInput);
+    const endDate = new Date(endDateInput);
+
+    try {
+        if (startDateInput && endDateInput && startDate <= endDate) {
+            const startMonthIndex = startDate.getMonth();
+            const endMonthIndex = endDate.getMonth();
+
+            const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
+            const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
+
+            // Update chart with filtered data
+            initializeChart(filteredData, filteredLabels);
+        } else {
+            document.getElementById("totalDisplay").innerText = `Invalid Date Range`;
+        }
+    } catch (error) {
+        console.error('Error updating chart:', error);
+    }
+}
+
+// Function to clear dates and reset chart
+async function clearDates() {
+    // Reset date inputs
+    document.getElementById("startDateInput").value = "";
+    document.getElementById("endDateInput").value = "";
+
+    // Update chart with full data
+    initializeChart(initialData, initialLabels);
+}
+
+// Initialize chart on page load
+window.addEventListener('load', async function () {
+    try {
+        const initialData = await fetchChartData();
+        initializeChart(initialData, initialLabels);
+    } catch (error) {
+        console.error('Error initializing chart:', error);
+    }
+});
+
+// Responsive chart resizing
+window.addEventListener('resize', function() {
+    if (barChart) {
+        barChart.resize();
+    }
+});
 
 //############################################################################################################
 // Line Chart Code for Illegal Trades

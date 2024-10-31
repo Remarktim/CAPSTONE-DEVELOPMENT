@@ -713,6 +713,51 @@ def get_poaching_trends(request):
     return JsonResponse(response_data)
 
 
+def get_chart_data (request):
+    # Get period and status from the frontend request
+    period = request.GET.get('period', 'overall')
+    status_filter = request.GET.get('status', None)
+
+    # Define statuses if filtering is not applied
+    statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
+    if status_filter:
+        statuses = [status_filter]  # Filter only for the specified status
+
+    # Initialize dictionaries to hold overall and yearly trends per status
+    trends = {status: {'overall': [0] * 12, 'yearly': {}} for status in statuses}
+
+    # Get all reports
+    reports = Incident.objects.all()
+
+    # Filter reports based on status if a specific status is requested
+    if status_filter:
+        reports = reports.filter(status=status_filter)
+
+    # Aggregate data
+    aggregated_data = reports.values(
+        'created_at__year', 'created_at__month', 'status').annotate(count=Count('id'))
+
+    for entry in aggregated_data:
+        month_index = entry['created_at__month'] - 1  # Convert month to 0-index
+        status = entry['status']
+        count = entry['count']
+        year = entry['created_at__year']
+
+        # Update overall trends by status
+        if status in trends:
+            trends[status]['overall'][month_index] += count
+
+            # Update yearly reports for each status
+            if year not in trends[status]['yearly']:
+                trends[status]['yearly'][year] = [0] * 12
+            trends[status]['yearly'][year][month_index] += count
+
+    # Prepare the final response with either specific status data or all statuses
+    response_data = {f"{status.lower()}_trend": trends[status] for status in statuses}
+
+    return JsonResponse(response_data)
+
+
 def get_available_years(request):
     years = Incident.objects.dates('created_at', 'year').distinct()
     available_years = [year.year for year in years]
