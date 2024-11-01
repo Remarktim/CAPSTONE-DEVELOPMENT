@@ -299,7 +299,7 @@ const IllegalTradeChartConfig = {
 
 let IllegalTradeChart = new Chart( IllegalTradeChart_ctx, IllegalTradeChartConfig);
 
-function fetchData() {
+function fetchDataIllegalTrade() {
   fetch(`/get-chart-data?period=overall&status=Illegal Trade`)
     .then((response) => response.json())
     .then((data) => {
@@ -352,7 +352,7 @@ function updateChart(year, trends) {
 }
 
 // Initialize the fetch on page load
-fetchData();
+fetchDataIllegalTrade();
 
 
 yearSelect.addEventListener("change", function () {
@@ -370,55 +370,32 @@ yearSelect.addEventListener("change", function () {
 
 //############################################################################################################
 // Bar two Chart Code for Dead and alive
-const DeadAliveChart_ctx = document.getElementById("DeadAliveChart").getContext("2d");
+const DeadAliveChartCtx = document.getElementById("DeadAliveChart").getContext("2d");
 
-const DeadAlive_dataThisYear = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  datasets: [
-    {
-      label: "Alive",
-      data: [12, 19, 3, 5, 2, 3, 7, 10, 13, 9, 8, 14],
-      backgroundColor: "rgba(63,7,3)",
-      borderColor: "rgba(63,7,3)",
-      borderWidth: 1,
-      borderRadius: 10,
-    },
-    {
-      label: "Dead",
-      data: [5, 9, 13, 15, 12, 8, 5, 14, 10, 11, 9, 13],
-      backgroundColor: "rgb(251, 146, 60)",
-      borderColor: "rgb(249, 115, 22)",
-      borderWidth: 1,
-      borderRadius: 10,
-    },
-  ],
-};
-
-const DeadAlive_dataLastYear = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  datasets: [
-    {
-      label: "Alive",
-      data: [15, 10, 8, 12, 7, 14, 9, 6, 5, 11, 8, 10],
-      backgroundColor: "rgba(63,7,3)",
-      borderColor: "rgba(63,7,3)",
-      borderWidth: 1,
-      borderRadius: 10,
-    },
-    {
-      label: "Dead",
-      data: [7, 12, 10, 5, 8, 7, 9, 13, 12, 9, 6, 11],
-      backgroundColor: "rgb(251, 146, 60)",
-      borderColor: "rgb(249, 115, 22)",
-      borderWidth: 1,
-      borderRadius: 10,
-    },
-  ],
-};
-
-let DeadAlive_currentChart = new Chart(DeadAliveChart_ctx, {
+// Initialize the chart with empty data
+let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
   type: "bar",
-  data: DeadAlive_dataThisYear,
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      {
+        label: "Alive",
+        data: [], // Will be populated dynamically
+        backgroundColor: "rgba(63,7,3)",
+        borderColor: "rgba(63,7,3)",
+        borderWidth: 1,
+        borderRadius: 10,
+      },
+      {
+        label: "Dead",
+        data: [], // Will be populated dynamically
+        backgroundColor: "rgb(251, 146, 60)",
+        borderColor: "rgb(249, 115, 22)",
+        borderWidth: 1,
+        borderRadius: 10,
+      },
+    ],
+  },
   options: {
     scales: {
       y: {
@@ -452,18 +429,54 @@ let DeadAlive_currentChart = new Chart(DeadAliveChart_ctx, {
   },
 });
 
+// Fetch data from API and populate chart options dynamically
+function fetchData() {
+  fetch(`/get-chart-data?status=Dead,Alive&period=overall`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched Data:", data);
+
+      // Extract years and data for "Alive" and "Dead" statuses
+      const aliveTrend = data["alive_trend"].yearly;
+      const deadTrend = data["dead_trend"].yearly;
+      const availableYears = Object.keys(aliveTrend);
+
+      // Populate the year dropdown
+      const yearSelect = document.getElementById("DeadAlive_yearSelector");
+      availableYears.forEach((year) => {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
+
+      // Set initial data for the first available year
+      updateChartData(availableYears[0], aliveTrend, deadTrend);
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+}
+
+// Update chart data for the selected year
+function updateChartData(selectedYear, aliveTrend, deadTrend) {
+  if (aliveTrend[selectedYear] && deadTrend[selectedYear]) {
+    DeadAlive_currentChart.data.datasets[0].data = aliveTrend[selectedYear];
+    DeadAlive_currentChart.data.datasets[1].data = deadTrend[selectedYear];
+    DeadAlive_currentChart.update();
+  } else {
+    console.error("No data available for the selected year:", selectedYear);
+  }
+}
+
+// Event listener for year selection
 document.getElementById("DeadAlive_yearSelector").addEventListener("change", function () {
   const selectedYear = this.value;
-  const container = document.getElementById("container");
-
-  if (selectedYear === "thisYear") {
-    DeadAlive_currentChart.data = DeadAlive_dataThisYear;
-  } else {
-    DeadAlive_currentChart.data = DeadAlive_dataLastYear;
-  }
-
-  DeadAlive_currentChart.update();
+  fetchData(); // Refresh data based on new selection
 });
+
+// Fetch data on page load
+fetchData();
 
 //############################################################################################################
 // Horizontal Chart for Found Scales
