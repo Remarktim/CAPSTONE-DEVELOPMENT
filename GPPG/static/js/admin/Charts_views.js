@@ -430,7 +430,7 @@ let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
 });
 
 // Fetch data from API and populate chart options dynamically
-function fetchData() {
+function fetchDataDeadAlive() {
   fetch(`/get-chart-data?status=Dead,Alive&period=overall`)
     .then((response) => response.json())
     .then((data) => {
@@ -472,46 +472,46 @@ function updateChartData(selectedYear, aliveTrend, deadTrend) {
 // Event listener for year selection
 document.getElementById("DeadAlive_yearSelector").addEventListener("change", function () {
   const selectedYear = this.value;
-  fetchData(); // Refresh data based on new selection
+  fetchDataDeadAlive(); // Refresh data based on new selection
 });
 
 // Fetch data on page load
-fetchData();
+fetchDataDeadAlive();
 
 //############################################################################################################
 // Horizontal Chart for Found Scales
 
 const FoundScales_ctx = document.getElementById("FoundScales_horizontalBarChart").getContext("2d");
-
-const FoundScales_dataThisYear = [65, 0, 80, 81, 0, 55, 40, 0, 0, 50, 0, 20];
-const FoundScales_dataLastYear = [0, 48, 0, 19, 86, 1, 90, 2, 0, 30, 0, 40];
 const FoundScales_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+let FoundScales_filteredData = {};
 
-// Filter function to remove months with no data
+// Function to filter and organize the data for the chart
 function FoundScales_filterData(data, labels) {
   const filteredData = [];
   const filteredLabels = [];
-
+  
+  // Only add non-zero data points
   data.forEach((value, index) => {
     if (value !== 0) {
-      // Only keep months with non-zero data
       filteredData.push(value);
       filteredLabels.push(labels[index]);
     }
   });
-
-  return { filteredData, filteredLabels };
+  
+  // If no data points, return empty arrays
+  return { 
+    filteredData: filteredData.length ? filteredData : [], 
+    filteredLabels: filteredLabels.length ? filteredLabels : [] 
+  };
 }
 
-let FoundScales_filteredThisYear = FoundScales_filterData(FoundScales_dataThisYear, FoundScales_labels);
-let FoundScales_filteredLastYear = FoundScales_filterData(FoundScales_dataLastYear, FoundScales_labels);
-
-let chartData = {
-  labels: FoundScales_filteredThisYear.filteredLabels,
+// Initial chart configuration
+const chartData = {
+  labels: [], // Will be updated dynamically
   datasets: [
     {
-      label: "This Year",
-      data: FoundScales_filteredThisYear.filteredData,
+      label: "Data",
+      data: [],
       backgroundColor: "rgb(251, 146, 60)",
       borderRadius: 10,
     },
@@ -554,24 +554,78 @@ const config = {
 
 const horizontalBarChart = new Chart(FoundScales_ctx, config);
 
-function horizontalBar_updateChart(selectedYear) {
-  if (selectedYear === "thisYearData") {
-    horizontalBarChart.data.labels = FoundScales_filteredThisYear.filteredLabels;
-    horizontalBarChart.data.datasets[0].data = FoundScales_filteredThisYear.filteredData;
-    horizontalBarChart.data.datasets[0].label = "This Year";
-    horizontalBarChart.data.datasets[0].backgroundColor = "rgb(251, 146, 60)";
-  } else if (selectedYear === "lastYearData") {
-    horizontalBarChart.data.labels = FoundScales_filteredLastYear.filteredLabels;
-    horizontalBarChart.data.datasets[0].data = FoundScales_filteredLastYear.filteredData;
-    horizontalBarChart.data.datasets[0].label = "Last Year";
-    horizontalBarChart.data.datasets[0].backgroundColor = "rgb(251, 146, 60)";
+// Fetch data dynamically from API
+async function fetchAndProcessData() {
+  try {
+    const response = await fetch('/get-chart-data?status=Scales&period=overall');
+    const data = await response.json();
+    
+    // Ensure scales_trend exists
+    if (!data.scales_trend) {
+      console.error("Scales trend data not available.");
+      data.scales_trend = {
+        yearly: {}
+      };
+    }
+    
+    // Get year select element
+    const yearSelect = document.getElementById("FoundScales_yearSelect");
+    
+    // Clear existing options
+    yearSelect.innerHTML = '';
+    
+    // Process and add yearly data
+    const years = Object.keys(data.scales_trend.yearly).sort();
+    years.forEach(year => {
+      const filteredYearData = FoundScales_filterData(data.scales_trend.yearly[year], FoundScales_labels);
+      FoundScales_filteredData[year] = filteredYearData;
+      
+      // Add year to select options
+      const yearOption = document.createElement("option");
+      yearOption.value = year;
+      yearOption.textContent = year;
+      yearSelect.appendChild(yearOption);
+    });
+    
+    // Trigger initial chart update with the first year if available
+    if (years.length > 0) {
+      yearSelect.value = years[0];
+      updateChartScales(years[0]);
+    }
+    
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    
+    // Provide fallback data
+    FoundScales_filteredData = {};
+    updateChartScales(null);
   }
-
-  horizontalBarChart.update(); // Update the chart with new data
 }
 
-// Add event listener to the dropdown
+// Function to update chart data based on the selected year
+function updateChartScales(selectedYear) {
+  const selectedData = selectedYear ? (FoundScales_filteredData[selectedYear] || { filteredData: [], filteredLabels: [] }) : { filteredData: [], filteredLabels: [] };
+  
+  // Only update and render if there's data
+  if (selectedData.filteredData.length) {
+    horizontalBarChart.data.labels = selectedData.filteredLabels;
+    horizontalBarChart.data.datasets[0].data = selectedData.filteredData;
+    horizontalBarChart.data.datasets[0].label = `${selectedYear} Data`;
+    horizontalBarChart.update();
+  } else {
+    // Clear the chart or show a "No data" message
+    horizontalBarChart.data.labels = [];
+    horizontalBarChart.data.datasets[0].data = [];
+    horizontalBarChart.data.datasets[0].label = "No Data Available";
+    horizontalBarChart.update();
+  }
+}
+
+// Event listener for year selection
 document.getElementById("FoundScales_yearSelect").addEventListener("change", function () {
   const selectedYear = this.value;
-  horizontalBar_updateChart(selectedYear);
+  updateChartScales(selectedYear);
 });
+
+// Initial data fetch
+document.addEventListener('DOMContentLoaded', fetchAndProcessData);
