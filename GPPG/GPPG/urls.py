@@ -27,6 +27,8 @@ urlpatterns = [
     path('officers/', views.officers, name='officers'),
     path('maps/', views.maps, name='maps'),
     path('account_view/', views.account_view, name='account_view'),
+    path('account_view/<int:id>/edit', views.user_update_private,
+         name='private_userAccounts_edit'),
     # ADMIN
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
@@ -74,6 +76,8 @@ urlpatterns = [
     path('admin_report/', views.admin_report, name='admin_report'),
     path('get-poaching-trends/', views.get_poaching_trends,
          name='get_poaching_trends'),
+     path('get-chart-data/', views.get_chart_data,
+         name='get_chart_data'),
     path('get-available-years/', views.get_available_years,
          name='get_available_years'),
 
