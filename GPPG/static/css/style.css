@@ -261,3 +261,35 @@ body {
 .animate-fade-in {
   animation: fadeIn 1s ease-out forwards;
 }
+
+.loader {
+  display: flex;
+  column-gap: 4px;
+}
+.loader span {
+  width: 8px;
+  height: 8px;
+  background: #3f0703;
+  border-radius: 50%;
+  animation: bounce 0.5s alternate infinite;
+}
+.loader span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.loader span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+/* Add hover effect for X button */
+.exit-button:hover {
+  transform: scale(1.1);
+  background-color: #ef4444;
+}

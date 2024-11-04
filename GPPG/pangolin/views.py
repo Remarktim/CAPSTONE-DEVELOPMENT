@@ -24,7 +24,13 @@ from django.contrib.auth.hashers import make_password, check_password
 import json
 from .models import User
 from .decorator import *
+from dotenv import load_dotenv
+import google.generativeai as genai
+from django.conf import settings
+import logging
 
+# Set up logging
+logger = logging.getLogger(__name__)
 # PUBLIC
 
 
@@ -145,6 +151,7 @@ def public_officers(request):
 
 # PRIVATE
 
+
 @login_required
 def home(request):
     try:
@@ -152,6 +159,121 @@ def home(request):
     except User.DoesNotExist:
         request.session.flush()
         return redirect('landing_page')
+
+
+def initialize_genai():
+    # Gemini AI with API key from settings
+    try:
+        api_key = settings.GEMINI_API_KEY
+        if not api_key:
+            logger.error("GEMINI_API_KEY not found in settings")
+            return None
+
+        genai.configure(api_key=api_key)
+
+        model = genai.GenerativeModel(
+            model_name='tunedModels/palawan-pangolin-quiojp7cizr2',  # my tune api gemini bot
+            generation_config={
+                'temperature': 0.9,
+                'top_p': 0.95,
+                'top_k': 40,
+                'max_output_tokens': 2048,
+            }
+        )
+        return model
+    except Exception as e:
+        logger.error(f"Error initializing Gemini API: {str(e)}")
+        return None
+
+
+def is_pangolin_related(text):
+    pangolin_keywords = [
+        'pangolin', 'pangolinidae', 'scaly anteater', 'manis', 'pholidota',
+        'scales', 'ant', 'termite', 'palawan', 'wildlife', 'endangered',
+        'conservation', 'philippines', 'manis culionensis', 'trade', 'poaching',
+        'habitat', 'nocturnal', 'mammal', 'species'
+    ]
+    text_lower = text.lower()
+    return any(keyword in text_lower for keyword in pangolin_keywords)
+
+
+@csrf_exempt
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_message = data.get('message', '').strip()
+
+            if not user_message:
+                return JsonResponse({
+                    'status': 'error',
+                    'response': 'Please enter a message.'
+                })
+
+            if not is_pangolin_related(user_message):
+                return JsonResponse({
+                    'status': 'success',
+                    'response': "I apologize, but I'm specifically designed to discuss pangolins and related topics. Could you please ask me something about pangolins? For example, you could ask about:\n\n" +
+                              "• Pangolin characteristics and behavior\n" +
+                              "• Pangolin conservation efforts\n" +
+                              "• The Palawan pangolin species\n" +
+                              "• Pangolin habitat and diet\n" +
+                              "• Threats to pangolin survival"
+                })
+
+            model = initialize_genai()
+            if not model:
+                logger.error("Failed to initialize Gemini model")
+                return JsonResponse({
+                    'status': 'error',
+                    'response': 'Chat service is temporarily unavailable.'
+                }, status=500)
+
+            try:
+                context_prompt = f"""
+                Acting as a pangolin expert, please provide accurate information about pangolins in response to this question: {user_message}
+                Keep the response focused on pangolin-related information.
+                If possible, relate the answer specifically to the Palawan pangolin (Manis culionensis).
+                Include scientific facts and conservation information when relevant.
+                """
+
+                chat = model.start_chat(history=[])
+                response = chat.send_message(context_prompt)
+
+                if response and response.text:
+                    return JsonResponse({
+                        'status': 'success',
+                        'response': response.text
+                    })
+                else:
+                    raise Exception("Empty response from model")
+
+            except Exception as e:
+                logger.error(f"Error getting model response: {str(e)}")
+                return JsonResponse({
+                    'status': 'error',
+                    'response': 'I apologize, but I had trouble processing your question. Please try again.'
+                }, status=500)
+
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON in request body")
+            return JsonResponse({
+                'status': 'error',
+                'response': 'Invalid request format.'
+            }, status=400)
+
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'response': 'An unexpected error occurred.'
+            }, status=500)
+
+    return JsonResponse({
+        'status': 'error',
+        'response': 'Invalid request method.'
+    }, status=400)
 
 
 @login_required
