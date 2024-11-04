@@ -35,7 +35,7 @@ const WebsiteViews_pieChart = new Chart(WebsiteViews_ctx, {
   data: WebsiteViews_PieData,
   options: {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "right",
@@ -106,7 +106,7 @@ function initializeChart(chartData, labels) {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 layout: {
                     padding: {
                         top: 20,
@@ -270,6 +270,7 @@ const IllegalTradeChartConfig = {
   },
   options: {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
@@ -330,7 +331,7 @@ function fetchDataIllegalTrade() {
       });
 
       const selectedYear = years[0]; // Set the default selected year
-      updateChart(selectedYear, trends); // Update the chart with the initial year data
+      updateChartIllegalTrade(selectedYear, trends); // Update the chart with the initial year data
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
@@ -338,7 +339,7 @@ function fetchDataIllegalTrade() {
 }
 
 // Function to update the chart with data for the selected year
-function updateChart(year, trends) {
+function updateChartIllegalTrade(year, trends) {
   const chartData = trends.yearly[year];
 
   if (!chartData) {
@@ -360,7 +361,7 @@ yearSelect.addEventListener("change", function () {
   fetch(`/get-chart-data?period=${selectedYear}&status=Illegal Trade`)
     .then((response) => response.json())
     .then((data) => {
-      updateChart(selectedYear, data); // Update the chart with the new year data
+      updateChartIllegalTrade(selectedYear, data); // Update the chart with the new year data
     })
     .catch((error) => {
       console.error("Error fetching data for the selected year:", error);
@@ -397,6 +398,8 @@ let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
     ],
   },
   options: {
+    responsive: true,
+    maintainAspectRatio: true,
     scales: {
       y: {
         beginAtZero: true,
@@ -478,6 +481,11 @@ document.getElementById("DeadAlive_yearSelector").addEventListener("change", fun
 // Fetch data on page load
 fetchDataDeadAlive();
 
+
+window.addEventListener('load', () => {
+  DeadAlive_currentChart.resize();
+});
+
 //############################################################################################################
 // Horizontal Chart for Found Scales
 
@@ -524,6 +532,7 @@ const config = {
   options: {
     indexAxis: "y",
     responsive: true,
+    maintainAspectRatio: true,
     scales: {
       y: {
         beginAtZero: true,
