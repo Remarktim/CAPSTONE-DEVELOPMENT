@@ -83,22 +83,8 @@ function getBarThickness() {
 // Global chart instance
 let barChart = null;
 
-<<<<<<< HEAD
-const totalElement = document.getElementById("totalDisplay");
-let initialTotal = initialData.reduce((acc, curr) => acc + curr, 0);
-if (totalElement) {
-  totalElement.textContent = `Total: ${initialTotal}`;
-}
-
-function updateChart() {
-  const startDateInput = document.getElementById("startDateInput").value;
-  const endDateInput = document.getElementById("endDateInput").value;
-  const startDate = new Date(startDateInput);
-  const endDate = new Date(endDateInput);
-=======
 // Initial data and labels
 let initialData, initialLabels;
->>>>>>> 58ebb28eb6b0e89dc7b6ea2a5b452003608b7384
 
 // Function to initialize or update the chart
 function initializeChart(chartData, labels) {
@@ -200,8 +186,6 @@ async function fetchChartData() {
     }
 }
 
-<<<<<<< HEAD
-=======
 // Function to update chart with date filtering
 async function updateChart() {
     const startDateInput = document.getElementById("startDateInput").value;
@@ -254,7 +238,6 @@ window.addEventListener('resize', function() {
     }
 });
 
->>>>>>> 58ebb28eb6b0e89dc7b6ea2a5b452003608b7384
 //############################################################################################################
 // Line Chart Code for Illegal Trades
 const IllegalTradeChart_ctx = document.getElementById("IllegalTrade_Chart").getContext("2d");
