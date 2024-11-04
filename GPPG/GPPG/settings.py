@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-sw$g&yej(s(5k4p0t1k)3hyag-w#m=*%nf9(p2ei2c90mao^_g'
+GEMINI_API_KEY = 'AIzaSyAmEY3lb3x-6CihX2J1_2kSZEsyRRNaV8M'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'pangolin.middleware.AuthenticationMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
 ]
 
 
@@ -123,20 +125,21 @@ USE_I18N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-COMPRESS_ROOT = BASE_DIR / 'static'
-
-COMPRESS_ENABLED = True
-
-
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',
-                       "django.contrib.staticfiles.finders.FileSystemFinder",
-                       "django.contrib.staticfiles.finders.AppDirectoriesFinder",)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 STATICFILES_DIRS = [
     BASE_DIR, 'static'
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+COMPRESS_ROOT = BASE_DIR / 'static'
+
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+COMPRESS_URL = STATIC_URL
+STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',
+                       "django.contrib.staticfiles.finders.FileSystemFinder",
+                       "django.contrib.staticfiles.finders.AppDirectoriesFinder",)
 
 
 # Default primary key field type

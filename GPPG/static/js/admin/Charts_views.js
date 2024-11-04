@@ -130,6 +130,12 @@ let barChart = new Chart(PoachingChart_ctx, {
   },
 });
 
+const totalElement = document.getElementById("totalDisplay");
+let initialTotal = initialData.reduce((acc, curr) => acc + curr, 0);
+if (totalElement) {
+  totalElement.textContent = `Total: ${initialTotal}`;
+}
+
 function updateChart() {
   const startDateInput = document.getElementById("startDateInput").value;
   const endDateInput = document.getElementById("endDateInput").value;
@@ -169,11 +175,6 @@ function clearDates() {
   document.getElementById("startDateInput").value = "";
   document.getElementById("endDateInput").value = "";
 }
-
-window.onload = function () {
-  let totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
-};
 
 //############################################################################################################
 // Line Chart Code for Illegal Trades
