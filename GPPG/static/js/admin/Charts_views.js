@@ -35,7 +35,7 @@ const WebsiteViews_pieChart = new Chart(WebsiteViews_ctx, {
   data: WebsiteViews_PieData,
   options: {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "right",
@@ -94,71 +94,69 @@ function updateChart() {
   const endDateInput = document.getElementById("endDateInput").value;
   const startDate = new Date(startDateInput);
   const endDate = new Date(endDateInput);
-  // Initial data and labels
-  let initialData, initialLabels;
+// Initial data and labels
+let initialData, initialLabels;
 
   // Function to initialize or update the chart
   function initializeChart(chartData, labels) {
     // Create or update the chart
     if (!barChart) {
-      // Create new chart
-      barChart = new Chart(PoachingChart_ctx, {
-        type: "bar",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              data: chartData,
-              backgroundColor: "rgba(255, 159, 64, 0.6)",
-              borderColor: "rgba(255, 159, 64, 1)",
-              borderWidth: 1,
-              barThickness: getBarThickness(),
-              borderRadius: 5,
+        // Create new chart
+        barChart = new Chart(PoachingChart_ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: "rgba(255, 159, 64, 0.6)",
+                    borderColor: "rgba(255, 159, 64, 1)",
+                    borderWidth: 1,
+                    barThickness: getBarThickness(),
+                    borderRadius: 5,
+                }]
             },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          layout: {
-            padding: {
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                    padding: {
+                        top: 20,
+                        right: 20,
+                        bottom: 20,
+                        left: 20
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { 
+                            color: "black",
+                            precision: 0
+                        },
+                        grid: { 
+                            display: false 
+                        },
+                    },
+                    x: {
+                        ticks: { 
+                            color: "black" 
+                        },
+                        grid: { 
+                            display: false 
+                        },
+                    },
+                },
+                plugins: {
+                    legend: { 
+                        display: false
+                    },
+                },
+                animation: {
+                    duration: 1000,
+                    easing: "easeInOutQuart",
+                },
             },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: "black",
-                precision: 0,
-              },
-              grid: {
-                display: false,
-              },
-            },
-            x: {
-              ticks: {
-                color: "black",
-              },
-              grid: {
-                display: false,
-              },
-            },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-          },
-          animation: {
-            duration: 1000,
-            easing: "easeInOutQuart",
-          },
-        },
-      });
+        });
     } else {
       // Update existing chart
       barChart.data.labels = labels;
@@ -196,8 +194,8 @@ function updateChart() {
     }
   }
 
-  // Function to update chart with date filtering
-  async function updateChart() {
+// Function to update chart with date filtering
+async function updateChart() {
     const startDateInput = document.getElementById("startDateInput").value;
     const endDateInput = document.getElementById("endDateInput").value;
     const startDate = new Date(startDateInput);
@@ -248,9 +246,9 @@ function updateChart() {
     }
   });
 
-  //############################################################################################################
-  // Line Chart Code for Illegal Trades
-  const IllegalTradeChart_ctx = document.getElementById("IllegalTrade_Chart").getContext("2d");
+//############################################################################################################
+// Line Chart Code for Illegal Trades
+const IllegalTradeChart_ctx = document.getElementById("IllegalTrade_Chart").getContext("2d");
 
   const IllegalTrade_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -261,51 +259,51 @@ function updateChart() {
   IllegalTradeGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
   IllegalTradeGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
 
-  const IllegalTradeChartConfig = {
-    type: "line",
-    data: {
-      labels: IllegalTrade_labels,
-      datasets: [
-        {
-          label: "", // Will be set dynamically
-          data: [], // Will be set dynamically
-          fill: true,
-          backgroundColor: IllegalTradeGradient,
-          borderColor: "rgba(255, 159, 64, 1)",
-          tension: 0.4,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 159, 64, 0.6)",
+const IllegalTradeChartConfig = {
+  type: "line",
+  data: {
+    labels: IllegalTrade_labels,
+    datasets: [
+      {
+        label: "", // Will be set dynamically
+        data: [], // Will be set dynamically
+        fill: true,
+        backgroundColor: IllegalTradeGradient,
+        borderColor: "rgba(255, 159, 64, 1)",
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: "rgba(255, 159, 64, 0.6)",
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: "black",
         },
-      ],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: "black",
-          },
-          grid: {
-            display: false,
-          },
-        },
-        x: {
-          ticks: {
-            color: "black",
-          },
-          grid: {
-            display: false,
-          },
+        grid: {
+          display: false,
         },
       },
-      plugins: {
-        legend: {
+      x: {
+        ticks: {
+          color: "black",
+        },
+        grid: {
           display: false,
         },
       },
     },
-  };
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+  },
+};
 
   let IllegalTradeChart = new Chart(IllegalTradeChart_ctx, IllegalTradeChartConfig);
 
@@ -339,17 +337,17 @@ function updateChart() {
           yearSelect.appendChild(option);
         });
 
-        const selectedYear = years[0]; // Set the default selected year
-        updateChart(selectedYear, trends); // Update the chart with the initial year data
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }
+      const selectedYear = years[0]; // Set the default selected year
+      updateChart(selectedYear, trends); // Update the chart with the initial year data
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+}
 
-  // Function to update the chart with data for the selected year
-  function updateChart(year, trends) {
-    const chartData = trends.yearly[year];
+// Function to update the chart with data for the selected year
+function updateChart(year, trends) {
+  const chartData = trends.yearly[year];
 
     if (!chartData) {
       console.error("No data available for the selected year:", year);
@@ -364,78 +362,79 @@ function updateChart() {
   // Initialize the fetch on page load
   fetchDataIllegalTrade();
 
-  yearSelect.addEventListener("change", function () {
-    const selectedYear = this.value;
-    fetch(`/get-chart-data?period=${selectedYear}&status=Illegal Trade`)
-      .then((response) => response.json())
-      .then((data) => {
-        updateChart(selectedYear, data); // Update the chart with the new year data
-      })
-      .catch((error) => {
-        console.error("Error fetching data for the selected year:", error);
-      });
-  });
+yearSelect.addEventListener("change", function () {
+  const selectedYear = this.value;
+  fetch(`/get-chart-data?period=${selectedYear}&status=Illegal Trade`)
+    .then((response) => response.json())
+    .then((data) => {
+      updateChart(selectedYear, data); // Update the chart with the new year data
+    })
+    .catch((error) => {
+      console.error("Error fetching data for the selected year:", error);
+    });
+});
+
 
   //############################################################################################################
   // Bar two Chart Code for Dead and alive
   const DeadAliveChartCtx = document.getElementById("DeadAliveChart").getContext("2d");
 
-  // Initialize the chart with empty data
-  let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
-    type: "bar",
-    data: {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      datasets: [
-        {
-          label: "Alive",
-          data: [], // Will be populated dynamically
-          backgroundColor: "rgba(63,7,3)",
-          borderColor: "rgba(63,7,3)",
-          borderWidth: 1,
-          borderRadius: 10,
+// Initialize the chart with empty data
+let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
+  type: "bar",
+  data: {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      {
+        label: "Alive",
+        data: [], // Will be populated dynamically
+        backgroundColor: "rgba(63,7,3)",
+        borderColor: "rgba(63,7,3)",
+        borderWidth: 1,
+        borderRadius: 10,
+      },
+      {
+        label: "Dead",
+        data: [], // Will be populated dynamically
+        backgroundColor: "rgb(251, 146, 60)",
+        borderColor: "rgb(249, 115, 22)",
+        borderWidth: 1,
+        borderRadius: 10,
+      },
+    ],
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: "black",
         },
-        {
-          label: "Dead",
-          data: [], // Will be populated dynamically
-          backgroundColor: "rgb(251, 146, 60)",
-          borderColor: "rgb(249, 115, 22)",
-          borderWidth: 1,
-          borderRadius: 10,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: "black",
-          },
-          grid: {
-            display: false,
-          },
-        },
-        x: {
-          ticks: {
-            color: "black",
-          },
-          grid: {
-            display: false,
-          },
+        grid: {
+          display: false,
         },
       },
-      plugins: {
-        legend: {
-          display: true,
-          labels: {
-            padding: 30,
-            usePointStyle: true,
-            color: "black",
-          },
+      x: {
+        ticks: {
+          color: "black",
+        },
+        grid: {
+          display: false,
         },
       },
     },
-  });
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          padding: 30,
+          usePointStyle: true,
+          color: "black",
+        },
+      },
+    },
+  },
+});
 
   // Fetch data from API and populate chart options dynamically
   function fetchDataDeadAlive() {
@@ -483,8 +482,8 @@ function updateChart() {
     fetchDataDeadAlive(); // Refresh data based on new selection
   });
 
-  // Fetch data on page load
-  fetchDataDeadAlive();
+// Fetch data on page load
+fetchDataDeadAlive();
 
   //############################################################################################################
   // Horizontal Chart for Found Scales
@@ -526,39 +525,39 @@ function updateChart() {
     ],
   };
 
-  const config = {
-    type: "bar",
-    data: chartData,
-    options: {
-      indexAxis: "y",
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: "black",
-          },
-          grid: {
-            display: false,
-          },
+const config = {
+  type: "bar",
+  data: chartData,
+  options: {
+    indexAxis: "y",
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: "black",
         },
-        x: {
-          beginAtZero: true,
-          ticks: {
-            color: "black",
-          },
-          grid: {
-            display: false,
-          },
+        grid: {
+          display: false,
         },
       },
-      plugins: {
-        legend: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          color: "black",
+        },
+        grid: {
           display: false,
         },
       },
     },
-  };
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+  },
+};
 
   const horizontalBarChart = new Chart(FoundScales_ctx, config);
 

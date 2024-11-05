@@ -77,144 +77,161 @@
 //   userAccountChart.update();
 // });
 
-// Bar and Line Chart Code for Pangolin Chart
-const barChartCtx = document.getElementById("PangolinChart").getContext("2d");
+// Bar and Line Chart for Pangolin
+const PoachingChart_ctx = document.getElementById("PangolinChart").getContext("2d");
 
-const initialData = [180, 70, 120, 50, 40, 90, 150, 110, 140, 80, 40, 60];
-const initialLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+// Function to get responsive bar thickness
 function getBarThickness() {
-  return window.innerWidth <= 600 ? 20 : 50;
+    return window.innerWidth <= 600 ? 20 : 50;
 }
 
-let barChart = new Chart(barChartCtx, {
-  type: "bar",
-  data: {
-    labels: initialLabels,
-    datasets: [
-      {
-        type: "bar",
-        data: initialData,
-        backgroundColor: "#C1A682",
-        borderColor: "#C1A682",
-        borderWidth: 1,
-        barThickness: getBarThickness(),
-        borderRadius: 10,
-        order: 2,
-      },
-      {
-        type: "line",
-        data: initialData,
-        borderColor: "#C1A682",
-        borderWidth: 2,
-        pointBackgroundColor: "#C1A682",
-        pointBorderColor: "#C1A682",
-        pointRadius: 3,
-        pointHoverRadius: 6,
-        fill: false,
-        tension: 0.3,
-        order: 1,
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: "black",
-          maxTicksLimit: 5,
-          stepSize: Math.ceil(Math.max(...initialData) / 4),
-        },
-        grid: {
-          display: false,
-        },
-      },
-      x: {
-        ticks: {
-          color: "black",
-        },
-        grid: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-    animation: {
-      duration: 1000,
-      easing: "easeInOutQuart",
-    },
-  },
+// Global chart instance
+let barChart = null;
+
+// Initial data and labels
+let initialData = [];
+let initialLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// Function to initialize or update the chart
+function initializeChart(chartData, labels) {
+    if (!barChart) {
+        // Create new chart with both bar and line datasets
+        barChart = new Chart(PoachingChart_ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                  {
+                    type: "bar",
+                    data: initialData,
+                    backgroundColor: "#C1A682",
+                    borderColor: "#C1A682",
+                    borderWidth: 1,
+                    barThickness: getBarThickness(),
+                    borderRadius: 10,
+                    order: 2,
+                  },
+                  {
+                    type: "line",
+                    data: initialData,
+                    borderColor: "#C1A682",
+                    borderWidth: 2,
+                    pointBackgroundColor: "#C1A682",
+                    pointBorderColor: "#C1A682",
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    fill: false,
+                    tension: 0.3,
+                    order: 1,
+                  },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: 20
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "black",
+                            precision: 0
+                        },
+                        grid: { display: false }
+                    },
+                    x: {
+                        ticks: { color: "black" },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: "easeInOutQuart",
+                }
+            }
+        });
+    } else {
+        // Update existing chart
+        barChart.data.labels = labels;
+        barChart.data.datasets[0].data = chartData; // Bar data
+        barChart.data.datasets[1].data = chartData; // Line data
+        barChart.update();
+    }
+
+    // Calculate and display total
+    const totalSum = chartData.reduce((acc, curr) => acc + curr, 0);
+    document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
+}
+
+// Function to fetch and process chart data from API
+async function fetchChartData() {
+    try {
+        const response = await fetch('/get-chart-data/');
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+
+        // Aggregate incidents for each month across all statuses
+        const monthlyTotals = initialLabels.map((_, monthIndex) => 
+            Object.values(data).reduce((total, trendData) => 
+                total + trendData.overall[monthIndex], 0)
+        );
+
+        initialData = monthlyTotals;  // Store initial data for future reset
+        return monthlyTotals;
+    } catch (error) {
+        console.error('Error fetching chart data:', error);
+        return new Array(12).fill(0);  // Return zeroed data in case of an error
+    }
+}
+
+// Function to update chart with date filtering
+async function updateChart() {
+    const startDateInput = document.getElementById("startDateInput").value;
+    const endDateInput = document.getElementById("endDateInput").value;
+    const startDate = new Date(startDateInput);
+    const endDate = new Date(endDateInput);
+
+    if (startDateInput && endDateInput && startDate <= endDate) {
+        const startMonthIndex = startDate.getMonth();
+        const endMonthIndex = endDate.getMonth();
+
+        const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
+        const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
+
+        initializeChart(filteredData, filteredLabels);
+    } else {
+        document.getElementById("totalDisplay").innerText = "Invalid Date Range";
+    }
+}
+
+// Function to clear dates and reset chart
+function clearDates() {
+    document.getElementById("startDateInput").value = "";
+    document.getElementById("endDateInput").value = "";
+
+    initializeChart(initialData, initialLabels);
+}
+
+// Initialize chart on page load
+window.addEventListener('load', async function () {
+    const chartData = await fetchChartData();
+    initializeChart(chartData, initialLabels);
 });
 
-const totalElement = document.getElementById("totalDisplay");
-let initialTotal = initialData.reduce((acc, curr) => acc + curr, 0);
-if (totalElement) {
-  totalElement.textContent = `Total: ${initialTotal}`;
-}
-
-function updateChart() {
-  const startDateInput = document.getElementById("startDateInput").value;
-  const endDateInput = document.getElementById("endDateInput").value;
-  const startDate = new Date(startDateInput);
-  const endDate = new Date(endDateInput);
-  const totalElement = document.getElementById("totalDisplay");
-
-  if (startDateInput && endDateInput && startDate <= endDate) {
-    const startMonthIndex = startDate.getMonth();
-    const endMonthIndex = endDate.getMonth();
-
-    const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
-    const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
-
-    const totalSum = filteredData.reduce((acc, curr) => acc + curr, 0);
-
-    barChart.data.labels = filteredLabels;
-    barChart.data.datasets[0].data = filteredData;
-    barChart.data.datasets[1].data = filteredData;
-
-    barChart.options.scales.y.ticks.stepSize = Math.ceil(Math.max(...filteredData) / 4);
-
-    barChart.update();
-
-    if (totalElement) {
-      totalElement.textContent = `Total: ${totalSum}`;
+// Responsive chart resizing
+window.addEventListener('resize', function() {
+    if (barChart) {
+        barChart.data.datasets[0].barThickness = getBarThickness();
+        barChart.update();
     }
-  } else if (totalElement) {
-    totalElement.textContent = "Invalid Date Range";
-  }
-}
+});
 
-function clearDates() {
-  const totalElement = document.getElementById("totalDisplay");
-
-  barChart.data.labels = initialLabels;
-  barChart.data.datasets[0].data = initialData;
-  barChart.data.datasets[1].data = initialData;
-
-  barChart.options.scales.y.ticks.stepSize = Math.ceil(Math.max(...initialData) / 4);
-
-  barChart.update();
-
-  const totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  if (totalElement) {
-    totalElement.textContent = `Total: ${totalSum}`;
-  }
-
-  document.getElementById("startDateInput").value = "";
-  document.getElementById("endDateInput").value = "";
-}
-
-window.onload = function () {
-  const totalElement = document.getElementById("totalDisplay");
-  const totalSum = initialData.reduce((acc, curr) => acc + curr, 0);
-  if (totalElement) {
-    totalElement.textContent = `Total: ${totalSum}`;
-  }
-};
