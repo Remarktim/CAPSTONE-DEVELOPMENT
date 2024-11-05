@@ -390,7 +390,37 @@ def user_update_private(request, id):
 
 
 def admin_home(request):
-    return render(request, 'admin/admin.html')
+    # Initialize overall trend data
+    overall_trend = {
+        'alive': 0,
+        'dead': 0,
+        'scales': 0,
+        'illegal_trade': 0,
+    }
+
+    # Aggregate data by status and count occurrences
+    aggregated_data = Incident.objects.values('status').annotate(count=Count('id'))
+
+    for entry in aggregated_data:
+        status = entry['status']  # Get the status
+        count = entry['count']    # Get the count
+
+        # Update the overall trend counts based on status
+        if status == 'Alive':
+            overall_trend['alive'] += count
+        elif status == 'Dead':
+            overall_trend['dead'] += count
+        elif status == 'Scales':
+            overall_trend['scales'] += count
+        elif status == 'Illegal Trade':
+            overall_trend['illegal_trade'] += count
+
+    # Prepare the response with the total count for each status
+    response_data = {
+        'overall_trend': overall_trend,
+    }
+
+    return render(request, 'admin/admin.html', response_data)
 
 
 def admin_login(request):
@@ -885,9 +915,31 @@ def get_chart_data(request):
 
     return JsonResponse(response_data)
 
+def get_registereduser_data(request):
+    # Get the list of distinct years from the User model
+    years = User.objects.dates('created_at', 'year', order='ASC').values_list('created_at__year', flat=True)
+
+    # Organize data by months for each year
+    data_by_year = {str(year): [0] * 12 for year in years}
+
+    # Query and process the user data
+    for year in years:
+        users_per_month = (
+            User.objects.filter(created_at__year=year)
+            .values_list('created_at__month')
+            .annotate(count=Count('id'))
+        )
+        for month, count in users_per_month:
+            data_by_year[str(year)][month - 1] = count
+
+    return JsonResponse(data_by_year)
+    
+
 
 def get_available_years(request):
     years = Incident.objects.dates('created_at', 'year').distinct()
     available_years = [year.year for year in years]
     available_years.sort(reverse=True)
     return JsonResponse(available_years, safe=False)
+
+
