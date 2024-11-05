@@ -22,7 +22,7 @@ function chatBot() {
       this.messages = [];
       this.messages.push({
         from: "bot",
-        text: "Hi! I'm PangoBot 🦕 Ask me anything about the Palawan Pangolin!",
+        text: "Hi! I'm PangoBot Ask me anything about the Palawan Pangolin!",
         timestamp: new Date().getTime(),
       });
     },
