@@ -215,11 +215,11 @@ def send_message(request):
                 return JsonResponse({
                     'status': 'success',
                     'response': "I apologize, but I'm specifically designed to discuss pangolins and related topics. Could you please ask me something about pangolins? For example, you could ask about:\n\n" +
-                              "• Pangolin characteristics and behavior\n" +
-                              "• Pangolin conservation efforts\n" +
-                              "• The Palawan pangolin species\n" +
-                              "• Pangolin habitat and diet\n" +
-                              "• Threats to pangolin survival"
+                                "• Pangolin characteristics and behavior\n" +
+                                "• Pangolin conservation efforts\n" +
+                                "• The Palawan pangolin species\n" +
+                                "• Pangolin habitat and diet\n" +
+                                "• Threats to pangolin survival"
                 })
 
             model = initialize_genai()
@@ -227,7 +227,7 @@ def send_message(request):
                 logger.error("Failed to initialize Gemini model")
                 return JsonResponse({
                     'status': 'error',
-                    'response': 'Chat service is temporarily unavailable.'
+                    'response': 'Chat service is temporarily unavailable. Please try again later.'
                 }, status=500)
 
             try:
@@ -247,7 +247,11 @@ def send_message(request):
                         'response': response.text
                     })
                 else:
-                    raise Exception("Empty response from model")
+                    logger.error("Empty response from model")
+                    return JsonResponse({
+                        'status': 'error',
+                        'response': 'I apologize, but I had trouble processing your question. Please try again.'
+                    }, status=500)
 
             except Exception as e:
                 logger.error(f"Error getting model response: {str(e)}")
@@ -260,14 +264,14 @@ def send_message(request):
             logger.error("Invalid JSON in request body")
             return JsonResponse({
                 'status': 'error',
-                'response': 'Invalid request format.'
+                'response': 'Invalid request format. Please send a valid message.'
             }, status=400)
 
         except Exception as e:
             logger.error(f"Unexpected error: {str(e)}")
             return JsonResponse({
                 'status': 'error',
-                'response': 'An unexpected error occurred.'
+                'response': 'An unexpected error occurred. Please try again later.'
             }, status=500)
 
     return JsonResponse({
@@ -355,6 +359,7 @@ def maps(request):
 @login_required
 def account_view(request):
     return render(request, 'private/account_view.html')
+
 
 @login_required
 def user_update_private(request, id):
@@ -839,43 +844,45 @@ def get_chart_data(request):
     # Get period and status from the frontend request
     period = request.GET.get('period', 'overall')
     status_filter = request.GET.get('status', None)
-    
+
     # Define statuses if filtering is not applied
     statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
     if status_filter:
         # Split the comma-separated statuses
         statuses = [s.strip() for s in status_filter.split(',')]
-    
+
     # Initialize dictionaries to hold overall and yearly trends per status
-    trends = {status: {'overall': [0] * 12, 'yearly': {}} for status in statuses}
-    
+    trends = {status: {'overall': [0] * 12, 'yearly': {}}
+              for status in statuses}
+
     # Get all reports
     reports = Incident.objects.all()
-    
+
     # Filter reports based on status if specific statuses are requested
     if status_filter:
         reports = reports.filter(status__in=statuses)
-    
+
     # Rest of your code remains the same...
     aggregated_data = reports.values(
         'created_at__year', 'created_at__month', 'status'
     ).annotate(count=Count('id'))
-    
+
     for entry in aggregated_data:
         month_index = entry['created_at__month'] - 1
         status = entry['status']
         count = entry['count']
         year = entry['created_at__year']
-        
+
         if status in trends:
             trends[status]['overall'][month_index] += count
-            
+
             if year not in trends[status]['yearly']:
                 trends[status]['yearly'][year] = [0] * 12
             trends[status]['yearly'][year][month_index] += count
-    
-    response_data = {f"{status.lower()}_trend": trends[status] for status in statuses}
-    
+
+    response_data = {
+        f"{status.lower()}_trend": trends[status] for status in statuses}
+
     return JsonResponse(response_data)
 
 

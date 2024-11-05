@@ -56,7 +56,7 @@ function chatBot() {
 
           const data = await response.json();
 
-          if (data.status === "success") {
+          if (data && data.status === "success" && data.response) {
             this.messages.push({
               from: "bot",
               text: data.response,
@@ -83,7 +83,9 @@ function chatBot() {
         // Scroll to bottom
         setTimeout(() => {
           const messagesDiv = document.getElementById("messages");
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          if (messagesDiv) {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          }
         }, 100);
       }
     },
