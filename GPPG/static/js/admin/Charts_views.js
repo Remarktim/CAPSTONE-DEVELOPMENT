@@ -35,7 +35,7 @@ const WebsiteViews_pieChart = new Chart(WebsiteViews_ctx, {
   data: WebsiteViews_PieData,
   options: {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     plugins: {
       legend: {
         position: "right",
@@ -77,28 +77,17 @@ const PoachingChart_ctx = document.getElementById("PoachingChart").getContext("2
 
 // Function to get responsive bar thickness
 function getBarThickness() {
-  return window.innerWidth <= 600 ? 15 : 30;
+    return window.innerWidth <= 600 ? 15 : 30;
 }
 
 // Global chart instance
 let barChart = null;
 
-const totalElement = document.getElementById("totalDisplay");
-let initialTotal = initialData.reduce((acc, curr) => acc + curr, 0);
-if (totalElement) {
-  totalElement.textContent = `Total: ${initialTotal}`;
-}
-
-function updateChart() {
-  const startDateInput = document.getElementById("startDateInput").value;
-  const endDateInput = document.getElementById("endDateInput").value;
-  const startDate = new Date(startDateInput);
-  const endDate = new Date(endDateInput);
 // Initial data and labels
 let initialData, initialLabels;
 
-  // Function to initialize or update the chart
-  function initializeChart(chartData, labels) {
+// Function to initialize or update the chart
+function initializeChart(chartData, labels) {
     // Create or update the chart
     if (!barChart) {
         // Create new chart
@@ -117,7 +106,7 @@ let initialData, initialLabels;
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 layout: {
                     padding: {
                         top: 20,
@@ -158,41 +147,44 @@ let initialData, initialLabels;
             },
         });
     } else {
-      // Update existing chart
-      barChart.data.labels = labels;
-      barChart.data.datasets[0].data = chartData;
-      barChart.update();
+        // Update existing chart
+        barChart.data.labels = labels;
+        barChart.data.datasets[0].data = chartData;
+        barChart.update();
     }
 
     // Calculate and display total
     const totalSum = chartData.reduce((acc, curr) => acc + curr, 0);
     document.getElementById("totalDisplay").innerText = `Total: ${totalSum}`;
-  }
+}
 
-  // Function to fetch chart data
-  async function fetchChartData() {
+// Function to fetch chart data
+async function fetchChartData() {
     try {
-      const response = await fetch("/get-chart-data/");
+        const response = await fetch('/get-chart-data/');
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+        const data = await response.json();
+        
+        // Sum up incidents for each month across all statuses
+        const monthlyTotals = data.alive_trend.overall.map((_, monthIndex) => 
+            Object.values(data).reduce((total, statusData) => 
+                total + statusData.overall[monthIndex], 0)
+        );
 
-      const data = await response.json();
+        // Store initial data and labels
+        initialData = monthlyTotals;
+        initialLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-      // Sum up incidents for each month across all statuses
-      const monthlyTotals = data.alive_trend.overall.map((_, monthIndex) => Object.values(data).reduce((total, statusData) => total + statusData.overall[monthIndex], 0));
-
-      // Store initial data and labels
-      initialData = monthlyTotals;
-      initialLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-      return monthlyTotals;
+        return monthlyTotals;
     } catch (error) {
-      console.error("Error fetching chart data:", error);
-      return new Array(12).fill(0);
+        console.error('Error fetching chart data:', error);
+        return new Array(12).fill(0);
     }
-  }
+}
 
 // Function to update chart with date filtering
 async function updateChart() {
@@ -202,62 +194,62 @@ async function updateChart() {
     const endDate = new Date(endDateInput);
 
     try {
-      if (startDateInput && endDateInput && startDate <= endDate) {
-        const startMonthIndex = startDate.getMonth();
-        const endMonthIndex = endDate.getMonth();
+        if (startDateInput && endDateInput && startDate <= endDate) {
+            const startMonthIndex = startDate.getMonth();
+            const endMonthIndex = endDate.getMonth();
 
-        const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
-        const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
+            const filteredData = initialData.slice(startMonthIndex, endMonthIndex + 1);
+            const filteredLabels = initialLabels.slice(startMonthIndex, endMonthIndex + 1);
 
-        // Update chart with filtered data
-        initializeChart(filteredData, filteredLabels);
-      } else {
-        document.getElementById("totalDisplay").innerText = `Invalid Date Range`;
-      }
+            // Update chart with filtered data
+            initializeChart(filteredData, filteredLabels);
+        } else {
+            document.getElementById("totalDisplay").innerText = `Invalid Date Range`;
+        }
     } catch (error) {
-      console.error("Error updating chart:", error);
+        console.error('Error updating chart:', error);
     }
-  }
+}
 
-  // Function to clear dates and reset chart
-  async function clearDates() {
+// Function to clear dates and reset chart
+async function clearDates() {
     // Reset date inputs
     document.getElementById("startDateInput").value = "";
     document.getElementById("endDateInput").value = "";
 
     // Update chart with full data
     initializeChart(initialData, initialLabels);
-  }
+}
 
-  // Initialize chart on page load
-  window.addEventListener("load", async function () {
+// Initialize chart on page load
+window.addEventListener('load', async function () {
     try {
-      const initialData = await fetchChartData();
-      initializeChart(initialData, initialLabels);
+        const initialData = await fetchChartData();
+        initializeChart(initialData, initialLabels);
     } catch (error) {
-      console.error("Error initializing chart:", error);
+        console.error('Error initializing chart:', error);
     }
-  });
+});
 
-  // Responsive chart resizing
-  window.addEventListener("resize", function () {
+// Responsive chart resizing
+window.addEventListener('resize', function() {
     if (barChart) {
-      barChart.resize();
+        barChart.resize();
     }
-  });
+});
 
 //############################################################################################################
 // Line Chart Code for Illegal Trades
 const IllegalTradeChart_ctx = document.getElementById("IllegalTrade_Chart").getContext("2d");
 
-  const IllegalTrade_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const IllegalTrade_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  const yearSelect = document.getElementById("yearSelect");
+const yearSelect = document.getElementById("yearSelect");
 
-  // Initialize the chart
-  let IllegalTradeGradient = IllegalTradeChart_ctx.createLinearGradient(0, 0, 0, 400);
-  IllegalTradeGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
-  IllegalTradeGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
+// Initialize the chart
+let IllegalTradeGradient =  IllegalTradeChart_ctx.createLinearGradient(0, 0, 0, 400);
+IllegalTradeGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
+IllegalTradeGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
 
 const IllegalTradeChartConfig = {
   type: "line",
@@ -278,6 +270,7 @@ const IllegalTradeChartConfig = {
   },
   options: {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
@@ -305,40 +298,40 @@ const IllegalTradeChartConfig = {
   },
 };
 
-  let IllegalTradeChart = new Chart(IllegalTradeChart_ctx, IllegalTradeChartConfig);
+let IllegalTradeChart = new Chart( IllegalTradeChart_ctx, IllegalTradeChartConfig);
 
-  function fetchDataIllegalTrade() {
-    fetch(`/get-chart-data?period=overall&status=Illegal Trade`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched Data:", data); // Log the full fetched data
+function fetchDataIllegalTrade() {
+  fetch(`/get-chart-data?period=overall&status=Illegal Trade`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched Data:", data); // Log the full fetched data
 
-        // Check the response structure
-        if (!data || typeof data !== "object") {
-          console.error("Fetched data is not an object:", data);
-          return;
-        }
+      // Check the response structure
+      if (!data || typeof data !== 'object') {
+        console.error("Fetched data is not an object:", data);
+        return;
+      }
 
-        // Access the correct key with bracket notation
-        const trends = data["illegal trade_trend"];
-        if (!trends || !trends.yearly) {
-          console.error("Invalid data format. Expected 'illegal trade_trend':", data);
-          return; // Exit the function if the data structure is not as expected
-        }
+      // Access the correct key with bracket notation
+      const trends = data["illegal trade_trend"];
+      if (!trends || !trends.yearly) {
+        console.error("Invalid data format. Expected 'illegal trade_trend':", data);
+        return; // Exit the function if the data structure is not as expected
+      }
 
-        // Extract the years from the data response
-        const years = Object.keys(trends.yearly);
+      // Extract the years from the data response
+      const years = Object.keys(trends.yearly);
 
-        // Populate the year dropdown
-        years.forEach((year) => {
-          const option = document.createElement("option");
-          option.value = year;
-          option.textContent = year;
-          yearSelect.appendChild(option);
-        });
+      // Populate the year dropdown
+      years.forEach((year) => {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      });
 
       const selectedYear = years[0]; // Set the default selected year
-      updateChart(selectedYear, trends); // Update the chart with the initial year data
+      updateChartIllegalTrade(selectedYear, trends); // Update the chart with the initial year data
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
@@ -346,28 +339,29 @@ const IllegalTradeChartConfig = {
 }
 
 // Function to update the chart with data for the selected year
-function updateChart(year, trends) {
+function updateChartIllegalTrade(year, trends) {
   const chartData = trends.yearly[year];
 
-    if (!chartData) {
-      console.error("No data available for the selected year:", year);
-      return; // Exit the function if there's no data for the selected year
-    }
-
-    IllegalTradeChart.data.datasets[0].data = chartData;
-    IllegalTradeChart.data.datasets[0].label = year; // Update label to show selected year
-    IllegalTradeChart.update();
+  if (!chartData) {
+    console.error("No data available for the selected year:", year);
+    return; // Exit the function if there's no data for the selected year
   }
 
-  // Initialize the fetch on page load
-  fetchDataIllegalTrade();
+  IllegalTradeChart.data.datasets[0].data = chartData;
+  IllegalTradeChart.data.datasets[0].label = year; // Update label to show selected year
+  IllegalTradeChart.update();
+}
+
+// Initialize the fetch on page load
+fetchDataIllegalTrade();
+
 
 yearSelect.addEventListener("change", function () {
   const selectedYear = this.value;
   fetch(`/get-chart-data?period=${selectedYear}&status=Illegal Trade`)
     .then((response) => response.json())
     .then((data) => {
-      updateChart(selectedYear, data); // Update the chart with the new year data
+      updateChartIllegalTrade(selectedYear, data); // Update the chart with the new year data
     })
     .catch((error) => {
       console.error("Error fetching data for the selected year:", error);
@@ -375,9 +369,9 @@ yearSelect.addEventListener("change", function () {
 });
 
 
-  //############################################################################################################
-  // Bar two Chart Code for Dead and alive
-  const DeadAliveChartCtx = document.getElementById("DeadAliveChart").getContext("2d");
+//############################################################################################################
+// Bar two Chart Code for Dead and alive
+const DeadAliveChartCtx = document.getElementById("DeadAliveChart").getContext("2d");
 
 // Initialize the chart with empty data
 let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
@@ -404,6 +398,7 @@ let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
     ],
   },
   options: {
+    maintainAspectRatio: true,
     scales: {
       y: {
         beginAtZero: true,
@@ -436,94 +431,94 @@ let DeadAlive_currentChart = new Chart(DeadAliveChartCtx, {
   },
 });
 
-  // Fetch data from API and populate chart options dynamically
-  function fetchDataDeadAlive() {
-    fetch(`/get-chart-data?status=Dead,Alive&period=overall`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched Data:", data);
+// Fetch data from API and populate chart options dynamically
+function fetchDataDeadAlive() {
+  fetch(`/get-chart-data?status=Dead,Alive&period=overall`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Fetched Data:", data);
 
-        // Extract years and data for "Alive" and "Dead" statuses
-        const aliveTrend = data["alive_trend"].yearly;
-        const deadTrend = data["dead_trend"].yearly;
-        const availableYears = Object.keys(aliveTrend);
+      // Extract years and data for "Alive" and "Dead" statuses
+      const aliveTrend = data["alive_trend"].yearly;
+      const deadTrend = data["dead_trend"].yearly;
+      const availableYears = Object.keys(aliveTrend);
 
-        // Populate the year dropdown
-        const yearSelect = document.getElementById("DeadAlive_yearSelector");
-        availableYears.forEach((year) => {
-          const option = document.createElement("option");
-          option.value = year;
-          option.textContent = year;
-          yearSelect.appendChild(option);
-        });
-
-        // Set initial data for the first available year
-        updateChartData(availableYears[0], aliveTrend, deadTrend);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      // Populate the year dropdown
+      const yearSelect = document.getElementById("DeadAlive_yearSelector");
+      availableYears.forEach((year) => {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
       });
-  }
 
-  // Update chart data for the selected year
-  function updateChartData(selectedYear, aliveTrend, deadTrend) {
-    if (aliveTrend[selectedYear] && deadTrend[selectedYear]) {
-      DeadAlive_currentChart.data.datasets[0].data = aliveTrend[selectedYear];
-      DeadAlive_currentChart.data.datasets[1].data = deadTrend[selectedYear];
-      DeadAlive_currentChart.update();
-    } else {
-      console.error("No data available for the selected year:", selectedYear);
-    }
-  }
+      // Set initial data for the first available year
+      updateChartData(availableYears[0], aliveTrend, deadTrend);
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+}
 
-  // Event listener for year selection
-  document.getElementById("DeadAlive_yearSelector").addEventListener("change", function () {
-    const selectedYear = this.value;
-    fetchDataDeadAlive(); // Refresh data based on new selection
-  });
+// Update chart data for the selected year
+function updateChartData(selectedYear, aliveTrend, deadTrend) {
+  if (aliveTrend[selectedYear] && deadTrend[selectedYear]) {
+    DeadAlive_currentChart.data.datasets[0].data = aliveTrend[selectedYear];
+    DeadAlive_currentChart.data.datasets[1].data = deadTrend[selectedYear];
+    DeadAlive_currentChart.update();
+  } else {
+    console.error("No data available for the selected year:", selectedYear);
+  }
+}
+
+// Event listener for year selection
+document.getElementById("DeadAlive_yearSelector").addEventListener("change", function () {
+  const selectedYear = this.value;
+  fetchDataDeadAlive(); // Refresh data based on new selection
+});
 
 // Fetch data on page load
 fetchDataDeadAlive();
 
-  //############################################################################################################
-  // Horizontal Chart for Found Scales
+//############################################################################################################
+// Horizontal Chart for Found Scales
 
-  const FoundScales_ctx = document.getElementById("FoundScales_horizontalBarChart").getContext("2d");
-  const FoundScales_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  let FoundScales_filteredData = {};
+const FoundScales_ctx = document.getElementById("FoundScales_horizontalBarChart").getContext("2d");
+const FoundScales_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+let FoundScales_filteredData = {};
 
-  // Function to filter and organize the data for the chart
-  function FoundScales_filterData(data, labels) {
-    const filteredData = [];
-    const filteredLabels = [];
-
-    // Only add non-zero data points
-    data.forEach((value, index) => {
-      if (value !== 0) {
-        filteredData.push(value);
-        filteredLabels.push(labels[index]);
-      }
-    });
-
-    // If no data points, return empty arrays
-    return {
-      filteredData: filteredData.length ? filteredData : [],
-      filteredLabels: filteredLabels.length ? filteredLabels : [],
-    };
-  }
-
-  // Initial chart configuration
-  const chartData = {
-    labels: [], // Will be updated dynamically
-    datasets: [
-      {
-        label: "Data",
-        data: [],
-        backgroundColor: "rgb(251, 146, 60)",
-        borderRadius: 10,
-      },
-    ],
+// Function to filter and organize the data for the chart
+function FoundScales_filterData(data, labels) {
+  const filteredData = [];
+  const filteredLabels = [];
+  
+  // Only add non-zero data points
+  data.forEach((value, index) => {
+    if (value !== 0) {
+      filteredData.push(value);
+      filteredLabels.push(labels[index]);
+    }
+  });
+  
+  // If no data points, return empty arrays
+  return { 
+    filteredData: filteredData.length ? filteredData : [], 
+    filteredLabels: filteredLabels.length ? filteredLabels : [] 
   };
+}
+
+// Initial chart configuration
+const chartData = {
+  labels: [], // Will be updated dynamically
+  datasets: [
+    {
+      label: "Data",
+      data: [],
+      backgroundColor: "rgb(251, 146, 60)",
+      borderRadius: 10,
+    },
+  ],
+};
 
 const config = {
   type: "bar",
@@ -531,6 +526,7 @@ const config = {
   options: {
     indexAxis: "y",
     responsive: true,
+    maintainAspectRatio: true,
     scales: {
       y: {
         beginAtZero: true,
@@ -559,80 +555,80 @@ const config = {
   },
 };
 
-  const horizontalBarChart = new Chart(FoundScales_ctx, config);
+const horizontalBarChart = new Chart(FoundScales_ctx, config);
 
-  // Fetch data dynamically from API
-  async function fetchAndProcessData() {
-    try {
-      const response = await fetch("/get-chart-data?status=Scales&period=overall");
-      const data = await response.json();
-
-      // Ensure scales_trend exists
-      if (!data.scales_trend) {
-        console.error("Scales trend data not available.");
-        data.scales_trend = {
-          yearly: {},
-        };
-      }
-
-      // Get year select element
-      const yearSelect = document.getElementById("FoundScales_yearSelect");
-
-      // Clear existing options
-      yearSelect.innerHTML = "";
-
-      // Process and add yearly data
-      const years = Object.keys(data.scales_trend.yearly).sort();
-      years.forEach((year) => {
-        const filteredYearData = FoundScales_filterData(data.scales_trend.yearly[year], FoundScales_labels);
-        FoundScales_filteredData[year] = filteredYearData;
-
-        // Add year to select options
-        const yearOption = document.createElement("option");
-        yearOption.value = year;
-        yearOption.textContent = year;
-        yearSelect.appendChild(yearOption);
-      });
-
-      // Trigger initial chart update with the first year if available
-      if (years.length > 0) {
-        yearSelect.value = years[0];
-        updateChartScales(years[0]);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-
-      // Provide fallback data
-      FoundScales_filteredData = {};
-      updateChartScales(null);
+// Fetch data dynamically from API
+async function fetchAndProcessData() {
+  try {
+    const response = await fetch('/get-chart-data?status=Scales&period=overall');
+    const data = await response.json();
+    
+    // Ensure scales_trend exists
+    if (!data.scales_trend) {
+      console.error("Scales trend data not available.");
+      data.scales_trend = {
+        yearly: {}
+      };
     }
-  }
-
-  // Function to update chart data based on the selected year
-  function updateChartScales(selectedYear) {
-    const selectedData = selectedYear ? FoundScales_filteredData[selectedYear] || { filteredData: [], filteredLabels: [] } : { filteredData: [], filteredLabels: [] };
-
-    // Only update and render if there's data
-    if (selectedData.filteredData.length) {
-      horizontalBarChart.data.labels = selectedData.filteredLabels;
-      horizontalBarChart.data.datasets[0].data = selectedData.filteredData;
-      horizontalBarChart.data.datasets[0].label = `${selectedYear} Data`;
-      horizontalBarChart.update();
-    } else {
-      // Clear the chart or show a "No data" message
-      horizontalBarChart.data.labels = [];
-      horizontalBarChart.data.datasets[0].data = [];
-      horizontalBarChart.data.datasets[0].label = "No Data Available";
-      horizontalBarChart.update();
+    
+    // Get year select element
+    const yearSelect = document.getElementById("FoundScales_yearSelect");
+    
+    // Clear existing options
+    yearSelect.innerHTML = '';
+    
+    // Process and add yearly data
+    const years = Object.keys(data.scales_trend.yearly).sort();
+    years.forEach(year => {
+      const filteredYearData = FoundScales_filterData(data.scales_trend.yearly[year], FoundScales_labels);
+      FoundScales_filteredData[year] = filteredYearData;
+      
+      // Add year to select options
+      const yearOption = document.createElement("option");
+      yearOption.value = year;
+      yearOption.textContent = year;
+      yearSelect.appendChild(yearOption);
+    });
+    
+    // Trigger initial chart update with the first year if available
+    if (years.length > 0) {
+      yearSelect.value = years[0];
+      updateChartScales(years[0]);
     }
+    
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    
+    // Provide fallback data
+    FoundScales_filteredData = {};
+    updateChartScales(null);
   }
-
-  // Event listener for year selection
-  document.getElementById("FoundScales_yearSelect").addEventListener("change", function () {
-    const selectedYear = this.value;
-    updateChartScales(selectedYear);
-  });
-
-  // Initial data fetch
-  document.addEventListener("DOMContentLoaded", fetchAndProcessData);
 }
+
+// Function to update chart data based on the selected year
+function updateChartScales(selectedYear) {
+  const selectedData = selectedYear ? (FoundScales_filteredData[selectedYear] || { filteredData: [], filteredLabels: [] }) : { filteredData: [], filteredLabels: [] };
+  
+  // Only update and render if there's data
+  if (selectedData.filteredData.length) {
+    horizontalBarChart.data.labels = selectedData.filteredLabels;
+    horizontalBarChart.data.datasets[0].data = selectedData.filteredData;
+    horizontalBarChart.data.datasets[0].label = `${selectedYear} Data`;
+    horizontalBarChart.update();
+  } else {
+    // Clear the chart or show a "No data" message
+    horizontalBarChart.data.labels = [];
+    horizontalBarChart.data.datasets[0].data = [];
+    horizontalBarChart.data.datasets[0].label = "No Data Available";
+    horizontalBarChart.update();
+  }
+}
+
+// Event listener for year selection
+document.getElementById("FoundScales_yearSelect").addEventListener("change", function () {
+  const selectedYear = this.value;
+  updateChartScales(selectedYear);
+});
+
+// Initial data fetch
+document.addEventListener('DOMContentLoaded', fetchAndProcessData);
