@@ -1,19 +1,23 @@
 {% load static %}
-<section class="grid grid-cols-4 gap-4 mb-4 font-['Roboto']">
+<section class="grid grid-cols-5 gap-5 mb-5 font-['Roboto']">
   <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
     <p class="text-2xl font-extrabold text-black">323</p>
     <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Website Visitors</p>
   </div>
   <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p class="text-2xl font-extrabold text-black">55</p>
+    <p class="text-2xl font-extrabold text-black" id="dead">{{ overall_trend.dead }}</p>
     <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Found Dead</p>
   </div>
   <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p class="text-2xl font-extrabold text-black">12</p>
+    <p class="text-2xl font-extrabold text-black" id="alive">{{ overall_trend.alive }}</p>
     <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Found Alive</p>
   </div>
   <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p class="text-2xl font-extrabold text-black">69</p>
+    <p class="text-2xl font-extrabold text-black" id="scales">{{ overall_trend.scales }}</p>
+    <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Scales</p>
+  </div>
+  <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
+    <p class="text-2xl font-extrabold text-black" id="illegaltrade">{{ overall_trend.illegal_trade }}</p>
     <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Illegal Trades</p>
   </div>
 </section>
@@ -121,7 +125,8 @@
         <canvas
           id="UserAccountChart"
           class="w-full"
-          height="175"></canvas>
+          height="290">
+        </canvas>
       </div>
     </div>
   </div>

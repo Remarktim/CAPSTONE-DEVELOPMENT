@@ -1,81 +1,103 @@
 // Line Chart Code for User Account Chart
-// const userAccountCtx = document.getElementById("UserAccountChart").getContext("2d");
+const userAccountCtx = document.getElementById("UserAccountChart").getContext("2d");
+let userAccountChart;
 
-// const dataByYear = {
-//   "This Year": [65, 59, 80, 81, 56, 55, 40, 45, 60, 75, 82, 90],
-//   "Last Year": [28, 48, 40, 19, 86, 27, 90, 55, 70, 85, 89, 95],
-// };
+const yearSelect = document.getElementById("yearSelect");
 
-// const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+// Fetch data from the server
+async function fetchUserAccountData() {
+  const response = await fetch('/get-registereduser-data/');
+  const data = await response.json();
+  return data;
+}
 
-// const yearSelected = document.getElementById("yearSelect");
-// Object.keys(dataByYear).forEach((year) => {
-//   const option = document.createElement("option");
-//   option.value = year;
-//   option.textContent = year;
-//   yearSelected.appendChild(option);
-// });
+// Populate the year select options
+async function loadYearOptions() {
+  const data = await fetchUserAccountData();
+  Object.keys(data).forEach((year) => {
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = year;
+    yearSelect.appendChild(option);
+  });
+  return Object.keys(data)[0]; // Return the first year
+}
 
-// let selectedYear = Object.keys(dataByYear)[0];
+// Update the chart with the selected year's data
+async function updateChartUser() {
+  const selectedYear = yearSelect.value;
+  const data = await fetchUserAccountData();
 
-// let userAccountGradient = userAccountCtx.createLinearGradient(0, 0, 0, 400);
-// userAccountGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
-// userAccountGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
+  const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// const userAccountChartConfig = {
-//   type: "line",
-//   data: {
-//     labels: labels,
-//     datasets: [
-//       {
-//         label: selectedYear,
-//         data: dataByYear[selectedYear],
-//         fill: true,
-//         backgroundColor: userAccountGradient,
-//         borderColor: "rgba(255, 159, 64, 1)",
-//         tension: 0.4,
-//         pointRadius: 3,
-//         pointBackgroundColor: "rgba(255, 159, 64, 0.6)",
-//       },
-//     ],
-//   },
-//   options: {
-//     responsive: true,
-//     scales: {
-//       y: {
-//         beginAtZero: true,
-//         ticks: {
-//           color: "black",
-//         },
-//         grid: {
-//           display: false,
-//         },
-//       },
-//       x: {
-//         ticks: {
-//           color: "black",
-//         },
-//         grid: {
-//           display: false,
-//         },
-//       },
-//     },
-//     plugins: {
-//       legend: {
-//         display: false,
-//       },
-//     },
-//   },
-// };
+  const userAccountGradient = userAccountCtx.createLinearGradient(0, 0, 0, 400);
+  userAccountGradient.addColorStop(0, "rgba(255, 159, 64, 0.6)");
+  userAccountGradient.addColorStop(1, "rgba(75, 192, 192, 0)");
 
-// let userAccountChart = new Chart(userAccountCtx, userAccountChartConfig);
+  const userAccountChartConfig = {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: selectedYear,
+          data: data[selectedYear],
+          fill: true,
+          backgroundColor: userAccountGradient,
+          borderColor: "rgba(255, 159, 64, 1)",
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: "rgba(255, 159, 64, 0.6)",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: "black",
+          },
+          grid: {
+            display: false,
+          },
+        },
+        x: {
+          ticks: {
+            color: "black",
+          },
+          grid: {
+            display: false,
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+    },
+  };
 
-// yearSelected.addEventListener("change", function () {
-//   selectedYear = this.value;
-//   userAccountChart.data.datasets[0].data = dataByYear[selectedYear];
-//   userAccountChart.data.datasets[0].label = selectedYear;
-//   userAccountChart.update();
-// });
+  if (userAccountChart) {
+    userAccountChart.destroy();
+  }
+
+  userAccountChart = new Chart(userAccountCtx, userAccountChartConfig);
+}
+
+async function initializeChartUser() {
+  const firstYear = await loadYearOptions();
+  yearSelect.value = firstYear;
+  await updateChartUser();
+}
+
+initializeChartUser();
+
+yearSelect.addEventListener("change", updateChartUser);
+
 
 // Bar and Line Chart for Pangolin
 const PoachingChart_ctx = document.getElementById("PangolinChart").getContext("2d");
@@ -234,4 +256,6 @@ window.addEventListener('resize', function() {
         barChart.update();
     }
 });
+
+
 

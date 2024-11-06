@@ -78,6 +78,8 @@ urlpatterns = [
          name='get_poaching_trends'),
      path('get-chart-data/', views.get_chart_data,
          name='get_chart_data'),
+     path('get-registereduser-data/', views.get_registereduser_data,
+         name='get_registereduser_data'),
     path('get-available-years/', views.get_available_years,
          name='get_available_years'),
 
