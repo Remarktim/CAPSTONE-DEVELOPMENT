@@ -168,11 +168,12 @@
 <!-- Officers Content -->
 
 {% block title_content %} Officers {% endblock title_content %} {% block content %}
-<section class="my-5 mx-16 h-auto py-2">
+<section class="my-5 mx-16 h-full overflow-hidden py-2">
   <div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 text-center justify-center">
+    <!-- First row 2 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 text-center justify-center">
       {% if president %} {% for President in president %}
-      <div class="p-10 rounded-3xl sm:w-72 shadow-lg mx-auto h-full justify-start flex flex-col">
+      <div class="p-10 rounded-3xl sm:w-72 border hover:shadow-lg transition ease-in-out duration-500 mx-auto h-full justify-start flex flex-col">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -220,7 +221,7 @@
       {% endfor %} {% endif %}
       <!--  -->
       {% if vice_president %} {% for vice_president in vice_president %}
-      <div class="p-10 rounded-3xl sm:w-72 shadow-lg mx-auto h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl sm:w-72 border hover:shadow-lg transition ease-in-out duration-500 mx-auto h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -268,10 +269,11 @@
       {% endfor %} {% endif %}
     </div>
 
+    <!-- Second row -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mt-10 text-center">
       <!-- Secretary -->
       {% if secretary %} {% for secretary in secretary %}
-      <div class="p-10 rounded-3xl shadow-lg h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl border hover:shadow-lg transition ease-in-out duration-500 h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -319,7 +321,7 @@
       {% endfor %} {% endif %}
       <!-- Treasurer -->
       {% if treasurer %} {% for treasurer in treasurer %}
-      <div class="p-10 rounded-3xl shadow-lg h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl border hover:shadow-lg transition ease-in-out duration-500 h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -367,7 +369,7 @@
       {% endfor %} {% endif %}
       <!-- Auditor  -->
       {% if auditor %} {% for auditor in auditor %}
-      <div class="p-10 rounded-3xl shadow-lg h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl border hover:shadow-lg transition ease-in-out duration-500 h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -415,7 +417,7 @@
       {% endfor %} {% endif %}
       <!-- Pio Internal  -->
       {% if pio_internal %} {% for pio_internal in pio_internal %}
-      <div class="p-10 rounded-3xl shadow-lg h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl border hover:shadow-lg transition ease-in-out duration-500 h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -463,7 +465,7 @@
       {% endfor %} {% endif %}
       <!-- Pio External  -->
       {% if pio_external %} {% for pio_external in pio_external %}
-      <div class="p-10 rounded-3xl shadow-lg h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl border hover:shadow-lg transition ease-in-out duration-500 h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
@@ -511,7 +513,7 @@
       {% endfor %} {% endif %}
       <!-- Business Manager  -->
       {% if business_manager %} {% for business_manager in business_manager %}
-      <div class="p-10 rounded-3xl shadow-lg h-full flex flex-col items-center justify-between">
+      <div class="p-10 rounded-3xl border hover:shadow-lg transition ease-in-out duration-500 h-full flex flex-col items-center justify-between">
         <img
           oncontextmenu="return false;"
           draggable="false"
