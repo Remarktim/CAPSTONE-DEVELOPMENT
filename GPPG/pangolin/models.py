@@ -78,6 +78,7 @@ class Incident(BaseModel):
     city = models.CharField(
         max_length=150, choices=ct_choices, null=True, blank=True)
     status = models.CharField(max_length=150, choices=st_choices)
+    date_reported = models.DateField()
     description = models.CharField(max_length=250)
 
     def __str__(self):

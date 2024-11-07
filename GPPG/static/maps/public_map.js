@@ -44,7 +44,6 @@ map.on("rendercomplete", function () {
   hideLoading();
 });
 
-//  data for cluster statistics
 const Datamap = {
   "North Palawan": { dead: 15000, alive: 50000, scales: 25000, illegalTrades: 10000 },
   "Central Palawan": { dead: 10000, alive: 30000, scales: 15000, illegalTrades: 5000 },
@@ -53,7 +52,7 @@ const Datamap = {
 
 var vectorLayer = new ol.layer.Vector({
   source: new ol.source.Vector({
-    url: "/static/maps/ClusterOfPalawan_filtereds.geojson", // GeoJSON file input
+    url: "/static/maps/ClusterOfPalawan_filtereds.geojson",
     format: new ol.format.GeoJSON(),
   }),
   style: function (feature) {
@@ -115,7 +114,13 @@ map.on("pointermove", function (evt) {
       featureOverlay.getSource().addFeature(feature);
       const properties = feature.getProperties();
       const regionName = properties.Cluster || "Unknown Region";
-      overlay.getElement().innerHTML = `<div class="bg-white p-5 rounded-2xl relative"><button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button><p class="mb-5 font-bold">${regionName}</p><canvas id="donutChart" width="220" height="220"></canvas></div>`;
+      overlay.getElement().innerHTML = `
+        <div class="bg-white p-5 rounded-2xl relative">
+          <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+          <p class="mb-5 font-bold">${regionName}</p>
+          <canvas id="donutChart" width="220" height="220"></canvas>
+        </div>
+      `;
       overlay.setPosition(evt.coordinate);
       drawDonutChart(regionName);
     } else {
@@ -136,7 +141,13 @@ map.on("click", function (evt) {
     featureOverlay.getSource().addFeature(feature);
     const properties = feature.getProperties();
     const regionName = properties.Cluster || "Unknown Region";
-    overlay.getElement().innerHTML = `<div class="bg-white p-5 rounded-2xl relative"><button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button><p class="mb-5 font-bold">${regionName}</p><canvas id="donutChart" width="220" height="220"></canvas></div>`;
+    overlay.getElement().innerHTML = `
+      <div class="bg-white p-5 rounded-2xl relative">
+        <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+        <p class="mb-5 font-bold">${regionName}</p>
+        <canvas id="donutChart" width="220" height="220"></canvas>
+      </div>
+    `;
     overlay.setPosition(evt.coordinate);
     drawDonutChart(regionName);
   }
@@ -154,10 +165,10 @@ function drawDonutChart(highlightRegion) {
           {
             data: [data.dead, data.alive, data.scales, data.illegalTrades],
             backgroundColor: [
-              "#ffa500", // Dead
-              "#008000", // Alive
-              "#8b4513", // Scales
-              "#a52a2a", // Illegal Trades
+              "#ffa500",
+              "#008000",
+              "#8b4513",
+              "#a52a2a",
             ],
           },
         ],
