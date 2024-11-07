@@ -1,8 +1,9 @@
 
-// Initialize map and overlay elements
-
 var highlight;
 var selectedFeature = null;
+var dataLoaded = false;
+var mapRendered = false;
+
 var map = new ol.Map({
   target: "map",
   layers: [],
@@ -14,7 +15,13 @@ var map = new ol.Map({
   }),
 });
 
-// Loading animation functions
+function checkLoadingComplete() {
+  if (dataLoaded && mapRendered) {
+    hideLoading();
+  }
+}
+
+// Your existing loading functions remain the same
 function showLoading() {
   const loadingElement = document.getElementById("loading-animation");
   const mapElement = document.getElementById("map");
@@ -36,7 +43,6 @@ function hideLoading() {
 }
 
 showLoading();
-map.on("rendercomplete", hideLoading);
 
 // Function to remove highlight and overlay
 function removeHighlight() {
@@ -78,11 +84,13 @@ async function fetchRegionData() {
   try {
     const response = await fetch('/get-region-data/');
     const data = await response.json();
-    console.log("Fetched data from API:", data); // Debugging line
-    Datamap = data; // Assign the fetched data to Datamap
+    Datamap = data; 
+    dataLoaded = true;
+    checkLoadingComplete();
   } catch (error) {
-    console.error("Failed to fetch region data:", error);
-    Datamap = {}; // Assign an empty object if fetching fails
+    Datamap = {}; 
+    dataLoaded = true;
+    checkLoadingComplete();
   }
 }
 
@@ -116,7 +124,27 @@ fetchRegionData().then(() => {
     },
   });
 
+  vectorLayer.getSource().on('featuresloadend', function() {
+    dataLoaded = true;
+    checkLoadingComplete();
+  });
+
+  vectorLayer.getSource().on('featuresloaderror', function(error) {
+    console.error('Error loading features:', error);
+    const loadingElement = document.getElementById("loading-animation");
+    if (loadingElement) {
+      loadingElement.innerHTML = '<div class="text-red-500">Error loading map data</div>';
+    }
+    dataLoaded = true; // Mark as loaded even on error
+    checkLoadingComplete();
+  });
+
   map.addLayer(vectorLayer);
+
+  map.on("rendercomplete", function () {
+    mapRendered = true;
+    checkLoadingComplete();
+  });
 
   map.on("pointermove", function (evt) {
     if (selectedFeature) return;
@@ -172,9 +200,6 @@ function drawDonutChart(regionName, dataMap) {
   const ctx = document.getElementById("donutChart").getContext("2d");
   const data = dataMap[regionName];
 
-  // Debugging data
-  console.log("Drawing chart for region:", regionName);
-  console.log("Data for region:", data);
 
   if (!data) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear canvas
