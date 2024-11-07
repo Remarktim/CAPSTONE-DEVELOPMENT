@@ -946,32 +946,32 @@ def get_available_years(request):
 def get_region_data(request):
     # Define regions and their corresponding municipalities
     regions = {
-        "Northern Palawan": ["Roxas", "San Vicente", "Dumaran", "El Nido", "Coron", "Busuanga", "Culion",
+        "North Palawan": ["Roxas", "San Vicente", "Dumaran", "El Nido", "Coron", "Busuanga", "Culion",
                              "Magsaysay", "Cagayancillo", "Araceli", "Agutaya", "Taytay", "Cuyo", "Linapacan"],
         "Central Palawan": ["Puerto Princesa City"],
-        "Southern Palawan": ["Aborlan", "Narra", "Quezon", "Brooke's Point", "Sofronio Española",
+        "South Palawan": ["Aborlan", "Narra", "Quezon", "Brooke's Point", "Sofronio Española",
                              "Rizal", "Bataraza", "Balabac"]
     }
 
     # Initialize response data structure
     region_data = {
-        "Northern Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+        "North Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
         "Central Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
-        "Southern Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+        "South Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
     }
 
     # Get all incidents and group by status, municipality
-    incidents = Incident.objects.values("municipality", "status").annotate(count=Count("id"))
+    incidents = Incident.objects.values("municity", "status").annotate(count=Count("id"))
 
     # Aggregate data by region
     for incident in incidents:
-        municipality = incident["municipality"]
+        municity = incident["municity"]
         status = incident["status"]
         count = incident["count"]
 
         # Determine which region the municipality belongs to
         for region, municipalities in regions.items():
-            if municipality in municipalities:
+            if municity in municipalities:
                 # Update counts based on status
                 if status == "Dead":
                     region_data[region]["dead"] += count

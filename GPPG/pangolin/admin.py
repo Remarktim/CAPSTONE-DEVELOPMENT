@@ -4,8 +4,8 @@ from .models import *
 
 @admin.register(Incident)
 class IncidentAdmin(admin.ModelAdmin):
-    list_display = ("municipality", "city", "status", "description")
-    search_fields = ("municipality", "city", "status")
+    list_display = ("municity", "status", "description")
+    search_fields = ("municity", "status")
 
 
 @admin.register(Evidence)
