@@ -6,6 +6,15 @@ from .models import *
 
 
 class IncidentForm(forms.ModelForm):
+
+
+    date_reported = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'type': 'date',  # 'date' input type triggers browser date picker
+            'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
+            'placeholder': 'Select Date',
+        })
+    )
     class Meta:
         model = Incident
         fields = "__all__"
@@ -14,8 +23,11 @@ class IncidentForm(forms.ModelForm):
             'municipality': 'Municipality',
             'city': 'City',
             'status': 'Status',
+            'date_reported': 'Date Reported',
             'description': 'Description',
         }
+
+
 
         widgets = {
             'municipality': forms.Select(attrs={

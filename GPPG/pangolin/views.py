@@ -872,10 +872,10 @@ def get_poaching_trends(request):
 
     # Aggregate data for overall trend and yearly reports
     aggregated_data = reports.values(
-        'created_at__year', 'created_at__month', 'status').annotate(count=Count('id'))
+        'date_reported__year', 'date_reported__month', 'status').annotate(count=Count('id'))
 
     for entry in aggregated_data:
-        month_index = entry['created_at__month'] - \
+        month_index = entry['date_reported__month'] - \
             1  # Convert month to 0-index
         status = entry['status']  # Use status directly
         count = entry['count']
@@ -891,7 +891,7 @@ def get_poaching_trends(request):
             overall_trend['illegal_trade'][month_index] += count
 
         # Update yearly reports with monthly breakdown
-        year = entry['created_at__year']
+        year = entry['date_reported__year']
         if year not in yearly_reports:
             yearly_reports[year] = {
                 'alive': [0] * 12,
@@ -942,14 +942,14 @@ def get_chart_data(request):
 
     # Rest of your code remains the same...
     aggregated_data = reports.values(
-        'created_at__year', 'created_at__month', 'status'
+        'date_reported__year', 'date_reported__month', 'status'
     ).annotate(count=Count('id'))
 
     for entry in aggregated_data:
-        month_index = entry['created_at__month'] - 1
+        month_index = entry['date_reported__month'] - 1
         status = entry['status']
         count = entry['count']
-        year = entry['created_at__year']
+        year = entry['date_reported__year']
 
         if status in trends:
             trends[status]['overall'][month_index] += count
@@ -986,7 +986,50 @@ def get_registereduser_data(request):
 
 
 def get_available_years(request):
-    years = Incident.objects.dates('created_at', 'year').distinct()
+    years = Incident.objects.dates('date_reported', 'year').distinct()
     available_years = [year.year for year in years]
     available_years.sort(reverse=True)
     return JsonResponse(available_years, safe=False)
+
+
+def get_region_data(request):
+    # Define regions and their corresponding municipalities
+    regions = {
+        "Northern Palawan": ["Roxas", "San Vicente", "Dumaran", "El Nido", "Coron", "Busuanga", "Culion",
+                             "Magsaysay", "Cagayancillo", "Araceli", "Agutaya", "Taytay", "Cuyo", "Linapacan"],
+        "Central Palawan": ["Puerto Princesa City"],
+        "Southern Palawan": ["Aborlan", "Narra", "Quezon", "Brooke's Point", "Sofronio Española",
+                             "Rizal", "Bataraza", "Balabac"]
+    }
+
+    # Initialize response data structure
+    region_data = {
+        "Northern Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+        "Central Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+        "Southern Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+    }
+
+    # Get all incidents and group by status, municipality
+    incidents = Incident.objects.values(
+        "municipality", "status").annotate(count=Count("id"))
+
+    # Aggregate data by region
+    for incident in incidents:
+        municipality = incident["municipality"]
+        status = incident["status"]
+        count = incident["count"]
+
+        # Determine which region the municipality belongs to
+        for region, municipalities in regions.items():
+            if municipality in municipalities:
+                # Update counts based on status
+                if status == "Dead":
+                    region_data[region]["dead"] += count
+                elif status == "Alive":
+                    region_data[region]["alive"] += count
+                elif status == "Scales":
+                    region_data[region]["scales"] += count
+                elif status == "Illegal Trade":
+                    region_data[region]["illegalTrades"] += count
+
+    return JsonResponse(region_data)

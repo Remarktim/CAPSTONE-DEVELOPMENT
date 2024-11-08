@@ -37,6 +37,16 @@
           {{ form.status }}
       </div>
 
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+            {{ form.date_reported.label_tag }}
+            {% if form.date_reported.errors %}
+              <div class="text-red-600">{{ form.date_reported.errors }}</div>
+            {% endif %}
+        </label>
+        {{ form.date_reported }}
+    </div>
+
   </div>
 
   <div>

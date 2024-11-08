@@ -89,6 +89,9 @@ urlpatterns = [
          name='get_registereduser_data'),
     path('get-available-years/', views.get_available_years,
          name='get_available_years'),
+     path('get-region-data/', views.get_region_data,
+         name='get_region_data'),
+
 
 
     path('password_reset/', views.CustomPasswordResetView.as_view(),
