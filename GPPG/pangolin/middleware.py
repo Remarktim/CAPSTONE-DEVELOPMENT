@@ -13,17 +13,23 @@ class AuthenticationMiddleware:
             reverse('landing_page'),
             reverse('login'),
             reverse('signup'),
-            '/static/',  # Allow
-            '/media/',   # Allow
+            '/accounts/',
+            '/auth/google/',
+            '/static/',
+            '/media/',
         ]
 
-        if not request.session.get('id'):
-            if not any(request.path.startswith(url) for url in PUBLIC_URLS):
-                return redirect('landing_page')
+        # Check if the path is public
+        current_path = request.path
+        is_public_url = any(current_path.startswith(url)
+                            for url in PUBLIC_URLS)
 
-        elif request.session.get('id'):
-            if request.path in [reverse('landing_page'), reverse('login'), reverse('signup')]:
-                return redirect('home')
+        # Get authentication status
+        is_authenticated = request.session.get('user_id') is not None
 
-        response = self.get_response(request)
-        return response
+        if not is_authenticated and not is_public_url:
+            return redirect('landing_page')
+        elif is_authenticated and current_path in [reverse('landing_page'), reverse('login'), reverse('signup')]:
+            return redirect('home')
+
+        return self.get_response(request)

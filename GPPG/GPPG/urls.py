@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, re_path
+from django.views.generic import TemplateView
+from django.urls import path, include
 from pangolin import views
 from pangolin.views import *
 from django.conf.urls.static import static
@@ -10,6 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', views.landing_page, name='landing_page'),
+
     path('signup/', views.signup, name='signup'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
@@ -18,6 +20,11 @@ urlpatterns = [
     path('about./', views.public_about, name='public_about'),
     path('officers./', views.public_officers, name='public_officers'),
     path('home/', views.home, name='home'),
+
+
+    path('accounts/', include('allauth.urls')),
+    path('auth/google/callback/', views.google_login_callback,
+         name='google_login_callback'),
 
     path('gallery/', views.gallery, name='gallery'),
     path('gallery_video/', views.gallery_video, name='gallery_video'),
@@ -76,9 +83,9 @@ urlpatterns = [
     path('admin_report/', views.admin_report, name='admin_report'),
     path('get-poaching-trends/', views.get_poaching_trends,
          name='get_poaching_trends'),
-     path('get-chart-data/', views.get_chart_data,
+    path('get-chart-data/', views.get_chart_data,
          name='get_chart_data'),
-     path('get-registereduser-data/', views.get_registereduser_data,
+    path('get-registereduser-data/', views.get_registereduser_data,
          name='get_registereduser_data'),
     path('get-available-years/', views.get_available_years,
          name='get_available_years'),
