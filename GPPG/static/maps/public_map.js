@@ -200,65 +200,96 @@ let chartInstance; // Store chart instance globally
 
 // Donut chart rendering function
 function drawDonutChart(regionName, dataMap) {
-  const ctx = document.getElementById("donutChart").getContext("2d");
+  const overlayElement = overlay.getElement();
   const data = dataMap[regionName];
 
+  // Calculate total incidents and the region percentage
+  const totalIncidentsPalawan = calculateTotalIncidents(dataMap);
+  const regionTotal = data ? data.dead + data.alive + data.scales + data.illegalTrades : 0;
+  const regionPercentage = totalIncidentsPalawan ? ((regionTotal / totalIncidentsPalawan) * 100).toFixed(2) : 0;
 
-  if (!data) {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear canvas
-    ctx.font = "16px Arial";
-    ctx.fillText("No data available", 50, 110);
-    return;
-  }
+  // Build overlay HTML structure
+  overlayElement.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl relative">
+      <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+      <div class="info-container mb-5 text-center">
+        <p class="font-bold">${regionName}</p>
+        <p class="text-sm text-gray-600"><b>${regionPercentage}%</b> of total incidents</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="donutChart" width="220" height="220"></canvas>
+      </div>
+    </div>
+  `;
 
-  // Destroy existing chart instance to avoid overlapping
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
+  // Draw the chart only if there's data
+  if (data) {
+    const ctx = document.getElementById("donutChart").getContext("2d");
 
-  chartInstance = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Dead", "Alive", "Scales", "Illegal Trades"],
-      datasets: [
-        {
-          data: [data.dead, data.alive, data.scales, data.illegalTrades],
-          backgroundColor: ["#ffa500", "#008000", "#8b4513", "#a52a2a"],
-        },
-      ],
-    },
-    options: {
-      responsive: false,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: {
-            padding: 10,
-            usePointStyle: true,
-            color: "#000",
+    // Destroy existing chart instance if any to prevent overlapping
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    // Render new chart instance
+    chartInstance = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Dead", "Alive", "Scales", "Illegal Trades"],
+        datasets: [
+          {
+            data: [data.dead, data.alive, data.scales, data.illegalTrades],
+            backgroundColor: ["#ffa500", "#008000", "#8b4513", "#a52a2a"],
           },
-        },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              const total = data.dead + data.alive + data.scales + data.illegalTrades;
-              const value = context.raw;
-              const percentage = ((value / total) * 100).toFixed(2);
-              return `${context.label}: ${percentage}%`;
+        ],
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              padding: 10,
+              usePointStyle: true,
+              color: "#000",
             },
           },
-        },
-        datalabels: {
-          color: "white",
-          formatter: (value) => `${value}`,
-          font: { weight: "semibold" },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const total = data.dead + data.alive + data.scales + data.illegalTrades;
+                const value = context.raw;
+                const percentage = ((value / total) * 100).toFixed(2);
+                return `${context.label}: ${percentage}%`;
+              },
+            },
+          },
+          datalabels: {
+            color: "white",
+            formatter: (value) => `${value}`,
+            font: { weight: "semibold" },
+          },
         },
       },
-    },
-    plugins: [ChartDataLabels],
-  });
+      plugins: [ChartDataLabels],
+    });
+  } else {
+    const chartContainer = overlayElement.querySelector(".chart-container");
+    chartContainer.innerHTML = `<p class="text-center text-gray-600">No data available</p>`;
+  }
 }
+
+
+function calculateTotalIncidents(dataMap) {
+  let total = 0;
+  for (const region in dataMap) {
+    const regionData = dataMap[region];
+    total += regionData.dead + regionData.alive + regionData.scales + regionData.illegalTrades;
+  }
+  return total;
+}
+
 
 function removeOverlay() {
   overlay.setPosition(undefined);

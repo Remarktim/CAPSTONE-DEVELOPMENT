@@ -100,17 +100,37 @@ function hideLoading() {
 }
 let municipalityData = {};
 // Function to fetch the incident data for a specific municipality
+let totalIncidents = 0;
+
+// Modify the fetchMunicipalityData function to calculate percentages
 function fetchMunicipalityData(municity) {
   fetch(`/get-municity-data/`)
     .then(response => response.json())
     .then(data => {
+      // Calculate total incidents across all municipalities first
+      totalIncidents = 0;
+      Object.values(data).forEach(municipalityData => {
+        if (municipalityData) {
+          totalIncidents += municipalityData.dead + 
+                          municipalityData.alive + 
+                          municipalityData.scales + 
+                          municipalityData.illegalTrades;
+        }
+      });
+
       const municipalityData = data[municity];
-      
-      // Check if there is data for the municipality
       if (municipalityData) {
-        createDoughnutChart(municipalityData); 
+        // Calculate percentage for this municipality
+        const municipalityTotal = municipalityData.dead + 
+                                municipalityData.alive + 
+                                municipalityData.scales + 
+                                municipalityData.illegalTrades;
+        const percentage = ((municipalityTotal / totalIncidents) * 100).toFixed(2);
+        
+        // Add percentage to the data object
+        municipalityData.percentage = percentage;
+        createDoughnutChart(municipalityData);
       } else {
-        // If no data exists, call createDoughnutChart with null
         createDoughnutChart(null);
       }
     })
@@ -119,19 +139,35 @@ function fetchMunicipalityData(municity) {
     });
 }
 
-let chartInstance; 
+// Update the overlay HTML creation in both click and pointermove events
+function createOverlayHTML(regionName, coordinate) {
+  const infoElement = document.createElement("div");
+  infoElement.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl relative shadow-2xl">
+      <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+      <div class="text-center mb-5">
+        <p class="font-bold">${regionName}</p>
+        <p class="text-sm text-gray-600" id="percentage-text">Loading...</p>
+      </div>
+      <canvas id="donutchart" width="220" height="220"></canvas>
+    </div>
+  `;
+  return infoElement;
+}
 
+let chartInstance; 
 
 function createDoughnutChart(municipalityData) {
   const ctx = document.getElementById("donutchart").getContext("2d");
+  const percentageElement = document.getElementById("percentage-text");
 
   // Clear the canvas before rendering new content
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   // Check if municipalityData is null or empty
-  if (!municipalityData || Object.values(municipalityData).every(value => value === 0)) {
+  if (!municipalityData || Object.values(municipalityData).every(value => value === 0 || typeof value === 'string')) {
     // Display "No recorded incidents" message
-    ctx.font = "bold 15px Roboto"; // Adjusted font size for better fit
+    ctx.font = "bold 15px Roboto";
     ctx.fillStyle = "gray";
     ctx.textAlign = "center";
     const message = "No poaching incidents recorded\nin this area";
@@ -142,12 +178,20 @@ function createDoughnutChart(municipalityData) {
       ctx.fillText(line, ctx.canvas.width / 2, ctx.canvas.height / 2 - 10 + index * 20);
     });
     
+    if (percentageElement) {
+      percentageElement.innerHTML = "0% of total incidents";
+    }
     return;
+  }
+
+  // Update percentage text
+  if (percentageElement) {
+    percentageElement.innerHTML = `<span class='font-bold'>${municipalityData.percentage}%</span> of total incidents`;
   }
 
   // Prepare the data
   const dataValues = [municipalityData.dead, municipalityData.alive, municipalityData.scales, municipalityData.illegalTrades];
-  const total = dataValues.reduce((sum, value) => sum + value, 0); // Total value for percentage calculation
+  const total = dataValues.reduce((sum, value) => sum + value, 0);
 
   // If a chart instance already exists, destroy it before creating a new one
   if (chartInstance) {
@@ -182,8 +226,11 @@ function createDoughnutChart(municipalityData) {
           callbacks: {
             label: function (context) {
               const value = context.raw;
-              const percentage = ((value / total) * 100).toFixed(2);
-              return `${context.label}: ${value} (${percentage}%)`;
+              if (total > 0) {
+                const percentage = ((value / total) * 100).toFixed(2);
+                return `${context.label}: (${percentage}%)`;
+              }
+              return `${context.label}: ${value}`;
             },
           },
         },
@@ -196,11 +243,9 @@ function createDoughnutChart(municipalityData) {
         },
       },
     },
-    plugins: [ChartDataLabels], 
+    plugins: [ChartDataLabels],
   });
 }
-
-
 
 
 
@@ -275,9 +320,34 @@ var featureOverlay = new ol.layer.Vector({
 });
 
 // Map pointer move event to highlight features
-// Map pointer move event to highlight features
+map.on("click", function (evt) {
+  var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    return feature;
+  });
+
+  if (feature) {
+    isClickActive = true;
+
+    const properties = feature.getProperties();
+    const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
+    const geometry = feature.getGeometry();
+    const centroid = ol.extent.getCenter(geometry.getExtent());
+
+    featureOverlay.getSource().clear();
+    featureOverlay.getSource().addFeature(feature);
+
+    overlay.setElement(createOverlayHTML(regionName));
+    overlay.setPosition(centroid);
+    
+    fetchMunicipalityData(regionName);
+  } else {
+    removeOverlay();
+  }
+});
+
+// Update the pointermove event handler
 map.on("pointermove", function (evt) {
-  if (isSearching || isClickActive) return; // Ignore if searching or click active
+  if (isSearching || isClickActive) return;
 
   var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
     return feature;
@@ -292,55 +362,13 @@ map.on("pointermove", function (evt) {
       const properties = feature.getProperties();
       const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
 
-      overlay.getElement().innerHTML = `
-        <div class="bg-white p-5 rounded-2xl relative shadow-2xl">
-          <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
-          <p class="mb-5 font-bold">${regionName}</p>
-          <canvas id="donutchart" width="220" height="220"></canvas>
-        </div>
-      `;
+      overlay.setElement(createOverlayHTML(regionName));
       overlay.setPosition(evt.coordinate);
-      fetchMunicipalityData(regionName);  // Trigger data fetch for this municipality
+      fetchMunicipalityData(regionName);
     } else {
       overlay.setPosition(undefined);
     }
     highlight = feature;
-  }
-});
-
-// Map click event to select and highlight a municipality
-map.on("click", function (evt) {
-  var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
-    return feature;
-  });
-
-  if (feature) {
-    isClickActive = true; // Set click active state
-
-    const properties = feature.getProperties();
-    const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
-    const geometry = feature.getGeometry();
-    const centroid = ol.extent.getCenter(geometry.getExtent());
-
-    featureOverlay.getSource().clear(); // Remove any previous highlights
-    featureOverlay.getSource().addFeature(feature); // Highlight the clicked feature
-
-    fetchMunicipalityData(regionName); // Fetch data for the clicked municipality
-
-    const infoElement = document.createElement("div");
-    infoElement.innerHTML = `
-      <div class="bg-white p-5 rounded-2xl relative shadow-2xl">
-        <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
-        <p class="mb-5 font-bold">${regionName}</p>
-        <canvas id="donutchart" width="220" height="220"></canvas>
-      </div>
-    `;
-    overlay.setElement(infoElement);
-    overlay.setPosition(centroid);
-
-    createDoughnutChart(municipalityData); // Render the chart here
-  } else {
-    removeOverlay(); // Remove overlay if clicking outside any feature
   }
 });
 

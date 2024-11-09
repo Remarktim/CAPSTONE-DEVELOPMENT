@@ -556,10 +556,6 @@ def incident_delete(request, id):
         })
 
 
-def cancel_delete(request, id, action=None):
-    if action == 'close':
-        return HttpResponse()
-
 
 def pangolin_activities(request):
     return render(request, 'admin/database_activities.html')
@@ -1012,7 +1008,7 @@ def get_region_data(request):
 
     # Get all incidents and group by status, municipality
     incidents = Incident.objects.values(
-        "municipality", "status").annotate(count=Count("id"))
+        "municity", "status").annotate(count=Count("id"))
 
     # Aggregate data by region
     for incident in incidents:

@@ -75,8 +75,6 @@ urlpatterns = [
          views.officer_update, name='admin_officers_edit'),
     path('officers_database/<int:id>/delete',
          views.officer_delete, name='admin_officers_delete'),
-    path('canceldelete/<int:id>/', views.cancel_delete,
-         {'action': 'close'}, name='cancel-delete'),
     path('admin_officers/', views.admin_officers, name='admin_officers'),
     path('admin_charts/', views.admin_charts, name='admin_charts'),
     path('admin_map/', views.admin_map, name='admin_map'),
