@@ -50,8 +50,6 @@ function searchMunicipality(event) {
     
     showError("Municipality not found. Please try again.");
   }
-
-  // Hide loading animation
   hideLoading();
 }
 
@@ -66,11 +64,8 @@ function showError(message) {
     document.body.appendChild(errorElement);
   }
 
-  // Set the message and show the element
   errorElement.textContent = message;
   errorElement.style.display = "block";
-
-  // Hide the message after a few seconds
   setTimeout(() => {
     errorElement.style.display = "none";
   }, 3000);
@@ -113,7 +108,7 @@ function fetchMunicipalityData(municity) {
       
       // Check if there is data for the municipality
       if (municipalityData) {
-        createDoughnutChart(municipalityData); // Create the chart with data
+        createDoughnutChart(municipalityData); 
       } else {
         // If no data exists, call createDoughnutChart with null
         createDoughnutChart(null);
@@ -124,9 +119,9 @@ function fetchMunicipalityData(municity) {
     });
 }
 
-let chartInstance; // Store chart instance globally
+let chartInstance; 
 
-// Donut chart rendering function
+
 function createDoughnutChart(municipalityData) {
   const ctx = document.getElementById("donutchart").getContext("2d");
 
@@ -135,37 +130,38 @@ function createDoughnutChart(municipalityData) {
 
   // Check if municipalityData is null or empty
   if (!municipalityData || Object.values(municipalityData).every(value => value === 0)) {
-    // Clear any existing content and display "No recorded incidents" message
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    
-    ctx.font = "14px Arial"; // Adjusted font size for better fit
+    // Display "No recorded incidents" message
+    ctx.font = "bold 15px Roboto"; // Adjusted font size for better fit
     ctx.fillStyle = "gray";
     ctx.textAlign = "center";
-
-    // Draw text centered in the canvas with line break
-    const message = "No recorded poaching incidents\nin this area";
+    const message = "No poaching incidents recorded\nin this area";
     const lines = message.split("\n");
 
     // Adjust y position for multi-line text
     lines.forEach((line, index) => {
-        ctx.fillText(line, ctx.canvas.width / 2, ctx.canvas.height / 2 - 10 + index * 20);
+      ctx.fillText(line, ctx.canvas.width / 2, ctx.canvas.height / 2 - 10 + index * 20);
     });
     
     return;
-}
+  }
 
-  // If data is available, proceed with creating the chart
+  // Prepare the data
+  const dataValues = [municipalityData.dead, municipalityData.alive, municipalityData.scales, municipalityData.illegalTrades];
+  const total = dataValues.reduce((sum, value) => sum + value, 0); // Total value for percentage calculation
+
+  // If a chart instance already exists, destroy it before creating a new one
   if (chartInstance) {
     chartInstance.destroy();
   }
 
+  // Create a new chart instance
   chartInstance = new Chart(ctx, {
     type: "doughnut",
     data: {
       labels: ["Dead", "Alive", "Scales", "Illegal Trades"],
       datasets: [
         {
-          data: [municipalityData.dead, municipalityData.alive, municipalityData.scales, municipalityData.illegalTrades],
+          data: dataValues,
           backgroundColor: ["#ffa500", "#008000", "#8b4513", "#a52a2a"],
         },
       ],
@@ -185,17 +181,27 @@ function createDoughnutChart(municipalityData) {
         tooltip: {
           callbacks: {
             label: function (context) {
-              const total = municipalityData.dead + municipalityData.alive + municipalityData.scales + municipalityData.illegalTrades;
               const value = context.raw;
               const percentage = ((value / total) * 100).toFixed(2);
-              return `${context.label}: ${percentage}%`;
+              return `${context.label}: ${value} (${percentage}%)`;
             },
           },
         },
+        datalabels: {
+          color: "white",
+          formatter: (value) => `${value}`,
+          font: { weight: "semibold"},
+          align: "center",
+          anchor: "center",
+        },
       },
     },
+    plugins: [ChartDataLabels], 
   });
 }
+
+
+
 
 
 // Create a map instance

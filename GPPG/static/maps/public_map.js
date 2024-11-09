@@ -189,6 +189,9 @@ fetchRegionData().then(() => {
       `;
       overlay.setPosition(evt.coordinate);
       drawDonutChart(regionName, Datamap);
+
+    }  else {
+      removeOverlay(); 
     }
   });
 });
