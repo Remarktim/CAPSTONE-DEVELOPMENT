@@ -28,7 +28,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from django.conf import settings
 import logging
-
+from allauth.socialaccount.models import SocialAccount
 # Set up logging
 logger = logging.getLogger(__name__)
 # PUBLIC
@@ -107,13 +107,56 @@ def login(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
+@csrf_exempt
+def google_login_callback(request):
+    """
+    Handle successful Google login
+    """
+    try:
+        if not request.user.is_authenticated:
+            return redirect('landing_page')
+
+        social_account = SocialAccount.objects.filter(
+            user=request.user,
+            provider='google'
+        ).first()
+
+        if social_account:
+            google_data = social_account.extra_data
+            email = google_data.get('email')
+
+            # Find or create your custom user
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                user = User.objects.create(
+                    email=email,
+                    first_name=google_data.get('given_name', ''),
+                    last_name=google_data.get('family_name', ''),
+                    password=make_password(None)  # Unusable password
+                )
+
+            # Set your custom session
+            request.session['user_id'] = user.id
+            request.session['user_email'] = user.email
+
+            return redirect('home')
+
+        logger.error("No social account found")
+        return redirect('landing_page')
+
+    except Exception as e:
+        logger.error(f"Google login error: {str(e)}")
+        return redirect('landing_page')
+
+
 def logout(request):
     request.session.flush()
     return redirect('landing_page')
 
 
 class CustomPasswordResetView(SuccessMessageMixin, PasswordResetView):
-    template_name = 'landingPage/password_reset.html'  # Use your custom template here
+    template_name = 'landingPage/password_reset.html'
     email_template_name = 'registration/password_reset_email.html'
     subject_template_name = 'registration/password_reset_subject.txt'
     success_url = reverse_lazy('landing_page')
@@ -151,11 +194,15 @@ def public_officers(request):
 
 # PRIVATE
 
-
 @login_required
 def home(request):
     try:
-        return render(request, 'private/index.html')
+        user_id = request.session.get('user_id')
+        if not user_id:
+            raise User.DoesNotExist
+
+        user = User.objects.get(id=user_id)
+        return render(request, 'private/index.html', {'user': user})
     except User.DoesNotExist:
         request.session.flush()
         return redirect('landing_page')
@@ -399,7 +446,8 @@ def admin_home(request):
     }
 
     # Aggregate data by status and count occurrences
-    aggregated_data = Incident.objects.values('status').annotate(count=Count('id'))
+    aggregated_data = Incident.objects.values(
+        'status').annotate(count=Count('id'))
 
     for entry in aggregated_data:
         status = entry['status']  # Get the status
@@ -916,9 +964,11 @@ def get_chart_data(request):
     return JsonResponse(response_data)
 
 
+
 def get_registereduser_data(request):
     
-    years = User.objects.dates('created_at', 'year', order='ASC').values_list('created_at__year', flat=True)
+    years = User.objects.dates('created_at', 'year', order='ASC').values_list(
+        'created_at__year', flat=True)
 
     # Organize data by months for each year
     data_by_year = {str(year): [0] * 12 for year in years}
@@ -934,7 +984,6 @@ def get_registereduser_data(request):
             data_by_year[str(year)][month - 1] = count
 
     return JsonResponse(data_by_year)
-    
 
 
 def get_available_years(request):
@@ -942,7 +991,7 @@ def get_available_years(request):
     available_years = [year.year for year in years]
     available_years.sort(reverse=True)
     return JsonResponse(available_years, safe=False)
-    
+
 
 def get_region_data(request):
     # Define regions and their corresponding municipalities
@@ -961,10 +1010,11 @@ def get_region_data(request):
         "South Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
     }
 
-   
-    incidents = Incident.objects.values("municity", "status").annotate(count=Count("id"))
+    # Get all incidents and group by status, municipality
+    incidents = Incident.objects.values(
+        "municipality", "status").annotate(count=Count("id"))
 
-    
+    # Aggregate data by region
     for incident in incidents:
         municity = incident["municity"]
         status = incident["status"]

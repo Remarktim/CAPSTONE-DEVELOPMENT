@@ -1,9 +1,9 @@
-{% load static %}
-<div class="p-6 flex items-center justify-center overflow-scroll h-full w-auto rounded-lg shadow-lg relative transition-all duration-300">
+{% load static %} {% load socialaccount %} {% providers_media_js %}
+<div class="p-6 flex items-center justify-center overflow-y-auto h-full w-auto rounded-lg shadow-lg relative transition-all duration-300">
   <div class="flip-card flex">
     <!-- signin -->
-    <div class="flip-card-front flex items-center w-full h-auto justify-center top-40 overflow-hidden">
-      <div class="flex w-full md:w-1/2 bg-gradient-to-b from-[#3f0703] to-[#eaebe6] max-h-fit shadow-md rounded-3xl">
+    <div class="flip-card-front translate-x-1 translate-y-4 transition-all o ease-in-out duration-300 flex items-center w-full h-auto justify-center top-40">
+      <div class="flex w-full md:w-1/2 bg-gradient-to-b from-[#3f0703] to-[#eaebe6] max-h-fit shadow-lg rounded-3xl">
         <div class="hidden xl:flex w-1/2 items-center justify-center p-10">
           <img
             src="{% static 'img/logo.jpg' %}"
@@ -24,19 +24,17 @@
             <p class="text-gray-600 mb-4 text-sm">Welcome!</p>
           </div>
 
-          <div
-            id="loginError"
-            class="text-red-500 mt-4 hidden text-center"></div>
-          <button
+          <a
+            href="{% provider_login_url 'google' process='login' next='/auth/google/callback/' %}"
             class="align-middle select-none font-sans font-bold text-center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-sm py-3.5 px-7 rounded-lg border border-gray-900 text-gray-500 hover:bg-gray-100 hover:text-black focus:ring focus:ring-gray-300 active:opacity-[0.85] w-full mb-2 flex h-10 items-center justify-center gap-2"
             type="button"
             data-ripple-dark="true">
             <img
-              src="https://www.material-tailwind.com/logos/logo-google.png"
+              src="{% static 'img/google.png' %}"
               alt="google"
               class="h-6 w-6" />
             Sign in with Google
-          </button>
+          </a>
           <div class="flex items-center justify-center my-4">
             <div class="border-t border-gray-400 w-full mr-4"></div>
             <span class="text-gray-400 font-medium">or</span>
@@ -44,7 +42,7 @@
           </div>
           <div
             id="loginError"
-            class="text-red-500 mt-4 hidden text-center"></div>
+            class="text-red-500 mt-4 mb-2 hidden text-center"></div>
           <form
             id="signInForm"
             method="POST"
@@ -181,21 +179,6 @@
             draggable="false" />
           <p class="text-3xl font-bold mb-4 text-gray-800">Sign Up</p>
           <p class="text-gray-600 mb-6">Join us today!</p>
-          <button
-            class="align-middle select-none font-sans font-bold text-center transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-sm py-3.5 px-7 rounded-lg border border-gray-900 text-gray-500 hover:bg-gray-100 hover:text-black focus:ring focus:ring-gray-300 active:opacity-[0.85] w-full md:w-96 mb-2 flex h-10 items-center justify-center gap-2"
-            type="button"
-            data-ripple-dark="true">
-            <img
-              src="https://www.material-tailwind.com/logos/logo-google.png"
-              alt="google"
-              class="h-6 w-6" />
-            Sign up with Google
-          </button>
-        </div>
-        <div class="flex items-center justify-center my-4">
-          <div class="border-t border-gray-400 w-full mr-4"></div>
-          <span class="text-gray-400 font-medium">or</span>
-          <div class="border-t border-gray-400 w-full ml-4"></div>
         </div>
 
         <div

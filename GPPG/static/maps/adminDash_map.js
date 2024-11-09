@@ -29,10 +29,9 @@ var mapDash = new ol.Map({
   layers: [],
   view: new ol.View({
     center: ol.proj.fromLonLat([118.7384, 9.8349]),
-    zoom: 1,
+    zoom: 7,
     minZoom: 2,
     maxZoom: 18,
-    extent: ol.proj.transformExtent([114, 7.5, 124.5, 25], "EPSG:4326", "EPSG:3857"),
   }),
 });
 

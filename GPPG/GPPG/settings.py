@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sw$g&yej(s(5k4p0t1k)3hyag-w#m=*%nf9(p2ei2c90mao^_g'
 GEMINI_API_KEY = 'AIzaSyAmEY3lb3x-6CihX2J1_2kSZEsyRRNaV8M'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -39,11 +40,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'pangolin',
     'compressor',
     'widget_tweaks',
-
 ]
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,7 +67,37 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'pangolin.middleware.AuthenticationMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '639361156779-5lcskb1re44gjhk39agaccrg59pebp1f.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
+
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+ACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_EMAIL_REQUIRED = True
+LOGOUT_REDIRECT_URL = 'landing_page'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGOUT_ON_GET = True
+LOGIN_REDIRECT_URL = '/auth/google/callback/'
 
 
 ROOT_URLCONF = 'GPPG.urls'

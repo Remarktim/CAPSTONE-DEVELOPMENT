@@ -102,7 +102,7 @@
         </button>
 
         <div
-          class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 sm:dark:border before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+          class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-300 hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 sm:dark:border before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="hs-navbar-example-dropdown">
@@ -122,7 +122,9 @@
     </div>
   </div>
 
-  <div class="hs-dropdown [--strategy:fixed] overflow-hidden border bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-5 top-6 md:top-0 md:right-0 md:relative">
+  <div
+    class="hs-dropdown [--strategy:fixed] overflow-hidden border bg-[#3f0703] rounded-full md:mx-2 absolute w-10 md:w-16 right-5 top-6 md:top-0 md:right-0 md:relative"
+    data-hs-dropdown>
     <button
       id="hs-navbar-example-dropdown"
       type="button"
@@ -130,10 +132,10 @@
       aria-haspopup="menu"
       aria-expanded="false"
       aria-label="Mega Menu">
-      <span class="font-medium text-white">{{ initials }}</span>
+      <span class="font-medium text-white uppercase">{{ initials }}</span>
     </button>
     <div
-      class="hs-dropdown-menu border-0 text-white transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 w-48 z-10 bg-black bg-opacity-20 backdrop-blur-lg sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+      class="hs-dropdown-menu border-0 text-white transition-all duration-200 ease-in-out transform opacity-0 translate-y-4 scale-95 pointer-events-none hs-dropdown-open:opacity-100 hs-dropdown-open:translate-y-0 hs-dropdown-open:scale-100 hs-dropdown-open:pointer-events-auto closing:translate-y--4 closing:opacity-0 closing:scale-95 w-48 z-10 bg-black bg-opacity-20 backdrop-blur-lg sm:shadow-md rounded-lg p-1 space-y-1 dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
       role="menu"
       aria-orientation="vertical"
       aria-labelledby="hs-navbar-example-dropdown">
@@ -141,13 +143,13 @@
         <img
           class="w-fit h-14 rounded-full mx-auto"
           src="{% static 'img/logo.jpg' %}" />
-        <p class="mt-2 text-center">{{ name }}</p>
+        <p class="mt-2 text-center capitalize">{{ name }}</p>
       </div>
       <hr class="w-20 h-1 mx-auto my-4 bg-gray-100 border-0 rounded md:my-10 dark:bg-gray-700" />
       <a
         href="{% url 'account_view' %}"
         onmouseover="prefetchPage('{% url 'account_view' %}')"
-        class="flex items-center gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md">
+        class="flex items-center gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md transition-all duration-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
@@ -171,7 +173,7 @@
       </a>
       <a
         href="{% url 'logout' %}"
-        class="flex items-center w-full gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md">
+        class="flex items-center w-full gap-x-3.5 py-2 px-3 text-sm focus:outline-none hover:bg-gray-100 hover:text-black rounded-md transition-all duration-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
