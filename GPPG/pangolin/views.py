@@ -805,7 +805,7 @@ def admin_profile(request):
 
 
 def get_poaching_trends(request):
-    # Get period from the frontend request
+    
     period = request.GET.get('period', 'overall')
 
     # Initialize overall trend data
@@ -813,10 +813,10 @@ def get_poaching_trends(request):
         'alive': [0] * 12,
         'dead': [0] * 12,
         'scales': [0] * 12,
-        'illegal_trade': [0] * 12,  # Ensure correct key
+        'illegal_trade': [0] * 12,  
     }
 
-    # Dictionary to hold yearly reports with monthly data initialized to zero
+    
     yearly_reports = {}
 
     # Get all reports regardless of the year for yearly reporting
@@ -828,8 +828,8 @@ def get_poaching_trends(request):
 
     for entry in aggregated_data:
         month_index = entry['date_reported__month'] - \
-            1  # Convert month to 0-index
-        status = entry['status']  # Use status directly
+            1  
+        status = entry['status']  
         count = entry['count']
 
         # Update overall trend
@@ -849,9 +849,9 @@ def get_poaching_trends(request):
                 'alive': [0] * 12,
                 'dead': [0] * 12,
                 'scales': [0] * 12,
-                'illegal_trade': [0] * 12,  # Ensure correct key
+                'illegal_trade': [0] * 12,  
             }
-        # Update counts for the specific month in the yearly report
+        
         if status == 'Alive':
             yearly_reports[year]['alive'][month_index] += count
         elif status == 'Dead':
@@ -861,7 +861,7 @@ def get_poaching_trends(request):
         elif status == 'Illegal Trade':
             yearly_reports[year]['illegal_trade'][month_index] += count
 
-    # Prepare the final response with the overall trend and yearly reports
+    
     response_data = {
         'overall_trend': overall_trend,
         'yearly_reports': yearly_reports,
@@ -871,28 +871,28 @@ def get_poaching_trends(request):
 
 
 def get_chart_data(request):
-    # Get period and status from the frontend request
+    
     period = request.GET.get('period', 'overall')
     status_filter = request.GET.get('status', None)
 
-    # Define statuses if filtering is not applied
+    
     statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
     if status_filter:
         # Split the comma-separated statuses
         statuses = [s.strip() for s in status_filter.split(',')]
 
-    # Initialize dictionaries to hold overall and yearly trends per status
+   
     trends = {status: {'overall': [0] * 12, 'yearly': {}}
               for status in statuses}
 
-    # Get all reports
+    
     reports = Incident.objects.all()
 
-    # Filter reports based on status if specific statuses are requested
+    
     if status_filter:
         reports = reports.filter(status__in=statuses)
 
-    # Rest of your code remains the same...
+    
     aggregated_data = reports.values(
         'date_reported__year', 'date_reported__month', 'status'
     ).annotate(count=Count('id'))
@@ -915,8 +915,9 @@ def get_chart_data(request):
 
     return JsonResponse(response_data)
 
+
 def get_registereduser_data(request):
-    # Get the list of distinct years from the User model
+    
     years = User.objects.dates('created_at', 'year', order='ASC').values_list('created_at__year', flat=True)
 
     # Organize data by months for each year
@@ -960,10 +961,10 @@ def get_region_data(request):
         "South Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
     }
 
-    # Get all incidents and group by status, municipality
+   
     incidents = Incident.objects.values("municity", "status").annotate(count=Count("id"))
 
-    # Aggregate data by region
+    
     for incident in incidents:
         municity = incident["municity"]
         status = incident["status"]
@@ -983,5 +984,30 @@ def get_region_data(request):
                     region_data[region]["illegalTrades"] += count
 
     return JsonResponse(region_data)
+
+
+def get_municity_data(request):
+    data = (
+        Incident.objects.values("municity")
+        .annotate(
+            dead=Count("id", filter=models.Q(status="Dead")),
+            alive=Count("id", filter=models.Q(status="Alive")),
+            scales=Count("id", filter=models.Q(status="Scales")),
+            illegalTrades=Count("id", filter=models.Q(status="Illegal Trade")),
+        )
+        .order_by("municity")
+    )
+
+    response_data = {
+        item["municity"]: {
+            "dead": item["dead"],
+            "alive": item["alive"],
+            "scales": item["scales"],
+            "illegalTrades": item["illegalTrades"],
+        }
+        for item in data
+    }
+
+    return JsonResponse(response_data)
 
 

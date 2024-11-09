@@ -84,6 +84,8 @@ urlpatterns = [
          name='get_available_years'),
      path('get-region-data/', views.get_region_data,
          name='get_region_data'),
+     path('get-municity-data/', views.get_municity_data,
+         name='get_municity_data'),
 
 
 
