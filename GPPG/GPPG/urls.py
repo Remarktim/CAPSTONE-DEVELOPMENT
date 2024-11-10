@@ -39,7 +39,7 @@ urlpatterns = [
     # ADMIN
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
-    path('admin_profile/', views.admin_profile, name='admin_profile'),
+    path('admin_profile/', AdminLogView.as_view(), name='admin_profile'),
     path('activities_database/', EventListView.as_view(),
          name='admin_activities_database'),
     path('activities_database/add', views.activity_add,

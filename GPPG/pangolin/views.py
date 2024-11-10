@@ -13,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
+from django.contrib.admin.models import LogEntry
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from .forms import *
@@ -841,9 +844,30 @@ def admin_report(request):
 def admin_charts(request):
     return render(request, 'admin/charts.html')
 
-
-def admin_profile(request):
-    return render(request, 'admin/profile.html')
+class AdminLogView(UserPassesTestMixin, ListView):
+    model = LogEntry
+    template_name = 'admin/profile.html'
+    paginate_by = 10
+    context_object_name = 'logs'
+    
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def get_queryset(self):
+        return LogEntry.objects.select_related('content_type', 'user').order_by('-action_time')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for log in context['logs']:
+            # Format the action message
+            if log.action_flag == 1:
+                action = f"Add in {log.content_type}"
+            elif log.action_flag == 2:
+                action = f"Change in {log.content_type}"
+            elif log.action_flag == 3:
+                action = f"Delete {log.object_repr} in {log.content_type}"
+            log.formatted_action = action
+        return context
 
 # QUERIES
 

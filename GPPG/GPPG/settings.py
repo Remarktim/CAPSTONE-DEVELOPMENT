@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'pangolin',
     'compressor',
     'widget_tweaks',
+    'django_admin_logs',
 ]
 SITE_ID = 1
 
@@ -192,3 +193,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+DJANGO_ADMIN_LOGS_ENABLED = True
+DJANGO_ADMIN_LOGS_DELETABLE = False
