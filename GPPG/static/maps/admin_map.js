@@ -1,5 +1,8 @@
 var highlight;
 var isSearching = false;
+var isClickActive = false;
+
+// Function to search for a municipality
 function searchMunicipality(event) {
   event.preventDefault();
   const searchValue = document.getElementById("search-dropdown").value.toLowerCase();
@@ -27,41 +30,67 @@ function searchMunicipality(event) {
 
     const properties = foundFeature.getProperties();
     const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
-    const population = properties.population || "No data available";
+
+    // Fetch data for the selected municipality
+    fetchMunicipalityData(regionName);
+
     const infoElement = document.createElement("div");
-    infoElement.className = "bg-white p-2 border rounded shadow";
     infoElement.innerHTML = `
-            <strong>${regionName}</strong><br>
-            Population: ${population}<br>
-            <button onclick="removeHighlight()" class="text-red-500 mt-2">Remove Highlight</button>
-        `;
+      <div class="bg-white p-5 rounded-2xl relative shadow-2xl">
+        <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+        <p class="mb-5 font-bold">${regionName}</p>
+        <canvas id="donutchart" width="220" height="220"></canvas>
+      </div>
+    `;
     overlay.setElement(infoElement);
     overlay.setPosition(centroid);
 
     isSearching = true;
   } else {
-    alert("Municipality not found. Please try again.");
+    
+    showError("Municipality not found. Please try again.");
   }
-
-  // Hide loading animation
   hideLoading();
 }
 
+// Error message display function
+function showError(message) {
+  // Create error message element if it doesn’t exist
+  let errorElement = document.getElementById("error-message");
+  if (!errorElement) {
+    errorElement = document.createElement("div");
+    errorElement.id = "error-message";
+    errorElement.className = "fixed top-5 left-1/2 transform -translate-x-1/2 bg-red-500 text-white p-3 rounded shadow-lg";
+    document.body.appendChild(errorElement);
+  }
+
+  errorElement.textContent = message;
+  errorElement.style.display = "block";
+  setTimeout(() => {
+    errorElement.style.display = "none";
+  }, 3000);
+}
+
+
+// Function to remove highlight from the municipality
 function removeHighlight() {
   featureOverlay.getSource().clear();
   overlay.setPosition(undefined);
   isSearching = false;
+  isClickActive = false;
 }
 
+// Function to show loading animation
 function showLoading() {
   const loadingElement = document.getElementById("loading-animation");
   if (loadingElement) {
     loadingElement.classList.remove("hidden");
     loadingElement.innerHTML =
-      '<div class="flex items-center  absolute inset-0  md:ml-72 justify-center "><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div></div>';
+      '<div class="flex items-center absolute inset-0 md:ml-72 justify-center "><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div></div>';
   }
 }
 
+// Function to hide loading animation
 function hideLoading() {
   const loadingElement = document.getElementById("loading-animation");
   if (loadingElement) {
@@ -69,7 +98,158 @@ function hideLoading() {
     loadingElement.innerHTML = "";
   }
 }
+let municipalityData = {};
+// Function to fetch the incident data for a specific municipality
+let totalIncidents = 0;
 
+// Modify the fetchMunicipalityData function to calculate percentages
+function fetchMunicipalityData(municity) {
+  fetch(`/get-municity-data/`)
+    .then(response => response.json())
+    .then(data => {
+      // Calculate total incidents across all municipalities first
+      totalIncidents = 0;
+      Object.values(data).forEach(municipalityData => {
+        if (municipalityData) {
+          totalIncidents += municipalityData.dead + 
+                          municipalityData.alive + 
+                          municipalityData.scales + 
+                          municipalityData.illegalTrades;
+        }
+      });
+
+      const municipalityData = data[municity];
+      if (municipalityData) {
+        // Calculate percentage for this municipality
+        const municipalityTotal = municipalityData.dead + 
+                                municipalityData.alive + 
+                                municipalityData.scales + 
+                                municipalityData.illegalTrades;
+        const percentage = ((municipalityTotal / totalIncidents) * 100).toFixed(2);
+        
+        // Add percentage to the data object
+        municipalityData.percentage = percentage;
+        createDoughnutChart(municipalityData);
+      } else {
+        createDoughnutChart(null);
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching municipality data:", error);
+    });
+}
+
+// Update the overlay HTML creation in both click and pointermove events
+function createOverlayHTML(regionName, coordinate) {
+  const infoElement = document.createElement("div");
+  infoElement.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl relative shadow-2xl">
+      <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+      <div class="text-center mb-5">
+        <p class="font-bold">${regionName}</p>
+        <p class="text-sm text-gray-600" id="percentage-text">Loading...</p>
+      </div>
+      <canvas id="donutchart" width="220" height="220"></canvas>
+    </div>
+  `;
+  return infoElement;
+}
+
+let chartInstance; 
+
+function createDoughnutChart(municipalityData) {
+  const ctx = document.getElementById("donutchart").getContext("2d");
+  const percentageElement = document.getElementById("percentage-text");
+
+  // Clear the canvas before rendering new content
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  // Check if municipalityData is null or empty
+  if (!municipalityData || Object.values(municipalityData).every(value => value === 0 || typeof value === 'string')) {
+    // Display "No recorded incidents" message
+    ctx.font = "bold 15px Roboto";
+    ctx.fillStyle = "gray";
+    ctx.textAlign = "center";
+    const message = "No poaching incidents recorded\nin this area";
+    const lines = message.split("\n");
+
+    // Adjust y position for multi-line text
+    lines.forEach((line, index) => {
+      ctx.fillText(line, ctx.canvas.width / 2, ctx.canvas.height / 2 - 10 + index * 20);
+    });
+    
+    if (percentageElement) {
+      percentageElement.innerHTML = "0% of total incidents";
+    }
+    return;
+  }
+
+  // Update percentage text
+  if (percentageElement) {
+    percentageElement.innerHTML = `<span class='font-bold'>${municipalityData.percentage}%</span> of total incidents`;
+  }
+
+  // Prepare the data
+  const dataValues = [municipalityData.dead, municipalityData.alive, municipalityData.scales, municipalityData.illegalTrades];
+  const total = dataValues.reduce((sum, value) => sum + value, 0);
+
+  // If a chart instance already exists, destroy it before creating a new one
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  // Create a new chart instance
+  chartInstance = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["Dead", "Alive", "Scales", "Illegal Trades"],
+      datasets: [
+        {
+          data: dataValues,
+          backgroundColor: ["#ffa500", "#008000", "#8b4513", "#a52a2a"],
+        },
+      ],
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            padding: 10,
+            usePointStyle: true,
+            color: "#000",
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const value = context.raw;
+              if (total > 0) {
+                const percentage = ((value / total) * 100).toFixed(2);
+                return `${context.label}: (${percentage}%)`;
+              }
+              return `${context.label}: ${value}`;
+            },
+          },
+        },
+        datalabels: {
+          color: "white",
+          formatter: (value) => `${value}`,
+          font: { weight: "semibold"},
+          align: "center",
+          anchor: "center",
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
+
+
+// Create a map instance
 var map = new ol.Map({
   target: "map",
   layers: [],
@@ -82,27 +262,21 @@ var map = new ol.Map({
   }),
 });
 
-// Show loading animation when map starts loading
 showLoading();
 
 map.on("rendercomplete", function () {
-  // Hide loading animation when map finishes rendering
   hideLoading();
 });
 
+// Define a vector layer to load GeoJSON
 var vectorLayer = new ol.layer.Vector({
   source: new ol.source.Vector({
-    url: "/static/maps/Municipals.geojson", // Geojson file input kuno
+    url: "/static/maps/Municipals.geojson",
     format: new ol.format.GeoJSON(),
   }),
   style: function (feature) {
-    const Datamap = {
-      "Puerto Princesa City": 150000,
-      "El Nido": 50000,
-      Roxas: 150000,
-      Taytay: 6969,
-    };
-    feature.set("population", Datamap[feature.get("ADM3_EN")] || "No data available");
+    const regionName = feature.get("ADM3_EN");
+    feature.set("data", municipalityData[regionName] || "No data available");
 
     return new ol.style.Style({
       stroke: new ol.style.Stroke({
@@ -118,6 +292,7 @@ var vectorLayer = new ol.layer.Vector({
 
 map.addLayer(vectorLayer);
 
+// Overlay for displaying information about the municipality
 var overlay = new ol.Overlay({
   element: document.createElement("div"),
   positioning: "bottom-center",
@@ -126,6 +301,7 @@ var overlay = new ol.Overlay({
 });
 map.addOverlay(overlay);
 
+// Highlight style for hovered municipality
 var highlightStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({
     color: "#ff0000",
@@ -136,15 +312,43 @@ var highlightStyle = new ol.style.Style({
   }),
 });
 
+// Feature overlay for highlighting municipalities
 var featureOverlay = new ol.layer.Vector({
   source: new ol.source.Vector(),
   map: map,
   style: highlightStyle,
 });
 
-var highlight;
+// Map pointer move event to highlight features
+map.on("click", function (evt) {
+  var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    return feature;
+  });
+
+  if (feature) {
+    isClickActive = true;
+
+    const properties = feature.getProperties();
+    const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
+    const geometry = feature.getGeometry();
+    const centroid = ol.extent.getCenter(geometry.getExtent());
+
+    featureOverlay.getSource().clear();
+    featureOverlay.getSource().addFeature(feature);
+
+    overlay.setElement(createOverlayHTML(regionName));
+    overlay.setPosition(centroid);
+    
+    fetchMunicipalityData(regionName);
+  } else {
+    removeOverlay();
+  }
+});
+
+// Update the pointermove event handler
 map.on("pointermove", function (evt) {
-  if (isSearching) return;
+  if (isSearching || isClickActive) return;
+
   var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
     return feature;
   });
@@ -157,13 +361,23 @@ map.on("pointermove", function (evt) {
       featureOverlay.getSource().addFeature(feature);
       const properties = feature.getProperties();
       const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
-      const population = properties.population || "No data available";
-      const coordinates = feature.getGeometry().getCoordinates();
-      overlay.getElement().innerHTML = `<div class="bg-white p-2 rounded ">${regionName}<br>Population: ${population}</div>`;
+
+      overlay.setElement(createOverlayHTML(regionName));
       overlay.setPosition(evt.coordinate);
+      fetchMunicipalityData(regionName);
     } else {
       overlay.setPosition(undefined);
     }
     highlight = feature;
   }
 });
+
+
+function removeOverlay() {
+  overlay.setPosition(undefined);
+  featureOverlay.getSource().clear();
+  highlight = null;
+  selectedFeature = null;
+  isClickActive = false;
+  isSearching = false;
+}

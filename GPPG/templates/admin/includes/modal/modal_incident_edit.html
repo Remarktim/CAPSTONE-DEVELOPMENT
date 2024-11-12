@@ -9,23 +9,14 @@
     {% csrf_token %} 
     <div class="grid grid-cols-2 gap-4">
       <div>
-          <label class="block text-sm font-medium text-gray-700">
-              {{ form.municipality.label_tag }}
-              {% if form.municipality.errors %}
-                <div class="text-red-600">{{ form.municipality.errors }}</div>
-              {% endif %}
-          </label>
-          {{ form.municipality }}
-      </div>
-      <div>
-          <label class="block text-sm font-medium text-gray-700">
-              {{ form.city.label_tag }}
-              {% if form.city.errors %}
-                <div class="text-red-600">{{ form.city.errors }}</div>
-              {% endif %}
-          </label>
-          {{ form.city }}
-      </div>
+        <label class="block text-sm font-medium text-gray-700">
+            {{ form.municity.label_tag }}
+            {% if form.municity.errors %}
+              <div class="text-red-600">{{ form.municity.errors }}</div>
+            {% endif %}
+        </label>
+        {{ form.municity }}
+    </div>
 
       <div>
           <label class="block text-sm font-medium text-gray-700">

@@ -58,7 +58,7 @@ class Incident(BaseModel):
         ('Linapacan', 'Linapacan'),
         ('Magsaysay', 'Magsaysay'),
         ('Narra', 'Narra'),
-        ('Puerto Princesa', 'Puerto Princesa'),
+        ('Puerto Princesa City', 'Puerto Princesa City'),
         ('Quezon', 'Quezon'),
         ('Rizal', 'Rizal'),
         ('Roxas', 'Roxas'),
@@ -68,24 +68,15 @@ class Incident(BaseModel):
 
     )
 
-    ct_choices = (
-        ('Puerto Princesa City', 'Puerto Princesa City'),
-
-    )
-
-    municipality = models.CharField(
+    municity = models.CharField(
         max_length=150, choices=mun_choices, null=True, blank=True)
-    city = models.CharField(
-        max_length=150, choices=ct_choices, null=True, blank=True)
     status = models.CharField(max_length=150, choices=st_choices)
     date_reported = models.DateField()
     description = models.CharField(max_length=250)
 
     def __str__(self):
 
-        if self.city:
-            return f"{self.city} - {self.id} ({self.status})"
-        return f"{self.municipality} - {self.id} ({self.status})"
+        return f"{self.municity} - {self.id} ({self.status})"
 
 
 class Evidence(BaseModel):

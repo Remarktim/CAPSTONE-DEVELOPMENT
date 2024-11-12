@@ -13,6 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
+from django.contrib.admin.models import LogEntry
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from .forms import *
@@ -556,11 +559,6 @@ def incident_delete(request, id):
         })
 
 
-def cancel_delete(request, id, action=None):
-    if action == 'close':
-        return HttpResponse()
-
-
 def pangolin_activities(request):
     return render(request, 'admin/database_activities.html')
 
@@ -846,14 +844,36 @@ def admin_charts(request):
     return render(request, 'admin/charts.html')
 
 
-def admin_profile(request):
-    return render(request, 'admin/profile.html')
+class AdminLogView(UserPassesTestMixin, ListView):
+    model = LogEntry
+    template_name = 'admin/profile.html'
+    paginate_by = 10
+    context_object_name = 'logs'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_queryset(self):
+        return LogEntry.objects.select_related('content_type', 'user').order_by('-action_time')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for log in context['logs']:
+            # Format the action message
+            if log.action_flag == 1:
+                action = f"Add in {log.content_type}"
+            elif log.action_flag == 2:
+                action = f"Change in {log.content_type}"
+            elif log.action_flag == 3:
+                action = f"Delete {log.object_repr} in {log.content_type}"
+            log.formatted_action = action
+        return context
 
 # QUERIES
 
 
 def get_poaching_trends(request):
-    # Get period from the frontend request
+
     period = request.GET.get('period', 'overall')
 
     # Initialize overall trend data
@@ -861,10 +881,9 @@ def get_poaching_trends(request):
         'alive': [0] * 12,
         'dead': [0] * 12,
         'scales': [0] * 12,
-        'illegal_trade': [0] * 12,  # Ensure correct key
+        'illegal_trade': [0] * 12,
     }
 
-    # Dictionary to hold yearly reports with monthly data initialized to zero
     yearly_reports = {}
 
     # Get all reports regardless of the year for yearly reporting
@@ -876,8 +895,8 @@ def get_poaching_trends(request):
 
     for entry in aggregated_data:
         month_index = entry['date_reported__month'] - \
-            1  # Convert month to 0-index
-        status = entry['status']  # Use status directly
+            1
+        status = entry['status']
         count = entry['count']
 
         # Update overall trend
@@ -897,9 +916,9 @@ def get_poaching_trends(request):
                 'alive': [0] * 12,
                 'dead': [0] * 12,
                 'scales': [0] * 12,
-                'illegal_trade': [0] * 12,  # Ensure correct key
+                'illegal_trade': [0] * 12,
             }
-        # Update counts for the specific month in the yearly report
+
         if status == 'Alive':
             yearly_reports[year]['alive'][month_index] += count
         elif status == 'Dead':
@@ -909,7 +928,6 @@ def get_poaching_trends(request):
         elif status == 'Illegal Trade':
             yearly_reports[year]['illegal_trade'][month_index] += count
 
-    # Prepare the final response with the overall trend and yearly reports
     response_data = {
         'overall_trend': overall_trend,
         'yearly_reports': yearly_reports,
@@ -919,28 +937,23 @@ def get_poaching_trends(request):
 
 
 def get_chart_data(request):
-    # Get period and status from the frontend request
+
     period = request.GET.get('period', 'overall')
     status_filter = request.GET.get('status', None)
 
-    # Define statuses if filtering is not applied
     statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
     if status_filter:
         # Split the comma-separated statuses
         statuses = [s.strip() for s in status_filter.split(',')]
 
-    # Initialize dictionaries to hold overall and yearly trends per status
     trends = {status: {'overall': [0] * 12, 'yearly': {}}
               for status in statuses}
 
-    # Get all reports
     reports = Incident.objects.all()
 
-    # Filter reports based on status if specific statuses are requested
     if status_filter:
         reports = reports.filter(status__in=statuses)
 
-    # Rest of your code remains the same...
     aggregated_data = reports.values(
         'date_reported__year', 'date_reported__month', 'status'
     ).annotate(count=Count('id'))
@@ -965,7 +978,7 @@ def get_chart_data(request):
 
 
 def get_registereduser_data(request):
-    # Get the list of distinct years from the User model
+
     years = User.objects.dates('created_at', 'year', order='ASC').values_list(
         'created_at__year', flat=True)
 
@@ -995,33 +1008,33 @@ def get_available_years(request):
 def get_region_data(request):
     # Define regions and their corresponding municipalities
     regions = {
-        "Northern Palawan": ["Roxas", "San Vicente", "Dumaran", "El Nido", "Coron", "Busuanga", "Culion",
-                             "Magsaysay", "Cagayancillo", "Araceli", "Agutaya", "Taytay", "Cuyo", "Linapacan"],
+        "North Palawan": ["Roxas", "San Vicente", "Dumaran", "El Nido", "Coron", "Busuanga", "Culion",
+                          "Magsaysay", "Cagayancillo", "Araceli", "Agutaya", "Taytay", "Cuyo", "Linapacan"],
         "Central Palawan": ["Puerto Princesa City"],
-        "Southern Palawan": ["Aborlan", "Narra", "Quezon", "Brooke's Point", "Sofronio Española",
-                             "Rizal", "Bataraza", "Balabac"]
+        "South Palawan": ["Aborlan", "Narra", "Quezon", "Brooke's Point", "Sofronio Española",
+                          "Rizal", "Bataraza", "Balabac"]
     }
 
     # Initialize response data structure
     region_data = {
-        "Northern Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+        "North Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
         "Central Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
-        "Southern Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
+        "South Palawan": {"dead": 0, "alive": 0, "scales": 0, "illegalTrades": 0},
     }
 
     # Get all incidents and group by status, municipality
     incidents = Incident.objects.values(
-        "municipality", "status").annotate(count=Count("id"))
+        "municity", "status").annotate(count=Count("id"))
 
     # Aggregate data by region
     for incident in incidents:
-        municipality = incident["municipality"]
+        municity = incident["municity"]
         status = incident["status"]
         count = incident["count"]
 
         # Determine which region the municipality belongs to
         for region, municipalities in regions.items():
-            if municipality in municipalities:
+            if municity in municipalities:
                 # Update counts based on status
                 if status == "Dead":
                     region_data[region]["dead"] += count
@@ -1035,10 +1048,34 @@ def get_region_data(request):
     return JsonResponse(region_data)
 
 
-
 @cache_page(60 * 60 * 24)  # Cache for 24 hours
 def get_geojson(request):
     # Load your static GeoJSON file
     with open('static/maps/ClusterOfPalawan_filtereds.geojson', 'r') as f:
         geojson_data = json.load(f)
     return JsonResponse(geojson_data)
+
+
+def get_municity_data(request):
+    data = (
+        Incident.objects.values("municity")
+        .annotate(
+            dead=Count("id", filter=models.Q(status="Dead")),
+            alive=Count("id", filter=models.Q(status="Alive")),
+            scales=Count("id", filter=models.Q(status="Scales")),
+            illegalTrades=Count("id", filter=models.Q(status="Illegal Trade")),
+        )
+        .order_by("municity")
+    )
+
+    response_data = {
+        item["municity"]: {
+            "dead": item["dead"],
+            "alive": item["alive"],
+            "scales": item["scales"],
+            "illegalTrades": item["illegalTrades"],
+        }
+        for item in data
+    }
+
+    return JsonResponse(response_data)

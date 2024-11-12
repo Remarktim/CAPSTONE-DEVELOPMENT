@@ -41,7 +41,7 @@ urlpatterns = [
     # ADMIN
     path('admin_home/', views.admin_home, name='admin_home'),
     path('admin_login/', views.admin_login, name='admin_login'),
-    path('admin_profile/', views.admin_profile, name='admin_profile'),
+    path('admin_profile/', AdminLogView.as_view(), name='admin_profile'),
     path('activities_database/', EventListView.as_view(),
          name='admin_activities_database'),
     path('activities_database/add', views.activity_add,
@@ -77,8 +77,6 @@ urlpatterns = [
          views.officer_update, name='admin_officers_edit'),
     path('officers_database/<int:id>/delete',
          views.officer_delete, name='admin_officers_delete'),
-    path('canceldelete/<int:id>/', views.cancel_delete,
-         {'action': 'close'}, name='cancel-delete'),
     path('admin_officers/', views.admin_officers, name='admin_officers'),
     path('admin_charts/', views.admin_charts, name='admin_charts'),
     path('admin_map/', views.admin_map, name='admin_map'),
@@ -93,6 +91,8 @@ urlpatterns = [
          name='get_available_years'),
     path('get-region-data/', views.get_region_data,
          name='get_region_data'),
+     path('get-municity-data/', views.get_municity_data,
+         name='get_municity_data'),
 
 
 
