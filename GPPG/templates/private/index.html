@@ -32,7 +32,9 @@
               <img
                 class="w-[55px] h-[54px] rounded-[172px]"
                 src="{% static 'img/logo.jpg' %}" />
-              <span class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']">Guardians of the Palawan Pangolin Guild</span>
+              <span
+                id="typing"
+                class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']"></span>
             </a>
             <button
               data-collapse-toggle="NavBar_menu_home"
@@ -383,9 +385,9 @@
     </section>
 
     {% include 'private/includes/footer.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
+    <script src="{% static 'js/typed.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/popper.js' %}"></script>
-    <script src="{% static 'js/navbar.js' %}"></script>
     <script src="{% static 'js/cdn.min.js' %}"></script>
     <script src="{% static 'js/taos.js' %}"></script>
     <script src="{% static 'js/admin/flowbite.min.js' %}"></script>

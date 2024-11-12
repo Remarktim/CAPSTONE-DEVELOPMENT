@@ -10,7 +10,9 @@
 <section class="mx-16 h-fit">
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
     {% for event in latest_events %} {% if forloop.last and forloop.counter == 6 %}
-    <div class="overflow-hidden hidden 2xl:flex 2xl:flex-col rounded-xl group bg-white shadow-lg">
+    <div
+      class="overflow-hidden hidden 2xl:flex 2xl:flex-col rounded-xl group bg-white shadow-lg stat-card animate-slideIn"
+      style="animation-delay: {% widthratio forloop.counter 10 0.5 %}s">
       {% if event.event_image %}
       <img
         src="{{ event.event_image.url }}"
@@ -23,7 +25,9 @@
       <p class="text-left m-5 text-black text-base font-semibold font-['Bahnschrift']">{{ event.name }}</p>
     </div>
     {% else %}
-    <div class="overflow-hidden rounded-xl group bg-white shadow-lg">
+    <div
+      class="overflow-hidden hidden 2xl:flex 2xl:flex-col rounded-xl group bg-white shadow-lg stat-card animate-slideIn"
+      style="animation-delay: {% widthratio forloop.counter 10 0.5 %}s">
       {% if event.event_image %}
       <img
         src="{{ event.event_image.url }}"

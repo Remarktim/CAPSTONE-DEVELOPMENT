@@ -12,9 +12,9 @@
       type="image/x-icon" />
     <link rel="stylesheet" href="{% static "css/main.css" %}"> <link rel="stylesheet" href="{% static "css/style.css" %}">
     <!--  -->
-    <link rel="stylesheet" href="{% static "css/min.css" %}"> <link rel="stylesheet" href="{% static "css/flowbite.min.css" %}"> {% block css %} {% endblock css%}
+    <link rel="stylesheet" href="{% static "css/flowbite.min.css" %}"> {% block css %} {% endblock css%}
     <!--  -->
-    <link rel="stylesheet" href="{% static "maps/ol.css" %}"> <link rel="stylesheet" href="{% static "maps/leaflet.css" %}" />
+    <link rel="stylesheet" href="{% static "maps/ol.css" %}">
     <!--  -->
     <link rel="stylesheet" href="{% static "css/materialdesignicons.min.css" %}">
   </head>
@@ -27,7 +27,7 @@
         <div class="p-14 py-10">
           <a
             href="{% url 'admin_home' %}"
-            class="flex justify-center w-fit">
+            class="flex justify-center w-fit ml-2">
             <img
               class="h-20 rounded-full"
               src="{% static 'img/logo.jpg' %}" />
@@ -57,7 +57,7 @@
           <li>
             <a
               href="{% url 'admin_home' %}"
-              class="flex items-center p-2 text-white rounded-lg dark:text-white bg-[#3f0703] group">
+              class="flex items-center p-2 text-white rounded-lg dark:text-white bg-greenbutton group">
               <svg
                 class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                 aria-hidden="true"
@@ -324,7 +324,6 @@
     <script src="{% static 'js/admin/index.js' %}"></script>
     <script src="{% static 'js/chart_3.7.1.js' %}"></script>
     <script src="{% static 'js/admin/ChartForDashboard.js' %}"></script>
-    <script src="{% static 'maps/leaflet.js'%}"></script>
     <script src="{% static 'maps/ol.js' %}"></script>
     <script src="{% static 'maps/adminDash_map.js' %}"></script>
     <script src="{% static 'js/htmx.min.js' %}"></script>

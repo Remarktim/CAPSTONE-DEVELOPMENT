@@ -143,3 +143,15 @@ document.addEventListener("DOMContentLoaded", function () {
     element.classList.remove("animate-slide-from-up");
   }, 1000);
 });
+
+var typed = new Typed("#typing", {
+  strings: ["Guardians of the Palawan Pangolin Guild", "GPPG"],
+  typeSpeed: 50,
+  backSpeed: 50,
+  backDelay: 1000,
+  loop: true,
+  cursorChar: "",
+  autoInsertCss: true,
+  startDelay: 0,
+  smartBackspace: true,
+});

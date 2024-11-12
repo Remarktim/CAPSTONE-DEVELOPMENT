@@ -1033,3 +1033,12 @@ def get_region_data(request):
                     region_data[region]["illegalTrades"] += count
 
     return JsonResponse(region_data)
+
+
+
+@cache_page(60 * 60 * 24)  # Cache for 24 hours
+def get_geojson(request):
+    # Load your static GeoJSON file
+    with open('static/maps/ClusterOfPalawan_filtereds.geojson', 'r') as f:
+        geojson_data = json.load(f)
+    return JsonResponse(geojson_data)

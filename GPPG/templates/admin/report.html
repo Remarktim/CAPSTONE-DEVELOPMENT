@@ -1,6 +1,5 @@
 {% extends "admin/admin.html" %} {% load static %} {% block title %}Report{% endblock title %}
 <!-- css -->
-{% block css %} <link rel="stylesheet" href="{% static "css/apexcharts.css" %}"> {% endblock css%}
 
 <!-- Report menu highlight -->
 {% block aside%}
@@ -42,7 +41,7 @@
   <li>
     <a
       href="{% url 'admin_report' %}"
-      class="flex items-center p-2 text-white rounded-lg dark:text-white bg-[#3f0703] group">
+      class="flex items-center p-2 text-white rounded-lg dark:text-white bg-greenbutton group">
       <svg
         class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
         aria-hidden="true"
@@ -170,49 +169,504 @@
 
 <!-- Report Content -->
 {% block title_content %} Report {% endblock title_content %} {% block content %}
-<div class="relative overflow-hidden w-64 h-64 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer">
-  <input
-    type="file"
-    id="fileInput"
-    accept="image/*"
-    class="hidden"
-    onchange="previewImage(event)" />
-  <div
-    id="uploadContainer"
-    class="w-full h-full flex items-center justify-center">
-    <span
-      id="plusIcon"
-      class="text-3xl text-gray-500"
-      >+</span
-    >
-    <img
-      id="uploadedImage"
-      class="object-cover hidden w-full h-full rounded-lg absolute top-0 left-0" />
+<div class="w-full h-full bg-white rounded-2xl shadow-lg p-5">
+  <div class="my-4 container mx-auto">
+    <ul class="flex gap-1 p-1 w-fit rounded-2xl font-medium flex-wrap justify-center bg-white">
+      <li
+        class="border px-5 py-1 rounded-xl cursor-pointer transition-all duration-300 hover:border-amber-700 hover:text-amber-700 filter-active animate-slideIn stat-card opacity-0"
+        data-filter="all">
+        All
+      </li>
+      <li
+        class="border px-5 py-1 rounded-xl cursor-pointer transition-all duration-300 hover:border-amber-700 hover:text-amber-700 animate-slideIn stat-card opacity-0"
+        data-filter="alive">
+        Alive
+      </li>
+      <li
+        class="border px-5 py-1 rounded-xl cursor-pointer transition-all duration-300 hover:border-amber-700 hover:text-amber-700 animate-slideIn stat-card opacity-0"
+        data-filter="dead">
+        Dead
+      </li>
+      <li
+        class="border px-5 py-1 rounded-xl cursor-pointer transition-all duration-300 hover:border-amber-700 hover:text-amber-700 animate-slideIn stat-card opacity-0"
+        data-filter="illegal">
+        Illegal Trades
+      </li>
+      <li
+        class="border px-5 py-1 rounded-xl cursor-pointer transition-all duration-300 hover:border-amber-700 hover:text-amber-700 animate-slideIn stat-card opacity-0"
+        data-filter="scales">
+        Scales
+      </li>
+    </ul>
   </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 container mx-auto">
+    <div class="transform transition-all duration-500 animate-cardEntry">
+      <div class="relative overflow-hidden rounded-xl p-1 border">
+        <div class="relative rounded-lg bg-white p-6">
+          <div class="mb-4 flex items-center space-x-2 transform transition-all duration-300">
+            <h2 class="text-2xl font-bold">Scales</h2>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-black">Roxas</p>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="text-black">Nov. 7, 2024</p>
+          </div>
+
+          <div class="flex space-x-2 h-auto opacity-90 transition-all duration-200 mb-6">
+            <div>
+              <svg
+                class="w-4 h-4 mt-1 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p class="text-black leading-relaxed">Description of the record sd the record sda sdasddddddddd h the record sda sdasddddddddd h the record sda sdasddddddddd ha sdasddddddddd here...</p>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-4 border-t pt-4 transform transition-all duration-300">
+            <button class="flex items-center px-4 py-2 rounded-lg border-2 border-red-600 text-red-600 hover:bg-red-50 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Cancel
+            </button>
+
+            <button class="flex items-center px-4 py-2 rounded-lg bg-green-900 text-white hover:bg-green-800 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+              </svg>
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="transform transition-all duration-500 animate-cardEntry">
+      <div class="relative overflow-hidden rounded-xl p-1 border">
+        <div class="relative rounded-lg bg-white p-6">
+          <div class="mb-4 flex items-center space-x-2 transform transition-all duration-300">
+            <h2 class="text-2xl font-bold">Scales</h2>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-black">Roxas</p>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="text-black">Nov. 7, 2024</p>
+          </div>
+
+          <div class="flex space-x-2 h-auto opacity-90 transition-all duration-200 mb-6">
+            <div>
+              <svg
+                class="w-4 h-4 mt-1 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p class="text-black leading-relaxed">Description of the record sd the record sda sdasddddddddd h the record sda sdasddddddddd h the record sda sdasddddddddd ha sdasddddddddd here...</p>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-4 border-t pt-4 transform transition-all duration-300">
+            <button class="flex items-center px-4 py-2 rounded-lg border-2 border-red-600 text-red-600 hover:bg-red-50 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Cancel
+            </button>
+
+            <button class="flex items-center px-4 py-2 rounded-lg bg-green-900 text-white hover:bg-green-800 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+              </svg>
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="transform transition-all duration-500 animate-cardEntry">
+      <div class="relative overflow-hidden rounded-xl p-1 border">
+        <div class="relative rounded-lg bg-white p-6">
+          <div class="mb-4 flex items-center space-x-2 transform transition-all duration-300">
+            <h2 class="text-2xl font-bold">Scales</h2>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-black">Roxas</p>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="text-black">Nov. 7, 2024</p>
+          </div>
+
+          <div class="flex space-x-2 h-auto opacity-90 transition-all duration-200 mb-6">
+            <div>
+              <svg
+                class="w-4 h-4 mt-1 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p class="text-black leading-relaxed">Description of the record sd the record sda sdasddddddddd h the record sda sdasddddddddd h the record sda sdasddddddddd ha sdasddddddddd here...</p>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-4 border-t pt-4 transform transition-all duration-300">
+            <button class="flex items-center px-4 py-2 rounded-lg border-2 border-red-600 text-red-600 hover:bg-red-50 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Cancel
+            </button>
+
+            <button class="flex items-center px-4 py-2 rounded-lg bg-green-900 text-white hover:bg-green-800 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+              </svg>
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="transform transition-all duration-500 animate-cardEntry">
+      <div class="relative overflow-hidden rounded-xl p-1 border">
+        <div class="relative rounded-lg bg-white p-6">
+          <div class="mb-4 flex items-center space-x-2 transform transition-all duration-300">
+            <h2 class="text-2xl font-bold">Scales</h2>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-black">Roxas</p>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="text-black">Nov. 7, 2024</p>
+          </div>
+
+          <div class="flex space-x-2 h-auto opacity-90 transition-all duration-200 mb-6">
+            <div>
+              <svg
+                class="w-4 h-4 mt-1 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p class="text-black leading-relaxed">Description of the record sd the record sda sdasddddddddd h the record sda sdasddddddddd h the record sda sdasddddddddd ha sdasddddddddd here...</p>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-4 border-t pt-4 transform transition-all duration-300">
+            <button class="flex items-center px-4 py-2 rounded-lg border-2 border-red-600 text-red-600 hover:bg-red-50 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Cancel
+            </button>
+
+            <button class="flex items-center px-4 py-2 rounded-lg bg-green-900 text-white hover:bg-green-800 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+              </svg>
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="transform transition-all duration-500 animate-cardEntry">
+      <div class="relative overflow-hidden rounded-xl p-1 border">
+        <div class="relative rounded-lg bg-white p-6">
+          <div class="mb-4 flex items-center space-x-2 transform transition-all duration-300">
+            <h2 class="text-2xl font-bold">Scales</h2>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-black">Roxas</p>
+          </div>
+
+          <div class="mb-3 flex items-center space-x-2 opacity-90 transition-all duration-200 hover:opacity-100 transform">
+            <svg
+              class="w-4 h-4 text-black"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p class="text-black">Nov. 7, 2024</p>
+          </div>
+
+          <div class="flex space-x-2 h-auto opacity-90 transition-all duration-200 mb-6">
+            <div>
+              <svg
+                class="w-4 h-4 mt-1 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p class="text-black leading-relaxed">Description of the record sd the record sda sdasddddddddd h the record sda sdasddddddddd h the record sda sdasddddddddd ha sdasddddddddd here...</p>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-4 border-t pt-4 transform transition-all duration-300">
+            <button class="flex items-center px-4 py-2 rounded-lg border-2 border-red-600 text-red-600 hover:bg-red-50 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Cancel
+            </button>
+
+            <button class="flex items-center px-4 py-2 rounded-lg bg-greenbutton text-white hover:bg-green-800 transition-all duration-300 hover:shadow-md">
+              <svg
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+              </svg>
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endblock %} {% block extra_js %} {% endblock extra_js %}
 </div>
-<div class="bg-blueshade w-full h-20 border-2"></div>
-{% endblock %} {% block extra_js %}
-<script>
-  const uploadContainer = document.getElementById("uploadContainer");
-  const fileInput = document.getElementById("fileInput");
-  const uploadedImage = document.getElementById("uploadedImage");
-  const plusIcon = document.getElementById("plusIcon");
-
-  uploadContainer.addEventListener("click", () => {
-    fileInput.click();
-  });
-
-  function previewImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        uploadedImage.src = e.target.result;
-        uploadedImage.classList.remove("hidden");
-        plusIcon.classList.add("hidden");
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-</script>
-{% endblock extra_js %}

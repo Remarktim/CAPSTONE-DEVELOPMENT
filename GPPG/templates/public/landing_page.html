@@ -33,7 +33,9 @@
               <img
                 class="w-[55px] h-[54px] rounded-[172px]"
                 src="{% static 'img/logo.jpg' %}" />
-              <span class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']">Guardians of the Palawan Pangolin Guild</span>
+              <span
+                id="typing"
+                class="2xl:block hidden mx-2 text-center text-white text-xl font-normal font-['Bahnschrift']"></span>
             </a>
             <button
               data-collapse-toggle="NavBar_menu_landing"
@@ -155,7 +157,7 @@
 
     <section
       id="content"
-      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[200ms] duration-[1000ms] [animation-iteration-count:infinite] taos:translate-y-[200px] taos:opacity-0">
+      class="container mx-auto rounded-3xl my-10 shadow-lg delay-[200ms] duration-[1000ms] [animation-iteration-count:infinite] taos:translate-y-[200px] taos:opacity-0 animate-slideIn">
       <div class="container flex flex-col mx-auto rounded-lg pt-12 pb-12 my-5">
         <div class="container flex flex-col items-center gap-16 mx-auto">
           <div class="flex flex-col gap-7">
@@ -310,6 +312,8 @@
     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/private/overlay.js' %}"></script>
     <script src="{% static 'js/private/toggle.js' %}"></script>
+    <script src="{% static 'js/typed.js' %}"></script>
+
     <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/taos.js' %}"></script>
     <!-- For Form abang kono -->

@@ -1,43 +1,55 @@
 {% load static %}
-<section class="grid grid-cols-5 gap-5 mb-5 font-['Roboto']">
-  <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p class="text-2xl font-extrabold text-black">323</p>
-    <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Website Visitors</p>
+<section class="grid grid-cols-5 gap-4 mb-5 font-['Roboto']">
+  <div class="stat-card flex flex-col border h-full p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-md rounded-xl transform transition-all duration-300 hover:scale-105 opacity-0 animate-fadeInUp">
+    <div class="flex flex-col items-center text-center">
+      <p class="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-600 mb-2">Website Visitors</p>
+      <p class="text-xl sm:text-2xl font-extrabold text-black">323</p>
+    </div>
   </div>
-  <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p
-      class="text-2xl font-extrabold text-black"
-      id="dead">
-      {{ overall_trend.dead }}
-    </p>
-    <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Found Dead</p>
+  <div class="stat-card flex flex-col border h-full p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-md rounded-xl transform transition-all duration-300 hover:scale-105 opacity-0 animate-fadeInUp">
+    <div class="flex flex-col items-center text-center">
+      <p class="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-600 mb-2">Found Dead</p>
+      <p
+        class="text-xl sm:text-2xl font-extrabold text-black"
+        id="dead">
+        {{ overall_trend.dead }}
+      </p>
+    </div>
   </div>
-  <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p
-      class="text-2xl font-extrabold text-black"
-      id="alive">
-      {{ overall_trend.alive }}
-    </p>
-    <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Found Alive</p>
+
+  <div class="stat-card flex flex-col border h-full p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-md rounded-xl transform transition-all duration-300 hover:scale-105 opacity-0 animate-fadeInUp">
+    <div class="flex flex-col items-center text-center">
+      <p class="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-600 mb-2">Found Alive</p>
+      <p
+        class="text-xl sm:text-2xl font-extrabold text-black"
+        id="alive">
+        {{ overall_trend.alive }}
+      </p>
+    </div>
   </div>
-  <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p
-      class="text-2xl font-extrabold text-black"
-      id="scales">
-      {{ overall_trend.scales }}
-    </p>
-    <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Scales</p>
+
+  <div class="stat-card flex flex-col border h-full p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-md rounded-xl transform transition-all duration-300 hover:scale-105 opacity-0 animate-fadeInUp">
+    <div class="flex flex-col items-center text-center">
+      <p class="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-600 mb-2">Scales</p>
+      <p
+        class="text-xl sm:text-2xl font-extrabold text-black"
+        id="scales">
+        {{ overall_trend.scales }}
+      </p>
+    </div>
   </div>
-  <div class="flex flex-col items-center justify-center border text-center h-full py-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
-    <p
-      class="text-2xl font-extrabold text-black"
-      id="illegaltrade">
-      {{ overall_trend.illegal_trade }}
-    </p>
-    <p class="text-xs md:text-lg xl:text-xl font-semibold text-gray-600">Illegal Trades</p>
+  <div class="stat-card flex flex-col border h-full p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-md rounded-xl transform transition-all duration-300 hover:scale-105 opacity-0 animate-fadeInUp">
+    <div class="flex flex-col items-center text-center">
+      <p class="text-sm sm:text-base lg:text-lg xl:text-xl font-semibold text-gray-600 mb-2">Illegal Trades</p>
+      <p
+        class="text-xl sm:text-2xl font-extrabold text-black"
+        id="illegaltrade">
+        {{ overall_trend.illegal_trade }}
+      </p>
+    </div>
   </div>
 </section>
-<section class="h-80 mb-4 bg-gray-50 border dark:bg-gray-800 rounded-xl px-5 w-full">
+<section class="h-80 mb-4 bg-gray-50 border dark:bg-gray-800 rounded-xl px-5 w-full animate-cardEntry">
   <div class="flex w-full">
     <div>
       <p class="text-md text-black mt-5 font-bold font-['Bahnschrift']">Pangolin Poaching Incidents</p>
@@ -114,7 +126,7 @@
       height="230"></canvas>
   </div>
 </section>
-<section class="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto md:h-2/5">
+<section class="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto md:h-2/5 animate-cardEntry">
   <div class="col-span-4 border md:col-span-2 pb-2 lg:col-span-2 row-span-2 overflow-hidden bg-white h-full dark:bg-gray-800 rounded-xl">
     <p class="text-md text-black ml-7 mt-5 font-bold font-['Bahnschrift']">Palawan Map</p>
     <div
