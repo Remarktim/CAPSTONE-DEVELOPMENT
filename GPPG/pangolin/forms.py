@@ -7,7 +7,6 @@ from .models import *
 
 class IncidentForm(forms.ModelForm):
 
-
     date_reported = forms.DateField(
         widget=forms.DateInput(attrs={
             'type': 'date',  # 'date' input type triggers browser date picker
@@ -15,6 +14,7 @@ class IncidentForm(forms.ModelForm):
             'placeholder': 'Select Date',
         })
     )
+
     class Meta:
         model = Incident
         fields = "__all__"
@@ -25,8 +25,6 @@ class IncidentForm(forms.ModelForm):
             'date_reported': 'Date Reported',
             'description': 'Description',
         }
-
-
 
         widgets = {
             'municity': forms.Select(attrs={
@@ -155,7 +153,7 @@ class EventForm(forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={
-                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'class': 'bg-gray-50 border-b-2 border-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
                 'placeholder': 'Enter Activity Name'
             }),
             'description': forms.Textarea(attrs={
