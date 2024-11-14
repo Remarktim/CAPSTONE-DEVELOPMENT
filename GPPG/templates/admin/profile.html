@@ -184,7 +184,8 @@
         </button>
       </div>
       <div class="my-5 gap-1 flex flex-col">
-        <h2 class="text-3xl font-bold text-gray-800">Clay Jensen</h2>
+        <h2 class="text-3xl font-bold text-gray-800">{{ user.username }}</h2>
+        <p class="text-gray-600 mt-1">({{ user.first_name }} {{ user.last_name }})</p>
 
         <p class="text-gray-600 mt-1">Status: <span class="text-green-600 font-semibold">Active</span></p>
       </div>
@@ -195,7 +196,7 @@
         </div>
         <div>
           <h3 class="text-lg font-medium text-gray-800">Email</h3>
-          <p class="text-gray-600 mt-1">clay.jensen@email.com</p>
+          <p class="text-gray-600 mt-1">{{ user.email }}</p>
         </div>
         <div>
           <h3 class="text-lg font-medium text-gray-800">Age</h3>

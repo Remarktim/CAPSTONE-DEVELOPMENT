@@ -363,9 +363,9 @@
             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
               {% for user in users %}
               <tr>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.first_name }}</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.last_name }}</td>
-                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.email }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.user_firstname }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.user_lastname }}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.user_email }}</td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ user.contact }}</td>
                 <td class="p-3 whitespace-nowrap text-end text-sm font-medium">
                   <div class="mr-1">
