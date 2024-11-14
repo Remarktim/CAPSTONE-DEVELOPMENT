@@ -27,6 +27,8 @@ urlpatterns = [
          name='google_login_callback'),
 
     path('api/palawan-data/', views.get_geojson, name='palawan_data'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('resend-otp/', views.resend_otp, name='resend_otp'),
 
     path('gallery/', views.gallery, name='gallery'),
     path('gallery_video/', views.gallery_video, name='gallery_video'),
@@ -92,7 +94,7 @@ urlpatterns = [
          name='get_available_years'),
     path('get-region-data/', views.get_region_data,
          name='get_region_data'),
-     path('get-municity-data/', views.get_municity_data,
+    path('get-municity-data/', views.get_municity_data,
          name='get_municity_data'),
 
 
