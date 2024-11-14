@@ -32,6 +32,13 @@ import google.generativeai as genai
 from django.conf import settings
 import logging
 from allauth.socialaccount.models import SocialAccount
+import random
+import string
+from django.core.mail import send_mail
+from datetime import datetime, timedelta
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+
 # Set up logging
 logger = logging.getLogger(__name__)
 # PUBLIC
@@ -40,6 +47,72 @@ logger = logging.getLogger(__name__)
 @guest_only
 def landing_page(request):
     return render(request, 'public/landing_page.html')
+
+
+class OTPHandler:
+    def __init__(self):
+        self.otps = {}  # Store OTPs with expiration time
+
+    def generate_otp(self):
+        """Generate a 6-digit OTP"""
+        return ''.join(random.choices(string.digits, k=6))
+
+    def store_otp(self, identifier, otp):
+        """Store OTP with 5-minute expiration"""
+        expiration = datetime.now() + timedelta(minutes=5)
+        self.otps[identifier] = {'otp': otp, 'expiration': expiration}
+
+    def verify_otp(self, identifier, otp):
+        """Verify OTP and check expiration"""
+        if identifier not in self.otps:
+            return False
+
+        stored = self.otps[identifier]
+        if datetime.now() > stored['expiration']:
+            del self.otps[identifier]
+            return False
+
+        if stored['otp'] == otp:
+            del self.otps[identifier]
+            return True
+
+        return False
+
+    def send_otp_email(self, email, otp):
+        user_data = {
+            'email': email,
+            'get_full_name': email.split('@')[0]
+        }
+
+        context = {
+            'user': user_data,
+            'otp': otp,
+            'site_name': 'Guardians of the Palawan Pangolin Guild',
+            'expiration_time': 5,
+        }
+
+        email_html = render_to_string('public/otpTemp.html', context)
+        email_text = render_to_string('public/otpTemp.txt', context)
+
+        try:
+            subject = f"{context['site_name']} - Verify Your Email"
+            msg = EmailMultiAlternatives(
+                subject=subject,
+                body=email_text,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[email]
+            )
+
+            msg.attach_alternative(email_html, "text/html")
+            msg.send()
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send OTP email to {email}: {str(e)}")
+            return False
+
+
+otp_handler = OTPHandler()
 
 
 @csrf_exempt
@@ -52,28 +125,119 @@ def signup(request):
             if User.objects.filter(email=data['email']).exists():
                 return JsonResponse({'status': 'error', 'message': 'Email already exists'}, status=400)
 
-            user = User.objects.create(
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                email=data['email'],
-                password=make_password(data['password']),
-                contact=data['contact']
-            )
+            request.session['pending_user'] = {
+                'first_name': data['first_name'],
+                'last_name': data['last_name'],
+                'email': data['email'],
+                'password': data['password'],
+                'contact': data['contact']
+            }
 
-            request.session['user_id'] = user.id
-            request.session['user_email'] = user.email
+            # Generate and send OTP
+            otp = otp_handler.generate_otp()
+            otp_handler.store_otp(data['email'], otp)
+
+            if not otp_handler.send_otp_email(data['email'], otp):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Failed to send OTP email'
+                }, status=500)
 
             return JsonResponse({
                 'status': 'success',
-                'message': 'User created successfully',
-                'user': {
-                    'first_name': user.first_name,
-                    'email': user.email
-                }
+                'message': 'OTP sent successfully',
+                'require_otp': True
             })
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@csrf_exempt
+@guest_only
+def verify_otp(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            pending_user = request.session.get('pending_user')
+
+            if not pending_user:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'No pending registration found'
+                }, status=400)
+
+            if otp_handler.verify_otp(pending_user['email'], data['otp']):
+                # Create user after OTP verification
+                user = User.objects.create(
+                    first_name=pending_user['first_name'],
+                    last_name=pending_user['last_name'],
+                    email=pending_user['email'],
+                    password=make_password(pending_user['password']),
+                    contact=pending_user['contact']
+                )
+
+                # Clear pending user data
+                del request.session['pending_user']
+
+                # Set session
+                request.session['user_id'] = user.id
+                request.session['user_email'] = user.email
+
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'User created successfully',
+                    'user': {
+                        'first_name': user.first_name,
+                        'email': user.email
+                    }
+                })
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Invalid or expired OTP'
+                }, status=400)
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+
+
+@csrf_exempt
+@guest_only
+def resend_otp(request):
+    if request.method == 'POST':
+        try:
+            pending_user = request.session.get('pending_user')
+
+            if not pending_user:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'No pending registration found'
+                }, status=400)
+
+            # Generate and send new OTP
+            otp = otp_handler.generate_otp()
+            otp_handler.store_otp(pending_user['email'], otp)
+
+            if not otp_handler.send_otp_email(pending_user['email'], otp):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Failed to send OTP email'
+                }, status=500)
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'OTP resent successfully'
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
 
 
 @csrf_exempt

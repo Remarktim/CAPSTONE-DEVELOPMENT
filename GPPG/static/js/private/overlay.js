@@ -1,6 +1,6 @@
 $(document).ready(function () {
   const elements = {
-    modal: $("#authModal"),
+    authModal: $("#authModal"),
     flipCard: $(".flip-card"),
     flipToSignup: $("#flipToSignup"),
     flipToSignin: $("#flipToSignin"),
@@ -30,6 +30,16 @@ $(document).ready(function () {
     loginButtonText: $("#loginButtonText"),
     loginButtonSpinner: $("#loginButtonSpinner"),
     loginSubmitBtn: $("#signInForm button[type='submit']"),
+    otpModal: $("#otpVerificationModal"),
+    otpForm: $("#otpVerificationForm"),
+    otpInput: $("#otp_input"),
+    otpError: $("#otpError"),
+    otpVerifyButton: $("#verifyOtpButton"),
+    otpVerifyButtonText: $("#verifyButtonText"),
+    otpVerifyButtonSpinner: $("#verifyButtonSpinner"),
+    otpResendButton: $("#resendOtpButton"),
+    otpCloseBtn: $("#otp_closeBtn"),
+    signUpSuccess: $("#signUpSuccess"),
   };
 
   const validators = {
@@ -43,14 +53,10 @@ $(document).ready(function () {
 
   // Helper functions
   function showError(message, errorElement = elements.signUpError) {
-    // Clear any existing timeout
     if (errorTimeout) {
       clearTimeout(errorTimeout);
     }
-
-    errorElement.text(message).removeClass("hidden").fadeIn(300); // Smooth fade in
-
-    // Set new timeout to hide error after 3 seconds
+    errorElement.text(message).removeClass("hidden").fadeIn(300);
     errorTimeout = setTimeout(() => {
       errorElement.fadeOut(300, function () {
         $(this).addClass("hidden").show();
@@ -75,7 +81,7 @@ $(document).ready(function () {
   }
 
   function closeModal() {
-    elements.modal.addClass("hidden");
+    elements.authModal.addClass("hidden");
     resetForms();
   }
 
@@ -137,13 +143,13 @@ $(document).ready(function () {
     elements.flipCard.removeClass("flipped");
   });
 
-  elements.loginBtn.on("click", () => elements.modal.removeClass("hidden"));
-  elements.aboutBtn.on("click", () => elements.modal.removeClass("hidden"));
+  elements.loginBtn.on("click", () => elements.authModal.removeClass("hidden"));
+  elements.aboutBtn.on("click", () => elements.authModal.removeClass("hidden"));
   elements.signInCloseBtn.on("click", closeModal);
   elements.signUpCloseBtn.on("click", closeModal);
 
   $(window).on("click", function (event) {
-    if ($(event.target).is(elements.modal)) closeModal();
+    if ($(event.target).is(elements.authModal)) closeModal();
   });
 
   // Terms and conditions handlers
@@ -257,6 +263,41 @@ $(document).ready(function () {
   }
 
   // Form submissions
+  function showOtpModal() {
+    console.log("Showing OTP modal");
+    elements.otpModal.removeClass("hidden").addClass("flex");
+    elements.otpInput.val("");
+    elements.otpError.addClass("hidden");
+  }
+
+  function hideOtpModal() {
+    elements.otpModal.removeClass("flex").addClass("hidden");
+  }
+
+  function showOtpError(message) {
+    elements.otpError.text(message).removeClass("hidden");
+    setTimeout(() => {
+      elements.otpError.addClass("hidden");
+    }, 3000);
+  }
+
+  // Function to get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // Sign Up Form Submission
   elements.signUpForm.on("submit", async function (e) {
     e.preventDefault();
     if (!validateForm()) return;
@@ -266,27 +307,110 @@ $(document).ready(function () {
     elements.submitButton.prop("disabled", true);
 
     try {
+      const formData = {
+        first_name: elements.firstNameInput.val().trim(),
+        last_name: elements.lastNameInput.val().trim(),
+        email: elements.emailSignupInput.val().trim(),
+        password: elements.passwordInput.val(),
+        contact: elements.phoneInput.val().trim(),
+      };
+
+      console.log("Sending signup request...");
+
       const response = await $.ajax({
         url: "/signup/",
         method: "POST",
         contentType: "application/json",
-        data: JSON.stringify({
-          first_name: elements.firstNameInput.val().trim(),
-          last_name: elements.lastNameInput.val().trim(),
-          email: elements.emailSignupInput.val().trim(),
-          password: elements.passwordInput.val(),
-          contact: elements.phoneInput.val().trim(),
-        }),
+        data: JSON.stringify(formData),
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
       });
 
-      elements.signUpForm.trigger("reset");
-      window.location.href = "/home/";
+      console.log("Signup response:", response);
+
+      if (response.status === "success" && response.require_otp) {
+        showOtpModal();
+      } else {
+        throw new Error(response.message || "Unexpected response");
+      }
     } catch (error) {
+      console.error("Signup error:", error);
       showError(error.responseJSON?.message || "An error occurred during signup");
     } finally {
       elements.buttonText.removeClass("hidden");
       elements.buttonSpinner.addClass("hidden");
       elements.submitButton.prop("disabled", false);
+    }
+  });
+
+  // OTP Form Submission
+  elements.otpForm.on("submit", async function (e) {
+    e.preventDefault();
+
+    const otp = elements.otpInput.val().trim();
+    if (!otp) {
+      showOtpError("Please enter the OTP");
+      return;
+    }
+
+    elements.otpVerifyButtonText.addClass("hidden");
+    elements.otpVerifyButtonSpinner.removeClass("hidden");
+    elements.otpVerifyButton.prop("disabled", true);
+
+    try {
+      const response = await $.ajax({
+        url: "/verify-otp/",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ otp }),
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
+
+      if (response.status === "success") {
+        hideOtpModal();
+        window.location.href = "/home/";
+      } else {
+        throw new Error(response.message || "Verification failed");
+      }
+    } catch (error) {
+      showOtpError(error.responseJSON?.message || "Invalid OTP");
+    } finally {
+      elements.otpVerifyButtonText.removeClass("hidden");
+      elements.otpVerifyButtonSpinner.addClass("hidden");
+      elements.otpVerifyButton.prop("disabled", false);
+    }
+  });
+
+  // Resend OTP Button Click
+  elements.otpResendButton.on("click", async function () {
+    try {
+      const response = await $.ajax({
+        url: "/resend-otp/",
+        method: "POST",
+        contentType: "application/json",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      });
+
+      if (response.status === "success") {
+        showOtpError("OTP resent successfully");
+      }
+    } catch (error) {
+      showOtpError("Failed to resend OTP");
+    }
+  });
+
+  // OTP Modal Close Button
+  elements.otpCloseBtn.on("click", hideOtpModal);
+
+  // Close OTP modal when clicking outside
+  $(window).on("click", function (event) {
+    if ($(event.target).is(elements.otpModal)) {
+      hideOtpModal();
     }
   });
 

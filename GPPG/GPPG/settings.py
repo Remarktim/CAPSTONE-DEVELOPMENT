@@ -197,3 +197,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DJANGO_ADMIN_LOGS_ENABLED = True
 DJANGO_ADMIN_LOGS_DELETABLE = False
+
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'postmaster@gppg.systems'
+EMAIL_HOST_PASSWORD = '2a5057a300930cb4c7e3509165a753d4-f6fe91d3-ae3fd37f'
+DEFAULT_FROM_EMAIL = 'postmaster@gppg.systems'
+
+# Session settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_SAVE_EVERY_REQUEST = True
