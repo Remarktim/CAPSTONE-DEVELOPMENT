@@ -37,10 +37,17 @@ function searchMunicipality(event) {
     const infoElement = document.createElement("div");
     infoElement.innerHTML = `
       <div class="bg-white p-5 rounded-2xl relative shadow-2xl">
-        <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
-        <p class="mb-5 font-bold">${regionName}</p>
-        <canvas id="donutchart" width="220" height="220"></canvas>
+      <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
+      <div class="text-center mb-5">
+        <p class="font-bold">${regionName}</p>
+        <div class="text-sm mt-2">
+          <p class="font-semibold">Poaching Incidents Recorded:</p>
+          <p class="text-2xl font-bold text-orange-600" id="total-text">Loading...</p>
+        </div>
+        <p class="text-sm text-gray-600" id="percentage-text">Loading...</p>
       </div>
+      <canvas id="donutchart" width="220" height="220"></canvas>
+    </div>
     `;
     overlay.setElement(infoElement);
     overlay.setPosition(centroid);
@@ -108,27 +115,28 @@ function fetchMunicipalityData(municity) {
     .then(response => response.json())
     .then(data => {
       // Calculate total incidents across all municipalities first
-      totalIncidents = 0;
+      let totalIncidents = 0;
       Object.values(data).forEach(municipalityData => {
         if (municipalityData) {
           totalIncidents += municipalityData.dead + 
-                          municipalityData.alive + 
-                          municipalityData.scales + 
-                          municipalityData.illegalTrades;
+                            municipalityData.alive + 
+                            municipalityData.scales + 
+                            municipalityData.illegalTrades;
         }
       });
 
       const municipalityData = data[municity];
       if (municipalityData) {
-        // Calculate percentage for this municipality
+        // Calculate total for this municipality
         const municipalityTotal = municipalityData.dead + 
-                                municipalityData.alive + 
-                                municipalityData.scales + 
-                                municipalityData.illegalTrades;
-        const percentage = ((municipalityTotal / totalIncidents) * 100).toFixed(2);
+                                  municipalityData.alive + 
+                                  municipalityData.scales + 
+                                  municipalityData.illegalTrades;
         
-        // Add percentage to the data object
-        municipalityData.percentage = percentage;
+        // Add total and percentage to the municipality data object
+        municipalityData.municipalityTotal = municipalityTotal;
+        municipalityData.percentage = ((municipalityTotal / totalIncidents) * 100).toFixed(2);
+
         createDoughnutChart(municipalityData);
       } else {
         createDoughnutChart(null);
@@ -147,6 +155,10 @@ function createOverlayHTML(regionName, coordinate) {
       <button onclick="removeOverlay()" class="absolute top-2 right-2 m-1 text-sm">&times;</button>
       <div class="text-center mb-5">
         <p class="font-bold">${regionName}</p>
+        <div class="text-sm mt-2">
+          <p class="font-semibold">Poaching Incidents Recorded:</p>
+          <p class="text-2xl font-bold text-orange-600" id="total-text">Loading...</p>
+        </div>
         <p class="text-sm text-gray-600" id="percentage-text">Loading...</p>
       </div>
       <canvas id="donutchart" width="220" height="220"></canvas>
@@ -160,6 +172,7 @@ let chartInstance;
 function createDoughnutChart(municipalityData) {
   const ctx = document.getElementById("donutchart").getContext("2d");
   const percentageElement = document.getElementById("percentage-text");
+  const totalElement = document.getElementById("total-text");
 
   // Clear the canvas before rendering new content
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -180,6 +193,7 @@ function createDoughnutChart(municipalityData) {
     
     if (percentageElement) {
       percentageElement.innerHTML = "0% of total incidents";
+      totalElement.innerHTML = "0";
     }
     return;
   }
@@ -187,6 +201,7 @@ function createDoughnutChart(municipalityData) {
   // Update percentage text
   if (percentageElement) {
     percentageElement.innerHTML = `<span class='font-bold'>${municipalityData.percentage}%</span> of total incidents`;
+    totalElement.innerHTML = `<span class='font-bold'>${municipalityData.municipalityTotal}</span>`;
   }
 
   // Prepare the data
