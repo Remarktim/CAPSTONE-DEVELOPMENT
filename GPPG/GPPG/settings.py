@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -64,9 +65,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'pangolin.middleware.SessionTimeoutMiddleware',
+    'pangolin.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'pangolin.middleware.AuthenticationMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
@@ -138,12 +140,22 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
+MESSAGE_TAGS = {
+    messages.ERROR: 'text-red-600',
+    messages.SUCCESS: 'text-green-600',
+    messages.INFO: 'text-blue-600',
+    messages.WARNING: 'text-yellow-600',
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -212,3 +224,8 @@ DEFAULT_FROM_EMAIL = 'postmaster@gppg.systems'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_SAVE_EVERY_REQUEST = True
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
+
+# Session settings for Auto log out if no activity
+SESSION_COOKIE_AUTO_LOGOUT = 3600  # 1 hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

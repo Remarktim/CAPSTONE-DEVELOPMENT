@@ -38,7 +38,18 @@ from django.core.mail import send_mail
 from datetime import datetime, timedelta
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.tokens import default_token_generator
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.forms import PasswordResetForm
+from django.utils.crypto import get_random_string
+import time
+import hashlib
+from django.views import View
+from django.views.decorators.csrf import csrf_protect
 # Set up logging
 logger = logging.getLogger(__name__)
 # PUBLIC
@@ -47,6 +58,108 @@ logger = logging.getLogger(__name__)
 @guest_only
 def landing_page(request):
     return render(request, 'public/landing_page.html')
+
+
+class PasswordResetView(View):
+    @staticmethod
+    def generate_token():
+        random_string = get_random_string(32)
+        timestamp = str(int(time.time()))
+        return hashlib.sha256(f"{random_string}{timestamp}".encode()).hexdigest()
+
+    def post(self, request):
+        data = json.loads(request.body)
+        email = data.get('email')
+
+        if not email:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Email is required.'
+            }, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+            token = self.generate_token()
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            reset_url = f"{request.scheme}://{request.get_host()}/reset/{uid}/{token}/"
+
+            # Store token in session with timestamp
+            request.session[f'password_reset_token_{uid}'] = {
+                'token': token,
+                'timestamp': int(time.time())
+            }
+
+            context = {
+                'user': {
+                    'email': email,
+                    'get_full_name': email.split('@')[0]
+                },
+                'reset_url': reset_url,
+                'site_name': 'Guardians of the Palawan Pangolin Guild',
+                'expiration_time': '24 hours'
+            }
+
+            email_html = render_to_string(
+                'public/password_reset_email.html', context)
+            email_text = render_to_string(
+                'public/password_reset_subject.txt', context)
+
+            msg = EmailMultiAlternatives(
+                subject=f"{context['site_name']} - Password Reset",
+                body=email_text,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[email]
+            )
+            msg.attach_alternative(email_html, "text/html")
+            msg.send()
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Password reset email sent successfully.'
+            })
+
+        except User.DoesNotExist:
+            return JsonResponse({
+                'status': 'success',
+                'message': 'If an account exists with this email, a password reset link will be sent.'
+            })
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class PasswordResetConfirmView(View):
+    template_name = 'public/password_reset_confirm.html'
+
+    def get(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+            return render(request, self.template_name, {'validlink': True})
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return render(request, self.template_name, {'validlink': False})
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+
+            password1 = request.POST.get('new_password1')
+            password2 = request.POST.get('new_password2')
+
+            if password1 and password2 and password1 == password2:
+                # Use Django's make_password
+                from django.contrib.auth.hashers import make_password
+                user.password = make_password(password1)
+                user.save()
+
+                messages.success(
+                    request, 'Your password has been set. You may go ahead and log in now.')
+                return redirect('landing_page')
+            else:
+                messages.error(request, 'Passwords do not match.')
+                return render(request, self.template_name, {'validlink': True})
+
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return render(request, self.template_name, {'validlink': False})
 
 
 class OTPHandler:
@@ -255,7 +368,6 @@ def login(request):
                 return JsonResponse({'status': 'error', 'message': 'Invalid credentials'}, status=400)
 
             if check_password(password, user.password):
-
                 request.session['user_id'] = user.id
                 request.session['user_email'] = user.email
 
@@ -272,6 +384,9 @@ def login(request):
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    # Handle GET request
+    return render(request, 'public/login.html')
 
 
 @csrf_exempt
@@ -320,18 +435,6 @@ def google_login_callback(request):
 def logout(request):
     request.session.flush()
     return redirect('landing_page')
-
-
-class CustomPasswordResetView(SuccessMessageMixin, PasswordResetView):
-    template_name = 'landingPage/password_reset.html'
-    email_template_name = 'registration/password_reset_email.html'
-    subject_template_name = 'registration/password_reset_subject.txt'
-    success_url = reverse_lazy('landing_page')
-    success_message = "A password reset link has been sent to your email."
-
-    def form_valid(self, form):
-        messages.success(self.request, self.success_message)
-        return super().form_valid(form)
 
 
 def public_about(request):

@@ -96,9 +96,9 @@ urlpatterns = [
     path('get-municity-data/', views.get_municity_data,
          name='get_municity_data'),
 
+    path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(),
+         name='password_reset_confirm'),
 
-
-    path('password_reset/', views.CustomPasswordResetView.as_view(),
-         name='password_reset'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
