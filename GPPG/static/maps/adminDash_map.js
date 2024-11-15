@@ -1,4 +1,3 @@
-// Code 2: Adjusted to avoid conflicts with Code 1
 var highlightDash;
 var isSearchingDash = false;
 
@@ -43,19 +42,53 @@ mapDash.on("rendercomplete", function () {
   hideLoadingDash();
 });
 
+let municipalityData = {};
+let totalIncidents = 0;
+
+async function fetchAdminMapData(municity) {
+  try {
+    const response = await fetch(`/get-municity-data/`);
+    const data = await response.json();
+
+    // Calculate total incidents across all municipalities first
+    totalIncidents = 0;
+    Object.values(data).forEach(municipality => {
+      if (municipality) {
+        totalIncidents += municipality.dead + 
+                          municipality.alive + 
+                          municipality.scales + 
+                          municipality.illegalTrades;
+      }
+    });
+
+    municipalityData = data;  // Set the global municipality data
+
+    if (municipalityData[municity]) {
+      const municipality = municipalityData[municity];
+      
+      // Calculate percentage for this municipality
+      const municipalityTotal = municipality.dead + 
+                                municipality.alive + 
+                                municipality.scales + 
+                                municipality.illegalTrades;
+      const percentage = ((municipalityTotal / totalIncidents) * 100).toFixed(2);
+
+      // Add percentage to the municipality data object
+      municipality.percentage = percentage;
+    }
+  } catch (error) {
+    console.error("Error fetching municipality data:", error);
+  }
+}
+
 var vectorLayerDash = new ol.layer.Vector({
   source: new ol.source.Vector({
     url: "/static/maps/map.geojson", // Geojson file input kuno
     format: new ol.format.GeoJSON(),
   }),
   style: function (feature) {
-    const Datamap = {
-      "Puerto Princesa City": 150000,
-      "El Nido": 50000,
-      Roxas: 150000,
-      Taytay: 6969,
-    };
-    feature.set("population", Datamap[feature.get("ADM3_EN")] || "No data available");
+    const regionName = feature.get("Municipalities");
+    feature.set("data", municipalityData[regionName] || "No data available");
 
     return new ol.style.Style({
       stroke: new ol.style.Stroke({
@@ -95,9 +128,9 @@ var featureOverlayDash = new ol.layer.Vector({
   style: highlightStyleDash,
 });
 
-var highlightDash;
-mapDash.on("pointermove", function (evt) {
+mapDash.on("pointermove", async function (evt) {
   if (isSearchingDash) return;
+
   var feature = mapDash.forEachFeatureAtPixel(evt.pixel, function (feature) {
     return feature;
   });
@@ -108,11 +141,33 @@ mapDash.on("pointermove", function (evt) {
     }
     if (feature) {
       featureOverlayDash.getSource().addFeature(feature);
+
       const properties = feature.getProperties();
-      const regionName = properties.name || properties.ADM3_EN || "Unknown Region";
-      const population = properties.population || "No data available";
-      const coordinates = feature.getGeometry().getCoordinates();
-      overlayDash.getElement().innerHTML = `<div class="bg-white p-2 rounded ">${regionName}<br>Population: ${population}</div>`;
+      const regionName = properties.name || properties.Municipalities || "Unknown Region";
+
+      // Fetch the data and update the overlay after the data is ready
+      await fetchAdminMapData(regionName);
+
+      const municipalityDataForRegion = municipalityData[regionName] || {};
+
+      // Get the total poaching incidents and percentage for this region
+      const totalPoachingIncidents = municipalityDataForRegion.dead + 
+                                     municipalityDataForRegion.alive + 
+                                     municipalityDataForRegion.scales + 
+                                     municipalityDataForRegion.illegalTrades;
+
+      // Handle the case where there's no data or incidents
+      const totalDisplay = totalPoachingIncidents > 0 ? totalPoachingIncidents : "No Poaching Incidents";
+      const percentage = municipalityDataForRegion.percentage || 0;
+
+      // Update the overlay with both total incidents and percentage
+      overlayDash.getElement().innerHTML = `
+        <div class="bg-white p-2 rounded shadow-2xl">
+          <p class="font-bold">${regionName}</p><br>
+          Total Poaching Incidents: <span class="font-bold">${totalDisplay}</span><br>
+          Percentage: <span class="font-bold">${totalPoachingIncidents > 0 ? `${percentage}%` : "N/A"}</span>
+        </div>`;
+
       overlayDash.setPosition(evt.coordinate);
     } else {
       overlayDash.setPosition(undefined);

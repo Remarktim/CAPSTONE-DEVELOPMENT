@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
-from django.contrib.admin.models import LogEntry
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -363,20 +363,20 @@ def login(request):
             password = data.get('password')
 
             try:
-                user = User.objects.get(email=email)
+                user = User.objects.get(user_email=email)
             except User.DoesNotExist:
                 return JsonResponse({'status': 'error', 'message': 'Invalid credentials'}, status=400)
 
             if check_password(password, user.password):
                 request.session['user_id'] = user.id
-                request.session['user_email'] = user.email
+                request.session['user_email'] = user.user_email
 
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Login successful',
                     'user': {
-                        'first_name': user.first_name,
-                        'email': user.email
+                        'first_name': user.user_firstname,
+                        'email': user.user_email
                     }
                 })
             else:
@@ -409,7 +409,7 @@ def google_login_callback(request):
 
             # Find or create your custom user
             try:
-                user = User.objects.get(email=email)
+                user = User.objects.get(user_email=email)
             except User.DoesNotExist:
                 user = User.objects.create(
                     email=email,
@@ -420,7 +420,7 @@ def google_login_callback(request):
 
             # Set your custom session
             request.session['user_id'] = user.id
-            request.session['user_email'] = user.email
+            request.session['user_email'] = user.user_email
 
             return redirect('home')
 
@@ -433,8 +433,11 @@ def google_login_callback(request):
 
 
 def logout(request):
-    request.session.flush()
-    return redirect('landing_page')
+        auth_logout(request)
+        return redirect(settings.LOGOUT_REDIRECT_URL)
+
+
+
 
 
 def public_about(request):
@@ -706,6 +709,19 @@ def user_update_private(request, id):
 # ADMIN
 
 
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+       
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  
+        
+        if not request.user.is_staff:
+            return redirect('admin_login') 
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+@admin_required
 def admin_home(request):
     # Initialize overall trend data
     overall_trend = {
@@ -741,10 +757,29 @@ def admin_home(request):
     return render(request, 'admin/admin.html', response_data)
 
 
+
+
 def admin_login(request):
-    return render(request, 'admin/login.html')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None and user.is_staff:
+            auth_login(request, user)
+            return redirect('admin_home')  
+        else:
+            return render(request, 'admin/login_admin.html', {'error': 'Invalid username or password'})
+    
+    return render(request, 'admin/login_admin.html')
+
+def admin_logout(request):
+    auth_logout(request)
+    return redirect(settings.ADMIN_LOGOUT_REDIRECT_URL)
 
 
+@method_decorator(admin_required, name='dispatch')
 class IncidentListView(ListView):
     model = Incident
     context_object_name = "incident"
@@ -775,10 +810,20 @@ def incident_add(request):
     if request.method == 'POST':
         form = IncidentForm(request.POST)
         if form.is_valid():
-            form.save()
+            incident = form.save()  
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Incident).pk,  
+                object_id=incident.pk,  
+                object_repr=str(incident),  
+                action_flag=ADDITION,  
+                change_message="Added a new Incident"  
+            )
+
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
-            messages.success(request, 'Incident Saved!')
+            messages.success(request, 'Incident Saved and logged!')
             return response
     else:
         form = IncidentForm()
@@ -793,6 +838,16 @@ def incident_update(request, id):
         form = IncidentForm(request.POST, instance=incident)
         if form.is_valid():
             form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Incident).pk,  
+                object_id=incident.pk,  
+                object_repr=str(incident),  
+                action_flag=CHANGE,  
+                change_message="Updated an incident"  
+            )
+
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Incident Updated!')
@@ -815,6 +870,16 @@ def incident_delete(request, id):
     incident = get_object_or_404(Incident, id=id)
 
     if request.method == 'POST':
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,  
+            content_type_id=ContentType.objects.get_for_model(Incident).pk,  
+            object_id=incident.pk, 
+            object_repr=str(incident),  
+            action_flag=DELETION,  
+            change_message="Deleted an incident"  
+        )
+
         incident.delete()
         response = HttpResponse()
         response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -833,7 +898,7 @@ def pangolin_activities(request):
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
 
-
+@method_decorator(admin_required, name='dispatch')
 class EventListView(ListView):
     model = Event
     context_object_name = "events"
@@ -844,7 +909,17 @@ def activity_add(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            event = form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Event).pk,  
+                object_id=event.pk,  
+                object_repr=str(event),  
+                action_flag=ADDITION,  
+                change_message="Added a new Event"  
+            )
+
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Acitivity Saved!')
@@ -862,6 +937,16 @@ def activity_update(request, id):
         form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
             form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Event).pk,  
+                object_id=event.pk,  
+                object_repr=str(event),  
+                action_flag=CHANGE,  
+                change_message="Updated an Event"  
+            )
+            
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Activity Updated!')
@@ -884,6 +969,14 @@ def activity_delete(request, id):
     event = get_object_or_404(Event, id=id)
 
     if request.method == 'POST':
+        LogEntry.objects.log_action(
+            user_id=request.user.id,  
+            content_type_id=ContentType.objects.get_for_model(Event).pk,  
+            object_id=event.pk, 
+            object_repr=str(event),  
+            action_flag=DELETION,  
+            change_message="Deleted an Event"  
+        )
         event.delete()
         response = HttpResponse()
         response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -894,7 +987,7 @@ def activity_delete(request, id):
             'event': event
         })
 
-
+@method_decorator(admin_required, name='dispatch')
 class UserListView(ListView):
     model = User
     context_object_name = "users"
@@ -905,7 +998,16 @@ def user_add(request):
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            user = form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(User).pk,  
+                object_id=user.pk,  
+                object_repr=str(user),  
+                action_flag=ADDITION,  
+                change_message="Added a new User"  
+            )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'User Saved!')
@@ -923,6 +1025,15 @@ def user_update(request, id):
         form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(User).pk,  
+                object_id=user.pk,  
+                object_repr=str(user),  
+                action_flag=CHANGE,  
+                change_message="User Updated"  
+            )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'User Updated!')
@@ -945,6 +1056,15 @@ def user_delete(request, id):
     user = get_object_or_404(User, id=id)
 
     if request.method == 'POST':
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,  
+            content_type_id=ContentType.objects.get_for_model(User).pk,  
+            object_id=user.pk, 
+            object_repr=str(user),  
+            action_flag=DELETION,  
+            change_message="User Deleted"  
+        )
         user.delete()
         response = HttpResponse()
         response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -955,7 +1075,7 @@ def user_delete(request, id):
             'user': user
         })
 
-
+@method_decorator(admin_required, name='dispatch')
 class GalleryListView(ListView):
     model = Gallery
     context_object_name = "gallery_items"
@@ -966,7 +1086,16 @@ def gallery_add(request):
     if request.method == 'POST':
         form = GalleryForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            gallery = form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Gallery).pk,  
+                object_id=gallery.pk,  
+                object_repr=str(gallery),  
+                action_flag=ADDITION,  
+                change_message="Added a Media to Gallery"  
+            )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Gallery Record Saved!')
@@ -984,6 +1113,15 @@ def gallery_update(request, id):
         form = GalleryForm(request.POST, request.FILES, instance=gallery)
         if form.is_valid():
             form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Gallery).pk,  
+                object_id=gallery.pk,  
+                object_repr=str(gallery),  
+                action_flag=CHANGE,  
+                change_message="Updated a Gallery Content"  
+            )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Gallery Updated!')
@@ -1006,6 +1144,15 @@ def gallery_delete(request, id):
     gallery = get_object_or_404(Gallery, id=id)
 
     if request.method == 'POST':
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,  
+            content_type_id=ContentType.objects.get_for_model(Gallery).pk,  
+            object_id=gallery.pk, 
+            object_repr=str(gallery),  
+            action_flag=DELETION,  
+            change_message="Media Deleted from Gallery"  
+        )
         gallery.delete()
         response = HttpResponse()
         response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1016,13 +1163,13 @@ def gallery_delete(request, id):
             'gallery': gallery
         })
 
-
+@method_decorator(admin_required, name='dispatch')
 class OfficerListView(ListView):
     model = Officer
     context_object_name = "officers"
     template_name = "admin/database_officers.html"
 
-
+@admin_required
 def admin_officers(request):
     presidents = Officer.objects.filter(position='President')
     vice_presidents = Officer.objects.filter(position='Vice President')
@@ -1048,7 +1195,16 @@ def officer_add(request):
     if request.method == 'POST':
         form = OfficerForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            officer = form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Officer).pk,  
+                object_id=officer.pk,  
+                object_repr=str(officer),  
+                action_flag=ADDITION,  
+                change_message="Added a new Officer"  
+            )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Officer Saved!')
@@ -1066,6 +1222,15 @@ def officer_update(request, id):
         form = OfficerForm(request.POST, request.FILES, instance=officer)
         if form.is_valid():
             form.save()
+
+            LogEntry.objects.log_action(
+                user_id=request.user.id,  
+                content_type_id=ContentType.objects.get_for_model(Officer).pk,  
+                object_id=officer.pk,  
+                object_repr=str(officer),  
+                action_flag=CHANGE,  
+                change_message="Officer Updated"  
+            )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Officer Updated!')
@@ -1088,6 +1253,15 @@ def officer_delete(request, id):
     officer = get_object_or_404(Officer, id=id)
 
     if request.method == 'POST':
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,  
+            content_type_id=ContentType.objects.get_for_model(Officer).pk,  
+            object_id=officer.pk, 
+            object_repr=str(officer),  
+            action_flag=DELETION,  
+            change_message="Officer Deleted"  
+        )
         officer.delete()
         response = HttpResponse()
         response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1110,29 +1284,32 @@ def admin_report(request):
 def admin_charts(request):
     return render(request, 'admin/charts.html')
 
-
+@method_decorator(admin_required, name='dispatch')
 class AdminLogView(UserPassesTestMixin, ListView):
     model = LogEntry
     template_name = 'admin/profile.html'
-    paginate_by = 10
+    paginate_by = 6
     context_object_name = 'logs'
+    login_url = reverse_lazy('admin_login')  # Redirects to admin login if test fails
 
     def test_func(self):
         return self.request.user.is_staff
 
     def get_queryset(self):
-        return LogEntry.objects.select_related('content_type', 'user').order_by('-action_time')
+        return LogEntry.objects.select_related('user').order_by('-action_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for log in context['logs']:
-            # Format the action message
+            # Format the action message using `change_message`
             if log.action_flag == 1:
-                action = f"Add in {log.content_type}"
+                action = f"{log.change_message}"
             elif log.action_flag == 2:
-                action = f"Change in {log.content_type}"
+                action = f"{log.change_message}"
             elif log.action_flag == 3:
-                action = f"Delete {log.object_repr} in {log.content_type}"
+                action = f"{log.change_message}"
+            else:
+                action = "No action specified"
             log.formatted_action = action
         return context
 

@@ -272,12 +272,12 @@
                   <p
                     class="text-sm text-gray-900 dark:text-white"
                     role="none">
-                    Remark Timones
+                    {{ user.username }}
                   </p>
                   <p
                     class="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                     role="none">
-                    resdadasdasdm@ss.com
+                    {{ user.email }}
                   </p>
                 </div>
                 <ul
@@ -302,7 +302,7 @@
 
                   <li>
                     <a
-                      href="#"
+                      href="{% url 'admin_logout' %}"
                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-black"
                       role="menuitem"
                       >Sign out</a

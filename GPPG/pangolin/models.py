@@ -150,7 +150,7 @@ class Officer(BaseModel):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name}"
+        return f"{self.last_name}, {self.first_name} ({self.position})"
 
 
 class Event(BaseModel):
@@ -177,14 +177,14 @@ class Event(BaseModel):
 
 
 class User(BaseModel):
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    email = models.EmailField(max_length=150)
+    user_firstname = models.CharField(max_length=150)
+    user_lastname = models.CharField(max_length=150)
+    user_email = models.EmailField(max_length=150)
     password = models.CharField(max_length=150)
     contact = models.CharField(max_length=11, validators=[validate_contact])
 
     def __str__(self):
-        return f"{self.first_name} - {self.email}"
+        return f"{self.user_firstname} - {self.user_email}"
 
 
 class Gallery(BaseModel):

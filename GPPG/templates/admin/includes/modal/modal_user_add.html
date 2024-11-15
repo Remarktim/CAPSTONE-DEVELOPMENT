@@ -10,33 +10,33 @@
     <div class="grid grid-cols-2 gap-4">
       <div>
           <label class="block text-sm font-medium text-gray-700">
-              {{ form.first_name.label_tag }}
-              {% if form.first_name.errors %}
-                <div class="text-red-600">{{ form.first_name.errors }}</div>
+              {{ form.user_firstname.label_tag }}
+              {% if form.user_firstname.errors %}
+                <div class="text-red-600">{{ form.user_firstname.errors }}</div>
               {% endif %}
           </label>
-          {{ form.first_name }}
+          {{ form.user_firstname }}
           
       </div>
       <div>
           <label class="block text-sm font-medium text-gray-700">
-              {{ form.last_name.label_tag }}
-              {% if form.last_name.errors %}
-                <div class="text-red-600">{{ form.last_name.errors }}</div>
+              {{ form.user_lastname.label_tag }}
+              {% if form.user_lastname.errors %}
+                <div class="text-red-600">{{ form.user_lastname.errors }}</div>
               {% endif %}
           </label>
-          {{ form.last_name }}
+          {{ form.user_lastname }}
           
       </div>
 
       <div>
           <label class="block text-sm font-medium text-gray-700">
-              {{ form.email.label_tag }}
-              {% if form.email.errors %}
-                <div class="text-red-600">{{ form.email.errors }}</div>
+              {{ form.user_email.label_tag }}
+              {% if form.user_email.errors %}
+                <div class="text-red-600">{{ form.user_email.errors }}</div>
               {% endif %}
           </label>
-          {{ form.email }}
+          {{ form.user_email }}
           
       </div>
       <div>
