@@ -61,6 +61,8 @@ def landing_page(request):
 
 
 class PasswordResetView(View):
+    TOKEN_EXPIRY_HOURS = 24
+
     @staticmethod
     def generate_token():
         random_string = get_random_string(32)
@@ -78,25 +80,27 @@ class PasswordResetView(View):
             }, status=400)
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(user_email=email)
             token = self.generate_token()
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             reset_url = f"{request.scheme}://{request.get_host()}/reset/{uid}/{token}/"
 
             # Store token in session with timestamp
+            expiry_time = int(time.time()) + (self.TOKEN_EXPIRY_HOURS * 3600)
             request.session[f'password_reset_token_{uid}'] = {
                 'token': token,
-                'timestamp': int(time.time())
+                'timestamp': int(time.time()),
+                'expiry': expiry_time
             }
 
             context = {
                 'user': {
                     'email': email,
-                    'get_full_name': email.split('@')[0]
+                    'get_full_name': f"{user.user_firstname} {user.user_lastname}",
                 },
                 'reset_url': reset_url,
-                'site_name': 'Guardians of the Palawan Pangolin Guild',
-                'expiration_time': '24 hours'
+                'site_name': settings.SITE_NAME,
+                'expiration_time': f'{self.TOKEN_EXPIRY_HOURS} hours'
             }
 
             email_html = render_to_string(
@@ -200,7 +204,7 @@ class OTPHandler:
         context = {
             'user': user_data,
             'otp': otp,
-            'site_name': 'Guardians of the Palawan Pangolin Guild',
+            'site_name': settings.SITE_NAME,
             'expiration_time': 5,
         }
 
@@ -229,28 +233,49 @@ otp_handler = OTPHandler()
 
 
 @csrf_exempt
-@guest_only
 def signup(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
 
-            if User.objects.filter(email=data['email']).exists():
-                return JsonResponse({'status': 'error', 'message': 'Email already exists'}, status=400)
+            # Validate required fields
+            required_fields = ['user_firstname', 'user_lastname',
+                               'user_email', 'password', 'contact']
+            for field in required_fields:
+                if not data.get(field):
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'{field} is required'
+                    }, status=400)
 
+            # Check if email already exists
+            if User.objects.filter(user_email=data['user_email']).exists():
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Email already exists'
+                }, status=400)
+
+            # Validate contact number
+            if not data['contact'].isdigit() or len(data['contact']) != 11:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Invalid contact number format'
+                }, status=400)
+
+            # Store user data in session
             request.session['pending_user'] = {
-                'first_name': data['first_name'],
-                'last_name': data['last_name'],
-                'email': data['email'],
+                'user_firstname': data['user_firstname'],
+                'user_lastname': data['user_lastname'],
+                'user_email': data['user_email'],
                 'password': data['password'],
                 'contact': data['contact']
             }
 
             # Generate and send OTP
             otp = otp_handler.generate_otp()
-            otp_handler.store_otp(data['email'], otp)
+            otp_handler.store_otp(data['user_email'], otp)
 
-            if not otp_handler.send_otp_email(data['email'], otp):
+            if not otp_handler.send_otp_email(data['user_email'], otp):
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Failed to send OTP email'
@@ -262,12 +287,20 @@ def signup(request):
                 'require_otp': True
             })
 
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Invalid JSON format'
+            }, status=400)
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            logger.error(f"Signup error: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': 'An error occurred during signup'
+            }, status=500)
 
 
 @csrf_exempt
-@guest_only
 def verify_otp(request):
     if request.method == 'POST':
         try:
@@ -280,12 +313,12 @@ def verify_otp(request):
                     'message': 'No pending registration found'
                 }, status=400)
 
-            if otp_handler.verify_otp(pending_user['email'], data['otp']):
+            if otp_handler.verify_otp(pending_user['user_email'], data['otp']):
                 # Create user after OTP verification
                 user = User.objects.create(
-                    first_name=pending_user['first_name'],
-                    last_name=pending_user['last_name'],
-                    email=pending_user['email'],
+                    user_firstname=pending_user['user_firstname'],
+                    user_lastname=pending_user['user_lastname'],
+                    user_email=pending_user['user_email'],
                     password=make_password(pending_user['password']),
                     contact=pending_user['contact']
                 )
@@ -295,14 +328,14 @@ def verify_otp(request):
 
                 # Set session
                 request.session['user_id'] = user.id
-                request.session['user_email'] = user.email
+                request.session['user_email'] = user.user_email
 
                 return JsonResponse({
                     'status': 'success',
                     'message': 'User created successfully',
                     'user': {
-                        'first_name': user.first_name,
-                        'email': user.email
+                        'user_firstname': user.user_firstname,
+                        'user_email': user.user_email
                     }
                 })
             else:
@@ -311,15 +344,20 @@ def verify_otp(request):
                     'message': 'Invalid or expired OTP'
                 }, status=400)
 
-        except Exception as e:
+        except json.JSONDecodeError:
             return JsonResponse({
                 'status': 'error',
-                'message': str(e)
+                'message': 'Invalid JSON format'
             }, status=400)
+        except Exception as e:
+            logger.error(f"OTP verification error: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': 'An error occurred during OTP verification'
+            }, status=500)
 
 
 @csrf_exempt
-@guest_only
 def resend_otp(request):
     if request.method == 'POST':
         try:
@@ -333,9 +371,9 @@ def resend_otp(request):
 
             # Generate and send new OTP
             otp = otp_handler.generate_otp()
-            otp_handler.store_otp(pending_user['email'], otp)
+            otp_handler.store_otp(pending_user['user_email'], otp)
 
-            if not otp_handler.send_otp_email(pending_user['email'], otp):
+            if not otp_handler.send_otp_email(pending_user['user_email'], otp):
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Failed to send OTP email'
@@ -347,10 +385,11 @@ def resend_otp(request):
             })
 
         except Exception as e:
+            logger.error(f"OTP resend error: {str(e)}")
             return JsonResponse({
                 'status': 'error',
-                'message': str(e)
-            }, status=400)
+                'message': 'An error occurred while resending OTP'
+            }, status=500)
 
 
 @csrf_exempt
@@ -433,11 +472,8 @@ def google_login_callback(request):
 
 
 def logout(request):
-        auth_logout(request)
-        return redirect(settings.LOGOUT_REDIRECT_URL)
-
-
-
+    auth_logout(request)
+    return redirect(settings.LOGOUT_REDIRECT_URL)
 
 
 def public_about(request):
@@ -712,14 +748,15 @@ def user_update_private(request, id):
 def admin_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-       
+
         if not request.user.is_authenticated:
-            return redirect('admin_login')  
-        
+            return redirect('admin_login')
+
         if not request.user.is_staff:
-            return redirect('admin_login') 
+            return redirect('admin_login')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
 
 @admin_required
 def admin_home(request):
@@ -757,22 +794,21 @@ def admin_home(request):
     return render(request, 'admin/admin.html', response_data)
 
 
-
-
 def admin_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None and user.is_staff:
             auth_login(request, user)
-            return redirect('admin_home')  
+            return redirect('admin_home')
         else:
             return render(request, 'admin/login_admin.html', {'error': 'Invalid username or password'})
-    
+
     return render(request, 'admin/login_admin.html')
+
 
 def admin_logout(request):
     auth_logout(request)
@@ -810,15 +846,15 @@ def incident_add(request):
     if request.method == 'POST':
         form = IncidentForm(request.POST)
         if form.is_valid():
-            incident = form.save()  
+            incident = form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Incident).pk,  
-                object_id=incident.pk,  
-                object_repr=str(incident),  
-                action_flag=ADDITION,  
-                change_message="Added a new Incident"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Incident).pk,
+                object_id=incident.pk,
+                object_repr=str(incident),
+                action_flag=ADDITION,
+                change_message="Added a new Incident"
             )
 
             response = HttpResponse()
@@ -840,12 +876,12 @@ def incident_update(request, id):
             form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Incident).pk,  
-                object_id=incident.pk,  
-                object_repr=str(incident),  
-                action_flag=CHANGE,  
-                change_message="Updated an incident"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Incident).pk,
+                object_id=incident.pk,
+                object_repr=str(incident),
+                action_flag=CHANGE,
+                change_message="Updated an incident"
             )
 
             response = HttpResponse()
@@ -872,12 +908,12 @@ def incident_delete(request, id):
     if request.method == 'POST':
 
         LogEntry.objects.log_action(
-            user_id=request.user.id,  
-            content_type_id=ContentType.objects.get_for_model(Incident).pk,  
-            object_id=incident.pk, 
-            object_repr=str(incident),  
-            action_flag=DELETION,  
-            change_message="Deleted an incident"  
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(Incident).pk,
+            object_id=incident.pk,
+            object_repr=str(incident),
+            action_flag=DELETION,
+            change_message="Deleted an incident"
         )
 
         incident.delete()
@@ -898,6 +934,7 @@ def pangolin_activities(request):
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
 
+
 @method_decorator(admin_required, name='dispatch')
 class EventListView(ListView):
     model = Event
@@ -912,12 +949,12 @@ def activity_add(request):
             event = form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Event).pk,  
-                object_id=event.pk,  
-                object_repr=str(event),  
-                action_flag=ADDITION,  
-                change_message="Added a new Event"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Event).pk,
+                object_id=event.pk,
+                object_repr=str(event),
+                action_flag=ADDITION,
+                change_message="Added a new Event"
             )
 
             response = HttpResponse()
@@ -939,14 +976,14 @@ def activity_update(request, id):
             form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Event).pk,  
-                object_id=event.pk,  
-                object_repr=str(event),  
-                action_flag=CHANGE,  
-                change_message="Updated an Event"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Event).pk,
+                object_id=event.pk,
+                object_repr=str(event),
+                action_flag=CHANGE,
+                change_message="Updated an Event"
             )
-            
+
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
             messages.success(request, 'Activity Updated!')
@@ -970,12 +1007,12 @@ def activity_delete(request, id):
 
     if request.method == 'POST':
         LogEntry.objects.log_action(
-            user_id=request.user.id,  
-            content_type_id=ContentType.objects.get_for_model(Event).pk,  
-            object_id=event.pk, 
-            object_repr=str(event),  
-            action_flag=DELETION,  
-            change_message="Deleted an Event"  
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(Event).pk,
+            object_id=event.pk,
+            object_repr=str(event),
+            action_flag=DELETION,
+            change_message="Deleted an Event"
         )
         event.delete()
         response = HttpResponse()
@@ -986,6 +1023,7 @@ def activity_delete(request, id):
         return render(request, 'admin/includes/modal/modal_activities_delete.html', {
             'event': event
         })
+
 
 @method_decorator(admin_required, name='dispatch')
 class UserListView(ListView):
@@ -1001,12 +1039,12 @@ def user_add(request):
             user = form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(User).pk,  
-                object_id=user.pk,  
-                object_repr=str(user),  
-                action_flag=ADDITION,  
-                change_message="Added a new User"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(User).pk,
+                object_id=user.pk,
+                object_repr=str(user),
+                action_flag=ADDITION,
+                change_message="Added a new User"
             )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1027,12 +1065,12 @@ def user_update(request, id):
             form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(User).pk,  
-                object_id=user.pk,  
-                object_repr=str(user),  
-                action_flag=CHANGE,  
-                change_message="User Updated"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(User).pk,
+                object_id=user.pk,
+                object_repr=str(user),
+                action_flag=CHANGE,
+                change_message="User Updated"
             )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1058,12 +1096,12 @@ def user_delete(request, id):
     if request.method == 'POST':
 
         LogEntry.objects.log_action(
-            user_id=request.user.id,  
-            content_type_id=ContentType.objects.get_for_model(User).pk,  
-            object_id=user.pk, 
-            object_repr=str(user),  
-            action_flag=DELETION,  
-            change_message="User Deleted"  
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(User).pk,
+            object_id=user.pk,
+            object_repr=str(user),
+            action_flag=DELETION,
+            change_message="User Deleted"
         )
         user.delete()
         response = HttpResponse()
@@ -1074,6 +1112,7 @@ def user_delete(request, id):
         return render(request, 'admin/includes/modal/modal_user_delete.html', {
             'user': user
         })
+
 
 @method_decorator(admin_required, name='dispatch')
 class GalleryListView(ListView):
@@ -1089,12 +1128,12 @@ def gallery_add(request):
             gallery = form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Gallery).pk,  
-                object_id=gallery.pk,  
-                object_repr=str(gallery),  
-                action_flag=ADDITION,  
-                change_message="Added a Media to Gallery"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Gallery).pk,
+                object_id=gallery.pk,
+                object_repr=str(gallery),
+                action_flag=ADDITION,
+                change_message="Added a Media to Gallery"
             )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1115,12 +1154,12 @@ def gallery_update(request, id):
             form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Gallery).pk,  
-                object_id=gallery.pk,  
-                object_repr=str(gallery),  
-                action_flag=CHANGE,  
-                change_message="Updated a Gallery Content"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Gallery).pk,
+                object_id=gallery.pk,
+                object_repr=str(gallery),
+                action_flag=CHANGE,
+                change_message="Updated a Gallery Content"
             )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1146,12 +1185,12 @@ def gallery_delete(request, id):
     if request.method == 'POST':
 
         LogEntry.objects.log_action(
-            user_id=request.user.id,  
-            content_type_id=ContentType.objects.get_for_model(Gallery).pk,  
-            object_id=gallery.pk, 
-            object_repr=str(gallery),  
-            action_flag=DELETION,  
-            change_message="Media Deleted from Gallery"  
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(Gallery).pk,
+            object_id=gallery.pk,
+            object_repr=str(gallery),
+            action_flag=DELETION,
+            change_message="Media Deleted from Gallery"
         )
         gallery.delete()
         response = HttpResponse()
@@ -1163,11 +1202,13 @@ def gallery_delete(request, id):
             'gallery': gallery
         })
 
+
 @method_decorator(admin_required, name='dispatch')
 class OfficerListView(ListView):
     model = Officer
     context_object_name = "officers"
     template_name = "admin/database_officers.html"
+
 
 @admin_required
 def admin_officers(request):
@@ -1198,12 +1239,12 @@ def officer_add(request):
             officer = form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Officer).pk,  
-                object_id=officer.pk,  
-                object_repr=str(officer),  
-                action_flag=ADDITION,  
-                change_message="Added a new Officer"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Officer).pk,
+                object_id=officer.pk,
+                object_repr=str(officer),
+                action_flag=ADDITION,
+                change_message="Added a new Officer"
             )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1224,12 +1265,12 @@ def officer_update(request, id):
             form.save()
 
             LogEntry.objects.log_action(
-                user_id=request.user.id,  
-                content_type_id=ContentType.objects.get_for_model(Officer).pk,  
-                object_id=officer.pk,  
-                object_repr=str(officer),  
-                action_flag=CHANGE,  
-                change_message="Officer Updated"  
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Officer).pk,
+                object_id=officer.pk,
+                object_repr=str(officer),
+                action_flag=CHANGE,
+                change_message="Officer Updated"
             )
             response = HttpResponse()
             response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1255,12 +1296,12 @@ def officer_delete(request, id):
     if request.method == 'POST':
 
         LogEntry.objects.log_action(
-            user_id=request.user.id,  
-            content_type_id=ContentType.objects.get_for_model(Officer).pk,  
-            object_id=officer.pk, 
-            object_repr=str(officer),  
-            action_flag=DELETION,  
-            change_message="Officer Deleted"  
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(Officer).pk,
+            object_id=officer.pk,
+            object_repr=str(officer),
+            action_flag=DELETION,
+            change_message="Officer Deleted"
         )
         officer.delete()
         response = HttpResponse()
@@ -1284,13 +1325,15 @@ def admin_report(request):
 def admin_charts(request):
     return render(request, 'admin/charts.html')
 
+
 @method_decorator(admin_required, name='dispatch')
 class AdminLogView(UserPassesTestMixin, ListView):
     model = LogEntry
     template_name = 'admin/profile.html'
     paginate_by = 6
     context_object_name = 'logs'
-    login_url = reverse_lazy('admin_login')  # Redirects to admin login if test fails
+    # Redirects to admin login if test fails
+    login_url = reverse_lazy('admin_login')
 
     def test_func(self):
         return self.request.user.is_staff

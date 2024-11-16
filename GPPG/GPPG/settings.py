@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-sw$g&yej(s(5k4p0t1k)3hyag-w#m=*%nf9(p2ei2c90mao^_g'
 GEMINI_API_KEY = 'AIzaSyAmEY3lb3x-6CihX2J1_2kSZEsyRRNaV8M'
-
+SITE_NAME = 'Guardians of the Palawan Pangolin Guild'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

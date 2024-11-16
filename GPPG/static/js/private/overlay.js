@@ -308,9 +308,9 @@ $(document).ready(function () {
 
     try {
       const formData = {
-        first_name: elements.firstNameInput.val().trim(),
-        last_name: elements.lastNameInput.val().trim(),
-        email: elements.emailSignupInput.val().trim(),
+        user_firstname: elements.firstNameInput.val().trim(),
+        user_lastname: elements.lastNameInput.val().trim(),
+        user_email: elements.emailSignupInput.val().trim(),
         password: elements.passwordInput.val(),
         contact: elements.phoneInput.val().trim(),
       };
