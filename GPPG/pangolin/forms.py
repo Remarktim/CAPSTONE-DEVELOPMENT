@@ -129,7 +129,7 @@ class EventForm(forms.ModelForm):
     date = forms.DateField(
         widget=forms.DateInput(attrs={
             'type': 'date',
-            'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5',
+            'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
             'placeholder': 'Select Date',
         })
     )
@@ -153,15 +153,15 @@ class EventForm(forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={
-                'class': 'bg-gray-50 border-b-2 border-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Enter Activity Name'
             }),
             'description': forms.Textarea(attrs={
-                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Enter Activity Description'
             }),
             'location': forms.TextInput(attrs={
-                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Enter Activity Location'
             }),
             'event_image': forms.ClearableFileInput(attrs={
