@@ -16,8 +16,9 @@ class EvidenceAdmin(admin.ModelAdmin):
 
 @admin.register(IncidentReport)
 class IncidentReportAdmin(admin.ModelAdmin):
-    list_display = ("admin", "incident", "date_reported")
-    search_fields = ("admin", "incident", "date_reported")
+    list_display = ("municity", "status", "description")
+    search_fields = ("municity", "status")
+
 
 
 @admin.register(Event)

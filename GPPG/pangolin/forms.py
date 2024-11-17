@@ -3,6 +3,7 @@ from django.forms import ModelForm
 from django.forms import ModelForm, DateTimeInput
 from django import forms
 from .models import *
+from django.contrib.auth.hashers import make_password
 
 
 class IncidentForm(forms.ModelForm):
@@ -209,3 +210,51 @@ class UserForm(forms.ModelForm):
                 'placeholder': 'Use atleast 8 characters'
             }),
         }
+
+
+class UserFormPrivate(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['user_firstname', 'user_lastname', 'user_email', 'contact']  
+        
+        labels = {
+            'user_firstname': 'First Name',
+            'user_lastname': 'Last Name',
+            'user_email': 'Email',
+            'contact': 'Contact Number',
+        }
+        
+        widgets = {
+            'user_firstname': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter First Name'
+            }),
+            'user_lastname': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter Last Name'
+            }),
+            'user_email': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter your Email Address'
+            }),
+            'contact': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter your contact number'
+            }),
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        
+        if self.instance.pk:  
+            user.password = self.instance.password  
+        
+        if commit:
+            user.save()
+        return user
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        for field in self.fields.values():
+            field.required = True
