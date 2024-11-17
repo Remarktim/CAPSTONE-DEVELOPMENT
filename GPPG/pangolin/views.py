@@ -50,6 +50,7 @@ import time
 import hashlib
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
+from django.http import JsonResponse, HttpResponseServerError
 # Set up logging
 logger = logging.getLogger(__name__)
 # PUBLIC
@@ -1537,10 +1538,14 @@ def get_region_data(request):
 
 @cache_page(60 * 60 * 24)  # Cache for 24 hours
 def get_geojson(request):
-    # Load your static GeoJSON file
-    with open('static/maps/ClusterOfPalawan_filtereds.geojson', 'r') as f:
-        geojson_data = json.load(f)
-    return JsonResponse(geojson_data)
+    try:
+        file_path = os.path.join(settings.STATIC_ROOT,
+                                 'maps', 'ClusterOfPalawan_filtereds.geojson')
+        with open(file_path, 'r') as f:
+            geojson_data = json.load(f)
+        return JsonResponse(geojson_data)
+    except Exception as e:
+        return HttpResponseServerError(f"Error loading GeoJSON: {str(e)}")
 
 
 def get_municity_data(request):
