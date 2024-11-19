@@ -15,7 +15,27 @@
     hx-post="{% url 'cancel-incident' report.id %}"
     hx-target="#modal-content"
     novalidate>
-    <p class="mb-4 text-gray-500 dark:text-gray-300 text-center">Are you sure you want to remove this  Incident Report <b>"{{ report }}"</b>?</p>
+    <p class="mb-4 text-gray-500 dark:text-gray-300 text-center">
+      Are you sure you want to remove this Incident Report?
+    </p>
+    
+    <!-- Incident Report Details -->
+    <div class="bg-gray-100 p-4 rounded-md mb-4 dark:bg-gray-800">
+      <p class="text-sm text-gray-600 dark:text-gray-300">
+        <strong>Municipality/City:</strong> {{ report.municity }}
+      </p>
+      <p class="text-sm text-gray-600 dark:text-gray-300">
+        <strong>Date Reported:</strong> {{ report.date_reported|date:"F d, Y" }}
+      </p>
+      <p class="text-sm text-gray-600 dark:text-gray-300">
+        <strong>Description:</strong> {{ report.description }}
+      </p>
+      {% if report.status %}
+      <p class="text-sm text-gray-600 dark:text-gray-300">
+        <strong>Status:</strong> {{ report.get_status_display }}
+      </p>
+      {% endif %}
+    </div>
     {% csrf_token %} {% include 'admin/includes/form.html' %}
     <div class="flex justify-center items-center space-x-4">
       <button

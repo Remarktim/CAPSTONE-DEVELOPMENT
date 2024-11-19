@@ -1393,8 +1393,7 @@ class AdminLogView(UserPassesTestMixin, ListView):
     model = LogEntry
     template_name = 'admin/profile.html'
     paginate_by = 6
-    context_object_name = 'logs'
-    # Redirects to admin login if test fails
+    context_object_name = 'all_logs'  
     login_url = reverse_lazy('admin_login')
 
     def test_func(self):
@@ -1405,18 +1404,28 @@ class AdminLogView(UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        for log in context['logs']:
-            # Format the action message using `change_message`
-            if log.action_flag == 1:
-                action = f"{log.change_message}"
-            elif log.action_flag == 2:
-                action = f"{log.change_message}"
-            elif log.action_flag == 3:
-                action = f"{log.change_message}"
-            else:
-                action = "No action specified"
-            log.formatted_action = action
+
+        context['user_logs'] = LogEntry.objects.filter(user=self.request.user).select_related('user').order_by('-action_time')
+
+        for log in context['all_logs']:
+            log.formatted_action = self.format_action(log)
+
+        for log in context['user_logs']:
+            log.formatted_action = self.format_action(log)
+
         return context
+
+    def format_action(self, log):
+        if log.action_flag == 1:
+            return f"{log.change_message}"
+        elif log.action_flag == 2:
+            return f"{log.change_message}"
+        elif log.action_flag == 3:
+            return f"{log.change_message}"
+        else:
+            return "No action specified"
+
+
 
 # QUERIES
 
@@ -1501,7 +1510,7 @@ def get_chart_data(request):
     reports = Incident.objects.all()
 
     if status_filter:
-        reports = reports.filter(status__in=statuses)
+        reports = reports.filter(status__in=statuses)  
 
     aggregated_data = reports.values(
         'date_reported__year', 'date_reported__month', 'status'
