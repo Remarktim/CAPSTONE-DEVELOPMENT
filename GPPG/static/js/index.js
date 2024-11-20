@@ -10,25 +10,85 @@ window.onload = function () {
 };
 
 //Chatbot
+
 function chatBot() {
+  const chatWindow = document.getElementById("chat-window");
+  const chatIcon = document.getElementById("chat-icon");
+  const closeIcon = document.getElementById("close-icon");
+  const chatToggle = document.getElementById("chat-toggle");
+  const chatMessages = document.getElementById("chat-messages");
+
   return {
     messages: [],
     botTyping: false,
     isChatActive: false,
     csrfToken: "{{ csrf_token }}",
 
+    toggleChat() {
+      // Add click scale effect
+      chatToggle.classList.add("scale-90");
+
+      setTimeout(() => {
+        chatToggle.classList.remove("scale-90");
+      }, 150);
+
+      if (!this.isChatActive) {
+        // Opening chat
+        this.isChatActive = true;
+        chatWindow.style.display = "block";
+
+        // Trigger animation after display is set
+        setTimeout(() => {
+          chatWindow.classList.remove("opacity-0", "scale-0", "bottom-0");
+          chatWindow.classList.add("opacity-100", "scale-100", "bottom-16");
+        }, 50);
+
+        chatIcon.classList.add("hidden");
+        closeIcon.classList.remove("hidden");
+        closeIcon.style.transform = "rotate(0deg)";
+
+        // Start chat if it's the first time
+        if (this.messages.length === 0) {
+          this.startChat();
+        }
+      } else {
+        // Closing chat
+        this.isChatActive = false;
+        chatWindow.classList.remove("opacity-100", "scale-100", "bottom-16");
+        chatWindow.classList.add("opacity-0", "scale-0", "bottom-0");
+
+        // Hide after animation completes
+        setTimeout(() => {
+          chatWindow.style.display = "none";
+        }, 300);
+
+        // Switch icons back
+        chatIcon.classList.remove("hidden");
+        closeIcon.classList.add("hidden");
+        closeIcon.style.transform = "rotate(180deg)";
+      }
+    },
+
     startChat() {
-      this.isChatActive = true;
       this.messages = [];
       this.messages.push({
         from: "bot",
         text: "Hi! I'm PangoBot Ask me anything about the Palawan Pangolin!",
         timestamp: new Date().getTime(),
       });
+      this.updateScroll();
     },
 
     formatMessage(text) {
       return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+    },
+
+    updateScroll() {
+      setTimeout(() => {
+        if (chatMessages) {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }, 100);
     },
 
     async updateChat(inputElement) {
@@ -43,6 +103,7 @@ function chatBot() {
 
         inputElement.value = "";
         this.botTyping = true;
+        this.updateScroll();
 
         try {
           const response = await fetch("/chat/send_message/", {
@@ -79,18 +140,84 @@ function chatBot() {
         }
 
         this.botTyping = false;
+        this.updateScroll();
+      }
+    },
 
-        // Scroll to bottom
-        setTimeout(() => {
-          const messagesDiv = document.getElementById("messages");
-          if (messagesDiv) {
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-          }
-        }, 100);
+    renderMessages() {
+      chatMessages.innerHTML = "";
+
+      this.messages.forEach((message) => {
+        const messageDiv = document.createElement("div");
+        const messageContent = document.createElement("div");
+
+        messageDiv.className = `flex ${message.from === "bot" ? "justify-start" : "justify-end"}`;
+        messageContent.className = `max-w-[80%] p-3 rounded-lg ${message.from === "bot" ? "bg-gray-100 text-gray-800" : "bg-[rgb(63,7,3)] text-white"}`;
+
+        const formattedText = this.formatMessage(message.text);
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(formattedText, "text/html");
+        messageContent.appendChild(doc.body.firstChild || doc.createTextNode(formattedText));
+
+        messageDiv.appendChild(messageContent);
+        chatMessages.appendChild(messageDiv);
+      });
+
+      if (this.botTyping) {
+        const typingDiv = document.createElement("div");
+        const typingContent = document.createElement("div");
+
+        typingDiv.className = "flex justify-start";
+        typingContent.className = "max-w-[80%] p-3 rounded-lg bg-gray-100 text-gray-800";
+        typingContent.textContent = "Typing...";
+
+        typingDiv.appendChild(typingContent);
+        chatMessages.appendChild(typingDiv);
       }
     },
   };
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const chatBotInstance = chatBot();
+
+  const chatToggle = document.getElementById("chat-toggle");
+  const chatForm = document.getElementById("chat-form");
+  const chatInput = document.getElementById("chat-input");
+
+  chatToggle.addEventListener("click", () => {
+    chatBotInstance.toggleChat();
+  });
+
+  chatForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    chatBotInstance.updateChat(chatInput);
+  });
+
+  chatInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      chatBotInstance.updateChat(chatInput);
+    }
+  });
+  function adjustHeight() {
+    chatInput.style.height = "40px";
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 160) + "px";
+  }
+
+  chatInput.addEventListener("input", adjustHeight);
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      chatBotInstance.updateChat(chatInput);
+    }
+  });
+
+  // Set up message rendering
+  setInterval(() => {
+    chatBotInstance.renderMessages();
+  }, 100);
+});
 //################################################################
 
 // Images

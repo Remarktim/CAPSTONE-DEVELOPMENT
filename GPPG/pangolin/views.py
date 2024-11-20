@@ -555,7 +555,6 @@ def is_pangolin_related(text):
 
 
 @csrf_exempt
-@login_required
 def send_message(request):
     if request.method == 'POST':
         try:
