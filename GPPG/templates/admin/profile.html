@@ -225,8 +225,9 @@
     <div>
       <h3 class="text-2xl font-semibold text-gray-800 mb-4">Your Activities</h3>
       <div class="bg-gray-50 p-4 rounded-lg shadow-md">
-          <!-- Add a container with a fixed height and scrolling -->
-          <ul class="divide-y divide-gray-200 overflow-y-auto" style="max-height: 150px;">
+          <ul 
+              class="divide-y divide-gray-200 overflow-y-auto scroll-thin" 
+              style="max-height: 150px; padding-right: 10px; box-sizing: content-box;">
               {% for activity in user_logs %}
               <li class="py-3 flex justify-between items-center">
                   <div>
@@ -241,6 +242,7 @@
           </ul>
       </div>
   </div>
+  
   
     
   </aside>

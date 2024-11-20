@@ -37,6 +37,76 @@
         {{ form.date_reported }}
     </div>
 
+    <div>
+      <label class="block text-sm font-medium text-gray-700">
+          {{ form.life_history.label_tag }}
+          {% if form.life_history.errors %}
+            <div class="text-red-600">{{ form.life_history.errors }}</div>
+          {% endif %}
+      </label>
+      {{ form.life_history }}
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700">
+        {{ form.weight.label_tag }}
+        {% if form.weight.errors %}
+          <div class="text-red-600">{{ form.weight.errors }}</div>
+        {% endif %}
+    </label>
+    {{ form.weight }}
+</div>
+
+  <div>
+      <label class="block text-sm font-medium text-gray-700">
+          {{ form.sex.label_tag }}
+          {% if form.sex.errors %}
+            <div class="text-red-600">{{ form.sex.errors }}</div>
+          {% endif %}
+      </label>
+      {{ form.sex }}
+  </div>
+
+<div>
+  <label class="block text-sm font-medium text-gray-700">
+      {{ form.obl_rolled.label_tag }}
+      {% if form.obl_rolled.errors %}
+        <div class="text-red-600">{{ form.obl_rolled.errors }}</div>
+      {% endif %}
+  </label>
+  {{ form.obl_rolled }}
+</div>
+
+<div>
+  <label class="block text-sm font-medium text-gray-700">
+      {{ form.obl_stretched.label_tag }}
+      {% if form.obl_stretched.errors %}
+        <div class="text-red-600">{{ form.obl_stretched.errors }}</div>
+      {% endif %}
+  </label>
+  {{ form.obl_stretched }}
+</div>
+
+<div>
+  <label class="block text-sm font-medium text-gray-700">
+      {{ form.ticks.label_tag }}
+      {% if form.ticks.errors %}
+        <div class="text-red-600">{{ form.ticks.errors }}</div>
+      {% endif %}
+  </label>
+  {{ form.ticks }}
+</div>
+
+<div>
+  <label class="block text-sm font-medium text-gray-700">
+      {{ form.feces.label_tag }}
+      {% if form.feces.errors %}
+        <div class="text-red-600">{{ form.feces.errors }}</div>
+      {% endif %}
+  </label>
+  {{ form.feces }}
+</div>
+
   </div>
 
   <div>
