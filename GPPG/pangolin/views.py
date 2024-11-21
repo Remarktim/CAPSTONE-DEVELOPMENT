@@ -1494,44 +1494,56 @@ def get_poaching_trends(request):
 
 
 def get_chart_data(request):
-
     period = request.GET.get('period', 'overall')
     status_filter = request.GET.get('status', None)
-
+    
     statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
     if status_filter:
         # Split the comma-separated statuses
         statuses = [s.strip() for s in status_filter.split(',')]
-
+    
     trends = {status: {'overall': [0] * 12, 'yearly': {}}
-              for status in statuses}
-
+             for status in statuses}
+    
     reports = Incident.objects.all()
-
     if status_filter:
-        reports = reports.filter(status__in=statuses)  
-
+        reports = reports.filter(status__in=statuses)
+    
     aggregated_data = reports.values(
         'date_reported__year', 'date_reported__month', 'status'
     ).annotate(count=Count('id'))
-
+    
+    # First, collect all the data as before
     for entry in aggregated_data:
         month_index = entry['date_reported__month'] - 1
         status = entry['status']
         count = entry['count']
         year = entry['date_reported__year']
-
+        
         if status in trends:
             trends[status]['overall'][month_index] += count
-
+            
             if year not in trends[status]['yearly']:
                 trends[status]['yearly'][year] = [0] * 12
             trends[status]['yearly'][year][month_index] += count
-
-    response_data = {
-        f"{status.lower()}_trend": trends[status] for status in statuses}
-
-    return JsonResponse(response_data)
+    
+    # Now reorganize the yearly data with sorted years
+    sorted_trends = {}
+    for status in statuses:
+        yearly_data = trends[status]['yearly']
+        # Sort years in descending order and create new ordered dictionary
+        sorted_years = dict(sorted(
+            yearly_data.items(),
+            key=lambda x: x[0],  # Sort by year
+            reverse=True  # Sort in descending order
+        ))
+        
+        sorted_trends[f"{status.lower()}_trend"] = {
+            'overall': trends[status]['overall'],
+            'yearly': sorted_years
+        }
+    
+    return JsonResponse(sorted_trends)
 
 
 def get_registereduser_data(request):
