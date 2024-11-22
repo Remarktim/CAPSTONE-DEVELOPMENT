@@ -1,3 +1,4 @@
+from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from django.db.models import Count
 from django.utils.decorators import method_decorator
@@ -714,7 +715,59 @@ def maps(request):
 
 @login_required
 def account_view(request):
-    return render(request, 'private/account_view.html')
+    change_password_form = ChangePasswordForm()
+    context = {
+        'change_password_form': change_password_form,
+    }
+    return render(request, 'private/account_view.html', context)
+
+
+# views.py
+
+
+@login_required
+def change_password(request):
+    if request.method != 'POST':
+        form = ChangePasswordForm()
+        return render(request, 'admin/includes/modal/modal_changepass.html', {'form': form})
+
+    form = ChangePasswordForm(request.POST)
+    if not form.is_valid():
+        return render(request, 'admin/includes/modal/modal_changepass.html', {
+            'form': form,
+            'error': True
+        })
+
+    try:
+        current_user_id = request.session.get('user_id')
+        user = User.objects.get(id=current_user_id)
+        current_password = form.cleaned_data['current_password']
+        new_password = form.cleaned_data['new_password']
+
+        if not user.user_password(current_password):
+            form.add_error('current_password', 'Current password is incorrect')
+            return render(request, 'admin/includes/modal/modal_changepass.html', {
+                'form': form,
+                'error': True
+            })
+
+        user.set_password(new_password)
+        user.save()
+
+        # Add success message for HTMX response
+        return HttpResponse(
+            '<div class="bg-green-100 text-green-700 p-4 rounded">'
+            'Password changed successfully!'
+            '<script>setTimeout(() => closeChangePasswordModal(), 2000)</script>'
+            '</div>'
+        )
+
+    except Exception as e:
+        form.add_error(None, str(e))
+        return render(request, 'admin/includes/modal/modal_changepass.html', {
+            'form': form,
+            'error': True
+        })
 
 
 @login_required

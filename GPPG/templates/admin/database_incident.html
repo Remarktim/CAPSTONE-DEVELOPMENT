@@ -460,7 +460,15 @@
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.municity }}</td>
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.status }}</td>
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.date_reported }}</td>
-                <td class="px-4 py-3 text-sm text-gray-800">{{ incident.description }}</td>
+                <td class="px-4 py-3 text-sm text-gray-800">
+                  <div class="max-w-xs">
+                    <div
+                      class="truncate"
+                      id="shortDesc{{ incident.id }}">
+                      {{ incident.description }}
+                    </div>
+                  </div>
+                </td>
                 <td class="px-4 py-3 text-end">
                   <div class="relative inline-flex">
                     <button
@@ -495,7 +503,7 @@
                               data-modal-toggle="modaldialog"
                               data-modal-target="modaldialog"
                               onclick="showTitle('Edit Incident');"
-                              class="text-center items-center cursor-pointer text-sm font-semibold hover:bg-gray-50 rounded-lg p-2 px-5 border border-black text-black transition-all duration-300 hover:shadow-md">
+                              class="text-center items-center cursor-pointer text-sm font-semibold bg-green-800 hover:bg-green-900 rounded-lg p-2 px-5 border border-black text-white transition-all duration-300 hover:shadow-md">
                               Edit
                             </button>
                             <button

@@ -167,6 +167,30 @@
 
 <!-- Charts Content -->
 {% block title_content %} Charts {% endblock title_content %} {% block content %}
+<div
+  id="chartModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 items-center justify-center">
+  <div class="bg-white rounded-xl p-6 w-11/12 h-5/6 relative">
+    <button
+      id="closeModal"
+      class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div
+      id="expandedChartContainer"
+      class="w-full h-full"></div>
+  </div>
+</div>
 <section class="h-72 mb-4 bg-gray-50 dark:bg-gray-800 rounded-xl px-5 overflow-hidden stat-card animate-slideIn transform transition-all duration-300 opacity-0">
   <div class="flex w-full">
     <div>
@@ -288,7 +312,9 @@
   </div>
 </section>
 
-<section class="h-fit bg-gray-50 dark:bg-gray-800 rounded-xl px-5 overflow-hidden stat-card animate-cardEntry transform transition-all duration-300 opacity-0">
+<section
+  class="h-fit bg-gray-50 dark:bg-gray-800 rounded-xl px-5 overflow-hidden stat-card animate-cardEntry transform transition-all duration-300 opacity-0"
+  onclick="expandChart('IllegalTrade_Chart', this)">
   <div class="text-md mt-3 font-['Bahnschrift']">
     <div class="flex w-full">
       <div class="font-bold">
@@ -315,5 +341,55 @@
 <script src="{% static 'js/chart_3.7.1.js' %}"></script>
 <script src="{% static 'js/datatables_chartjs.js' %}"></script>
 <script src="{% static 'js/admin/Charts_views.js' %}"></script>
+
+{{ block.super }}
+<script>
+  let currentChart = null;
+  let originalParent = null;
+
+  function expandChart(chartId, container) {
+    const modal = document.getElementById("chartModal");
+    const expandedContainer = document.getElementById("expandedChartContainer");
+    const chartCanvas = document.getElementById(chartId);
+
+    if (!chartCanvas) return;
+
+    originalParent = chartCanvas.parentElement;
+    currentChart = chartCanvas;
+
+    modal.classList.remove("hidden");
+    expandedContainer.appendChild(chartCanvas);
+
+    // Resize chart to fit expanded container
+    const chart = Chart.getChart(chartId);
+    if (chart) {
+      chart.resize();
+    }
+  }
+
+  document.getElementById("closeModal").addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (currentChart && originalParent) {
+      originalParent.appendChild(currentChart);
+      const chart = Chart.getChart(currentChart.id);
+      if (chart) {
+        chart.resize();
+      }
+    }
+    document.getElementById("chartModal").classList.add("hidden");
+  });
+
+  // Close modal on escape key
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      document.getElementById("closeModal").click();
+    }
+  });
+
+  // Prevent click inside modal from closing it
+  document.getElementById("expandedChartContainer").addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+</script>
 
 {% endblock extra_js %}

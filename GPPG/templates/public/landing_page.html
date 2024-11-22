@@ -386,7 +386,7 @@
       <div class="md:mx-16 p-6 h-full">{% include 'public/includes/card_carousel.html' %}</div>
     </section>
 
-    {% include 'public/includes/footer.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
+    {% include 'public/includes/footer.html' %} {% include 'global/warning.html' %} {% endblock %} {% block extra_js %} {% endblock extra_js %}
     <script src="{% static 'js/admin/flowbite.min.js' %}"></script>
     <script src="{% static 'js/preline.js' %}"></script>
     <script src="{% static 'js/jquery.js' %}"></script>
