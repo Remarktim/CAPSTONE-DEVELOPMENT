@@ -3,6 +3,7 @@ from django.forms import ModelForm
 from django.forms import ModelForm, DateTimeInput
 from django import forms
 from .models import *
+from django.contrib.auth.hashers import make_password
 
 
 class IncidentForm(forms.ModelForm):
@@ -24,6 +25,13 @@ class IncidentForm(forms.ModelForm):
             'status': 'Status',
             'date_reported': 'Date Reported',
             'description': 'Description',
+            'life_history': 'Life History',
+            'weight': 'Body Weight',
+            'sex': 'Sex',
+            'obl_rolled': 'Overall Body Length (rolled)',
+            'obl_stretched': 'Overall Body Length (stretched)',
+            'ticks': 'Ticks',
+            'feces': 'Feces',
         }
 
         widgets = {
@@ -37,6 +45,31 @@ class IncidentForm(forms.ModelForm):
             'description': forms.Textarea(attrs={
                 'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Write a description here'
+            }),
+            'life_history': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter Life History'
+            }),
+            'weight': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter Body Weight'
+            }),
+            'sex': forms.Select(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500'
+            }),
+            'obl_rolled': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter Overall Body Length'
+            }),
+            'obl_stretched': forms.TextInput(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500',
+                'placeholder': 'Enter Overall Body Length'
+            }),
+            'ticks': forms.Select(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500'
+            }),
+            'feces': forms.Select(attrs={
+                'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500'
             }),
         }
 
@@ -199,6 +232,80 @@ class UserForm(forms.ModelForm):
                 'placeholder': 'Enter your Email Address'
             }),
 
+            'contact': forms.TextInput(attrs={
+                'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+                'placeholder': 'Enter your contact number'
+            }),
+
+            'password': forms.TextInput(attrs={
+                'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+                'placeholder': 'Use atleast 8 characters'
+            }),
+        }
+
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(
+        label='Current Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+            'placeholder': 'Enter your current password'
+        })
+    )
+    new_password = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+            'placeholder': 'Enter your new password'
+        })
+    )
+    confirm_password = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput(attrs={
+
+            'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+            'placeholder': 'Confirm your new password'
+        })
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        if new_password and confirm_password:
+            if new_password != confirm_password:
+                raise forms.ValidationError({
+                    'confirm_password': ["Passwords don't match!"]
+                })
+        return cleaned_data
+
+
+class UserFormPrivate(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['user_firstname', 'user_lastname', 'user_email', 'contact']
+
+        labels = {
+            'user_firstname': 'First Name',
+            'user_lastname': 'Last Name',
+            'user_email': 'Email',
+            'contact': 'Contact Number',
+        }
+
+        widgets = {
+            'user_firstname': forms.TextInput(attrs={
+                'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+                'placeholder': 'Enter First Name'
+            }),
+            'user_lastname': forms.TextInput(attrs={
+                'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+                'placeholder': 'Enter Last Name'
+            }),
+            'user_email': forms.TextInput(attrs={
+                'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
+                'placeholder': 'Enter your Email Address'
+            }),
             'contact': forms.TextInput(attrs={
                 'class': 'w-full px-4 border-b border-t-0 border-x-0 border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Enter your contact number'

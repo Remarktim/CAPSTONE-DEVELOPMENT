@@ -25,6 +25,8 @@ document.body.addEventListener('closeAndRefresh', function() {
 });
 
 
+
+
 function showTitle(text) {
   document.getElementById('title').innerText = text;
 }

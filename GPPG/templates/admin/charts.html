@@ -300,17 +300,17 @@
       height="285"></canvas>
   </div>
 
-  <div class="h-auto w-full bg-gray-50 dark:bg-gray-800 rounded-xl px-5 t flex flex-col items-center stat-card animate-cardEntry transform transition-all duration-300 opacity-0">
-    <div class="text-start w-full">
-      <p class="text-md text-black mt-5 ml-2 font-bold font-['Bahnschrift'] justify-start">Website Views</p>
+    <div class="h-auto w-full bg-gray-50 dark:bg-gray-800 rounded-xl px-5 t flex flex-col items-center stat-card animate-cardEntry transform transition-all duration-300 opacity-0">
+      <div class="text-start w-full">
+        <p class="text-md text-black mt-5 ml-2 font-bold font-['Bahnschrift'] justify-start">Website Views</p>
+      </div>
+      <div class="max-w-xs flex justify-center items-center w-full">
+        <canvas
+          id="yearPieChart"
+          class="-mt-5"></canvas>
+      </div>
     </div>
-    <div class="max-w-xs flex justify-center items-center w-full">
-      <canvas
-        id="yearPieChart"
-        class="-mt-5"></canvas>
-    </div>
-  </div>
-</section>
+  </section>
 
 <section
   class="h-fit bg-gray-50 dark:bg-gray-800 rounded-xl px-5 overflow-hidden stat-card animate-cardEntry transform transition-all duration-300 opacity-0"
@@ -392,4 +392,5 @@
   });
 </script>
 
-{% endblock extra_js %}
+  {% endblock extra_js %}
+</section>

@@ -775,7 +775,7 @@ def user_update_private(request, id):
     user = get_object_or_404(User, id=id)
 
     if request.method == 'POST':
-        form = UserForm(request.POST, request.FILES, instance=user)
+        form = UserFormPrivate(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             response = HttpResponse()
@@ -784,13 +784,13 @@ def user_update_private(request, id):
             return response
         else:
 
-            return render(request, 'admin/includes/modal/modal_user_edit.html', {
+            return render(request, 'admin/includes/modal/modal_user_edit_private.html', {
                 'form': form,
                 'user': user,
             })
 
-    form = UserForm(instance=user)
-    return render(request, 'admin/includes/modal/modal_user_edit.html', {
+    form = UserFormPrivate(instance=user)
+    return render(request, 'admin/includes/modal/modal_user_edit_private.html', {
         'form': form,
         'user': user
     })
@@ -1371,8 +1371,69 @@ def admin_map(request):
     return render(request, 'admin/map.html')
 
 
-def admin_report(request):
-    return render(request, 'admin/report.html')
+@method_decorator(admin_required, name='dispatch')
+class IncidentReportsListView(ListView):
+    model = IncidentReport
+    context_object_name = "reports"
+    template_name = "admin/report.html"
+
+
+def confirm_accept(request, report_id):
+    report = get_object_or_404(IncidentReport, pk=report_id)
+    return render(request, 'admin/includes/modal/modal_report_accept.html', {'report': report})
+
+def accept_incident(request, report_id):
+    
+    report = get_object_or_404(IncidentReport, id=report_id)
+    
+
+    incident = Incident.objects.create(
+        municity=report.municity,
+        status=report.status,
+        date_reported=report.date_reported,
+        description=report.description,
+    )
+
+    LogEntry.objects.log_action(
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Incident).pk,
+                object_id=incident.pk,
+                object_repr=str(incident),
+                action_flag=ADDITION,
+                change_message="Report Accepted and Added to Incidents"
+            )
+    
+    
+    report.delete()
+    
+    messages.success(request, "Incident accepted and added to the database.")
+    
+    return redirect("admin_report")  
+
+def confirm_cancel(request, report_id):
+    report = get_object_or_404(IncidentReport, id=report_id)
+    return render(request, 'admin/includes/modal/modal_report_cancel.html', {'report': report})
+
+
+def cancel_incident(request, report_id):
+    
+    report = get_object_or_404(IncidentReport, id=report_id)
+
+    LogEntry.objects.log_action(
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(IncidentReport).pk,
+                object_id=report.pk,
+                object_repr=str(report),
+                action_flag=DELETION,
+                change_message="Report canceled and removed"
+            )
+    
+    report.delete()
+    
+    messages.info(request, "Incident report removed.")
+    response = HttpResponse()
+    response.headers['HX-Trigger'] = 'closeAndRefresh'
+    return response
 
 
 def admin_charts(request):
@@ -1384,8 +1445,7 @@ class AdminLogView(UserPassesTestMixin, ListView):
     model = LogEntry
     template_name = 'admin/profile.html'
     paginate_by = 6
-    context_object_name = 'logs'
-    # Redirects to admin login if test fails
+    context_object_name = 'all_logs'  
     login_url = reverse_lazy('admin_login')
 
     def test_func(self):
@@ -1396,18 +1456,28 @@ class AdminLogView(UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        for log in context['logs']:
-            # Format the action message using `change_message`
-            if log.action_flag == 1:
-                action = f"{log.change_message}"
-            elif log.action_flag == 2:
-                action = f"{log.change_message}"
-            elif log.action_flag == 3:
-                action = f"{log.change_message}"
-            else:
-                action = "No action specified"
-            log.formatted_action = action
+
+        context['user_logs'] = LogEntry.objects.filter(user=self.request.user).select_related('user').order_by('-action_time')
+
+        for log in context['all_logs']:
+            log.formatted_action = self.format_action(log)
+
+        for log in context['user_logs']:
+            log.formatted_action = self.format_action(log)
+
         return context
+
+    def format_action(self, log):
+        if log.action_flag == 1:
+            return f"{log.change_message}"
+        elif log.action_flag == 2:
+            return f"{log.change_message}"
+        elif log.action_flag == 3:
+            return f"{log.change_message}"
+        else:
+            return "No action specified"
+
+
 
 # QUERIES
 
@@ -1477,44 +1547,56 @@ def get_poaching_trends(request):
 
 
 def get_chart_data(request):
-
     period = request.GET.get('period', 'overall')
     status_filter = request.GET.get('status', None)
-
+    
     statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
     if status_filter:
         # Split the comma-separated statuses
         statuses = [s.strip() for s in status_filter.split(',')]
-
+    
     trends = {status: {'overall': [0] * 12, 'yearly': {}}
-              for status in statuses}
-
+             for status in statuses}
+    
     reports = Incident.objects.all()
-
     if status_filter:
         reports = reports.filter(status__in=statuses)
-
+    
     aggregated_data = reports.values(
         'date_reported__year', 'date_reported__month', 'status'
     ).annotate(count=Count('id'))
-
+    
+    # First, collect all the data as before
     for entry in aggregated_data:
         month_index = entry['date_reported__month'] - 1
         status = entry['status']
         count = entry['count']
         year = entry['date_reported__year']
-
+        
         if status in trends:
             trends[status]['overall'][month_index] += count
-
+            
             if year not in trends[status]['yearly']:
                 trends[status]['yearly'][year] = [0] * 12
             trends[status]['yearly'][year][month_index] += count
-
-    response_data = {
-        f"{status.lower()}_trend": trends[status] for status in statuses}
-
-    return JsonResponse(response_data)
+    
+    # Now reorganize the yearly data with sorted years
+    sorted_trends = {}
+    for status in statuses:
+        yearly_data = trends[status]['yearly']
+        # Sort years in descending order and create new ordered dictionary
+        sorted_years = dict(sorted(
+            yearly_data.items(),
+            key=lambda x: x[0],  # Sort by year
+            reverse=True  # Sort in descending order
+        ))
+        
+        sorted_trends[f"{status.lower()}_trend"] = {
+            'overall': trends[status]['overall'],
+            'yearly': sorted_years
+        }
+    
+    return JsonResponse(sorted_trends)
 
 
 def get_registereduser_data(request):
