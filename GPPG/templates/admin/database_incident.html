@@ -173,7 +173,7 @@
   <!-- Main Content Container -->
   <div
     id="hs-datatable-with-export"
-    class="p-4 rounded-xl overflow-hidden bg-white h-[865px] shadow-sm"
+    class="p-4 rounded-xl overflow-hidden bg-white h-auto shadow-sm"
     data-hs-datatable='{
     "pageLength": 10,
     "pagingOptions": {
@@ -622,15 +622,6 @@
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.municity }}</td>
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.status }}</td>
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.date_reported }}</td>
-                <td class="px-4 py-3 text-sm text-gray-800">
-                  <div class="max-w-xs">
-                    <div
-                      class="truncate"
-                      id="shortDesc{{ incident.id }}">
-                      {{ incident.description }}
-                    </div>
-                  </div>
-                </td>
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.life_history }}</td>
                 <td class="px-4 py-3 text-sm text-gray-800">{{ incident.weight }}</td>
                 <td class="px-4 py-3 text-sm font-medium text-gray-800">{{ incident.sex }}</td>

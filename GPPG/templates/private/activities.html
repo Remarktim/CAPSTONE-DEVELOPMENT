@@ -56,7 +56,8 @@
           class="w-full h-60 object-cover transform group-hover:scale-105 transition-transform duration-300"
           onclick="openModal(this)"
           oncontextmenu="return false;"
-          draggable="false" />
+          draggable="false"
+          loading="lazy" />
         <div class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300"></div>
       </div>
       {% endif %}
@@ -165,7 +166,8 @@
         <img
           src="{{ event.event_image.url }}"
           alt="{{ event.name }}"
-          class="w-auto h-72 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" />
+          class="w-auto h-72 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+          loading="lazy" />
         {% endif %}
       </div>
     </div>
@@ -177,7 +179,8 @@
         <img
           src="{{ event.event_image.url }}"
           alt="{{ event.name }}"
-          class="w-auto h-72 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" />
+          class="w-auto h-72 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+          loading="lazy" />
         {% endif %}
       </div>
       <div class="text-content w-full md:w-1/2 p-6 text-white">

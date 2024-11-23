@@ -980,10 +980,6 @@ def incident_delete(request, id):
         })
 
 
-def pangolin_activities(request):
-    return render(request, 'admin/database_activities.html')
-
-
 def userAccounts_database(request):
     return render(request, 'admin/database_userAccounts.html')
 
@@ -993,6 +989,8 @@ class EventListView(ListView):
     model = Event
     context_object_name = "events"
     template_name = "admin/database_activities.html"
+    paginate_by = 6  # This will show 6 items per page
+    ordering = ['-date']
 
 
 def activity_add(request):
@@ -1382,10 +1380,10 @@ def confirm_accept(request, report_id):
     report = get_object_or_404(IncidentReport, pk=report_id)
     return render(request, 'admin/includes/modal/modal_report_accept.html', {'report': report})
 
+
 def accept_incident(request, report_id):
-    
+
     report = get_object_or_404(IncidentReport, id=report_id)
-    
 
     incident = Incident.objects.create(
         municity=report.municity,
@@ -1395,20 +1393,20 @@ def accept_incident(request, report_id):
     )
 
     LogEntry.objects.log_action(
-                user_id=request.user.id,
-                content_type_id=ContentType.objects.get_for_model(Incident).pk,
-                object_id=incident.pk,
-                object_repr=str(incident),
-                action_flag=ADDITION,
-                change_message="Report Accepted and Added to Incidents"
-            )
-    
-    
+        user_id=request.user.id,
+        content_type_id=ContentType.objects.get_for_model(Incident).pk,
+        object_id=incident.pk,
+        object_repr=str(incident),
+        action_flag=ADDITION,
+        change_message="Report Accepted and Added to Incidents"
+    )
+
     report.delete()
-    
+
     messages.success(request, "Incident accepted and added to the database.")
-    
-    return redirect("admin_report")  
+
+    return redirect("admin_report")
+
 
 def confirm_cancel(request, report_id):
     report = get_object_or_404(IncidentReport, id=report_id)
@@ -1416,20 +1414,20 @@ def confirm_cancel(request, report_id):
 
 
 def cancel_incident(request, report_id):
-    
+
     report = get_object_or_404(IncidentReport, id=report_id)
 
     LogEntry.objects.log_action(
-                user_id=request.user.id,
-                content_type_id=ContentType.objects.get_for_model(IncidentReport).pk,
-                object_id=report.pk,
-                object_repr=str(report),
-                action_flag=DELETION,
-                change_message="Report canceled and removed"
-            )
-    
+        user_id=request.user.id,
+        content_type_id=ContentType.objects.get_for_model(IncidentReport).pk,
+        object_id=report.pk,
+        object_repr=str(report),
+        action_flag=DELETION,
+        change_message="Report canceled and removed"
+    )
+
     report.delete()
-    
+
     messages.info(request, "Incident report removed.")
     response = HttpResponse()
     response.headers['HX-Trigger'] = 'closeAndRefresh'
@@ -1445,7 +1443,7 @@ class AdminLogView(UserPassesTestMixin, ListView):
     model = LogEntry
     template_name = 'admin/profile.html'
     paginate_by = 6
-    context_object_name = 'all_logs'  
+    context_object_name = 'all_logs'
     login_url = reverse_lazy('admin_login')
 
     def test_func(self):
@@ -1457,7 +1455,8 @@ class AdminLogView(UserPassesTestMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['user_logs'] = LogEntry.objects.filter(user=self.request.user).select_related('user').order_by('-action_time')
+        context['user_logs'] = LogEntry.objects.filter(
+            user=self.request.user).select_related('user').order_by('-action_time')
 
         for log in context['all_logs']:
             log.formatted_action = self.format_action(log)
@@ -1476,7 +1475,6 @@ class AdminLogView(UserPassesTestMixin, ListView):
             return f"{log.change_message}"
         else:
             return "No action specified"
-
 
 
 # QUERIES
@@ -1549,37 +1547,37 @@ def get_poaching_trends(request):
 def get_chart_data(request):
     period = request.GET.get('period', 'overall')
     status_filter = request.GET.get('status', None)
-    
+
     statuses = ['Alive', 'Dead', 'Scales', 'Illegal Trade']
     if status_filter:
         # Split the comma-separated statuses
         statuses = [s.strip() for s in status_filter.split(',')]
-    
+
     trends = {status: {'overall': [0] * 12, 'yearly': {}}
-             for status in statuses}
-    
+              for status in statuses}
+
     reports = Incident.objects.all()
     if status_filter:
         reports = reports.filter(status__in=statuses)
-    
+
     aggregated_data = reports.values(
         'date_reported__year', 'date_reported__month', 'status'
     ).annotate(count=Count('id'))
-    
+
     # First, collect all the data as before
     for entry in aggregated_data:
         month_index = entry['date_reported__month'] - 1
         status = entry['status']
         count = entry['count']
         year = entry['date_reported__year']
-        
+
         if status in trends:
             trends[status]['overall'][month_index] += count
-            
+
             if year not in trends[status]['yearly']:
                 trends[status]['yearly'][year] = [0] * 12
             trends[status]['yearly'][year][month_index] += count
-    
+
     # Now reorganize the yearly data with sorted years
     sorted_trends = {}
     for status in statuses:
@@ -1590,12 +1588,12 @@ def get_chart_data(request):
             key=lambda x: x[0],  # Sort by year
             reverse=True  # Sort in descending order
         ))
-        
+
         sorted_trends[f"{status.lower()}_trend"] = {
             'overall': trends[status]['overall'],
             'yearly': sorted_years
         }
-    
+
     return JsonResponse(sorted_trends)
 
 
