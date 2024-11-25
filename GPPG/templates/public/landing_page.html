@@ -24,17 +24,14 @@
     <div
       id="chat-bot"
       class="fixed right-5 bottom-5 z-50">
-      <!-- Chat Interface -->
       <div
         id="chat-window"
         class="absolute right-0 origin-bottom-right w-80 md:w-96 bg-white rounded-lg shadow-xl border overflow-hidden transition-all duration-300 ease-in-out opacity-0 scale-0 bottom-0"
         style="display: none">
-        <!-- Header -->
         <div class="bg-[rgb(63,7,3)] p-4 text-white">
-          <h3 class="font-semibold">Chat Support</h3>
+          <h3 class="font-semibold">Chat Bot</h3>
         </div>
 
-        <!-- Messages -->
         <div
           id="chat-messages"
           class="h-96 overflow-y-auto p-4 space-y-4 scroll-thin">
@@ -43,7 +40,6 @@
           </div>
         </div>
 
-        <!-- Input Area -->
         <div class="border-t p-4 bg-gray-50">
           <form
             id="chat-form"
@@ -76,7 +72,6 @@
         </div>
       </div>
 
-      <!-- Chat Button -->
       <button
         id="chat-toggle"
         class="bg-[rgb(63,7,3)] border p-3 rounded-full w-fit h-auto hover:scale-110 active:scale-90 transform transition-all ease-in-out duration-150 shadow-lg hover:shadow-xl active:shadow-md">
@@ -395,6 +390,5 @@
     <script src="{% static 'js/alpine.js' %}"></script>
     <script src="{% static 'js/index.js' %}"></script>
     <script src="{% static 'js/taos.js' %}"></script>
-    <!-- For Form abang kono -->
   </body>
 </html>

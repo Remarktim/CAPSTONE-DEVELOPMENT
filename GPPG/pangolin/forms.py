@@ -78,13 +78,19 @@ class OfficerForm(forms.ModelForm):
 
     date_joined = forms.DateField(
         widget=forms.DateInput(attrs={
-            'type': 'date',  # 'date' input type triggers browser date picker
+            'type': 'date',
             'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
             'placeholder': 'Select Date',
         })
     )
 
     class Meta:
+        officer_image = forms.ImageField(
+            widget=forms.FileInput(attrs={
+                'class': 'hidden',
+                'accept': 'image/*'
+            }),
+        )
         model = Officer
         fields = "__all__"
 
@@ -113,15 +119,16 @@ class OfficerForm(forms.ModelForm):
             }),
             'fb_url': forms.URLInput(attrs={
                 'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
-                'placeholder': 'Enter your full Facebook profile link (e.g., https://www.facebook.com/your.custom.url)',
+                'placeholder': 'Enter your full Facebook  link (e.g., https://www.facebook.com/your.custom.url)',
                 'required': 'required'
             }),
             'ig_url': forms.URLInput(attrs={
                 'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
-                'placeholder': 'Enter your full Instagram profile link (e.g., https://www.instagram.com/your.custom.url)'
+                'placeholder': 'Enter your full Instagram  link (e.g., https://www.instagram.com/your.custom.url)'
             }),
-            'officer_image': forms.ClearableFileInput(attrs={
-                'class': 'block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer',
+            'officer_image': forms.FileInput(attrs={
+                'class': 'hidden',
+                'accept': 'image/*'
             }),
         }
 
@@ -139,6 +146,13 @@ class OfficerForm(forms.ModelForm):
 
 
 class GalleryForm(forms.ModelForm):
+    media = forms.FileField(
+        widget=forms.FileInput(attrs={
+            'class': 'hidden',
+            'accept': 'image/*,video/*'
+        }),
+    )
+
     class Meta:
         model = Gallery
         fields = ['uploader', 'media']
@@ -151,9 +165,11 @@ class GalleryForm(forms.ModelForm):
             'uploader': forms.TextInput(attrs={
                 'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Enter your name',
+
             }),
-            'media': forms.ClearableFileInput(attrs={
-                'class': 'block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer',
+            'media': forms.FileInput(attrs={
+                'class': 'hidden',
+                'accept': 'image/*,video/*'
             }),
         }
 
@@ -167,7 +183,7 @@ class EventForm(forms.ModelForm):
         })
     )
     event_image = forms.ImageField(
-        widget=forms.ClearableFileInput(attrs={
+        widget=forms.FileInput(attrs={
             'class': 'hidden',
         }),
     )
@@ -197,7 +213,7 @@ class EventForm(forms.ModelForm):
                 'class': 'bg-gray-50 border-b-2 border-t-0 border-x-0 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:border-b-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-b-primary-600',
                 'placeholder': 'Enter Activity Location'
             }),
-            'event_image': forms.ClearableFileInput(attrs={
+            'event_image': forms.FileInput(attrs={
                 'class': 'hidden',
                 'accept': 'image/*'
             }),

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 from django.db.models import Count
@@ -483,27 +484,42 @@ def public_about(request):
 
 
 def public_officers(request):
-    presidents = Officer.objects.filter(position='President')
-    vice_presidents = Officer.objects.filter(position='Vice President')
-    secretary = Officer.objects.filter(position='Secretary')
-    treasurer = Officer.objects.filter(position='Treasurer')
-    auditor = Officer.objects.filter(position='Auditor')
-    pio_internal = Officer.objects.filter(position='Pio Internal')
-    pio_external = Officer.objects.filter(position='Pio External')
-    business_manager = Officer.objects.filter(position='Business Manager')
-    return render(request, 'public/officers.html', {
-        'president': presidents,
-        'vice_president': vice_presidents,
-        'secretary': secretary,
-        'treasurer': treasurer,
-        'auditor': auditor,
-        'pio_internal': pio_internal,
-        'pio_external': pio_external,
-        'business_manager': business_manager,
-    })
+    current_year = datetime.now().year
 
+    available_years = Officer.objects.dates(
+        'date_joined', 'year', order='DESC')
+
+    selected_year = request.GET.get('year', str(current_year))
+
+    context = {
+        'available_years': available_years,
+        'selected_year': selected_year,
+        'current_year': str(current_year)
+    }
+
+    base_filter = {'date_joined__year': selected_year} if selected_year else {}
+
+    positions = {
+        'president': 'President',
+        'vice_president': 'Vice President',
+        'secretary': 'Secretary',
+        'treasurer': 'Treasurer',
+        'auditor': 'Auditor',
+        'pio_internal': 'Pio Internal',
+        'pio_external': 'Pio External',
+        'business_manager': 'Business Manager'
+    }
+
+    for position_key, position_name in positions.items():
+        context[position_key] = Officer.objects.filter(
+            position=position_name,
+            **base_filter
+        )
+
+    return render(request, 'public/officers.html', context)
 
 # PRIVATE
+
 
 @login_required
 def home(request):
@@ -688,24 +704,39 @@ def trend(request):
 
 @login_required
 def officers(request):
-    presidents = Officer.objects.filter(position='President')
-    vice_presidents = Officer.objects.filter(position='Vice President')
-    secretary = Officer.objects.filter(position='Secretary')
-    treasurer = Officer.objects.filter(position='Treasurer')
-    auditor = Officer.objects.filter(position='Auditor')
-    pio_internal = Officer.objects.filter(position='Pio Internal')
-    pio_external = Officer.objects.filter(position='Pio External')
-    business_manager = Officer.objects.filter(position='Business Manager')
-    return render(request, 'private/officers.html', {
-        'president': presidents,
-        'vice_president': vice_presidents,
-        'secretary': secretary,
-        'treasurer': treasurer,
-        'auditor': auditor,
-        'pio_internal': pio_internal,
-        'pio_external': pio_external,
-        'business_manager': business_manager,
-    })
+    current_year = datetime.now().year
+
+    available_years = Officer.objects.dates(
+        'date_joined', 'year', order='DESC')
+
+    selected_year = request.GET.get('year', str(current_year))
+
+    context = {
+        'available_years': available_years,
+        'selected_year': selected_year,
+        'current_year': str(current_year)
+    }
+
+    base_filter = {'date_joined__year': selected_year} if selected_year else {}
+
+    positions = {
+        'president': 'President',
+        'vice_president': 'Vice President',
+        'secretary': 'Secretary',
+        'treasurer': 'Treasurer',
+        'auditor': 'Auditor',
+        'pio_internal': 'Pio Internal',
+        'pio_external': 'Pio External',
+        'business_manager': 'Business Manager'
+    }
+
+    for position_key, position_name in positions.items():
+        context[position_key] = Officer.objects.filter(
+            position=position_name,
+            **base_filter
+        )
+
+    return render(request, 'private/officers.html', context)
 
 
 @login_required
