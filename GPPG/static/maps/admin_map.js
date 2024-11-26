@@ -54,7 +54,6 @@ function searchMunicipality(event) {
 
     isSearching = true;
   } else {
-    
     showError("Municipality not found. Please try again.");
   }
   hideLoading();
@@ -77,7 +76,6 @@ function showError(message) {
     errorElement.style.display = "none";
   }, 3000);
 }
-
 
 // Function to remove highlight from the municipality
 function removeHighlight() {
@@ -112,27 +110,21 @@ let totalIncidents = 0;
 // Modify the fetchMunicipalityData function to calculate percentages
 function fetchMunicipalityData(municity) {
   fetch(`/get-municity-data/`)
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       // Calculate total incidents across all municipalities first
       let totalIncidents = 0;
-      Object.values(data).forEach(municipalityData => {
+      Object.values(data).forEach((municipalityData) => {
         if (municipalityData) {
-          totalIncidents += municipalityData.dead + 
-                            municipalityData.alive + 
-                            municipalityData.scales + 
-                            municipalityData.illegalTrades;
+          totalIncidents += municipalityData.dead + municipalityData.alive + municipalityData.scales + municipalityData.illegalTrades;
         }
       });
 
       const municipalityData = data[municity];
       if (municipalityData) {
         // Calculate total for this municipality
-        const municipalityTotal = municipalityData.dead + 
-                                  municipalityData.alive + 
-                                  municipalityData.scales + 
-                                  municipalityData.illegalTrades;
-        
+        const municipalityTotal = municipalityData.dead + municipalityData.alive + municipalityData.scales + municipalityData.illegalTrades;
+
         // Add total and percentage to the municipality data object
         municipalityData.municipalityTotal = municipalityTotal;
         municipalityData.percentage = ((municipalityTotal / totalIncidents) * 100).toFixed(2);
@@ -142,7 +134,7 @@ function fetchMunicipalityData(municity) {
         createDoughnutChart(null);
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error fetching municipality data:", error);
     });
 }
@@ -167,7 +159,7 @@ function createOverlayHTML(regionName, coordinate) {
   return infoElement;
 }
 
-let chartInstance; 
+let chartInstance;
 
 function createDoughnutChart(municipalityData) {
   const ctx = document.getElementById("donutchart").getContext("2d");
@@ -178,7 +170,7 @@ function createDoughnutChart(municipalityData) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   // Check if municipalityData is null or empty
-  if (!municipalityData || Object.values(municipalityData).every(value => value === 0 || typeof value === 'string')) {
+  if (!municipalityData || Object.values(municipalityData).every((value) => value === 0 || typeof value === "string")) {
     // Display "No recorded incidents" message
     ctx.font = "bold 15px Roboto";
     ctx.fillStyle = "gray";
@@ -190,7 +182,7 @@ function createDoughnutChart(municipalityData) {
     lines.forEach((line, index) => {
       ctx.fillText(line, ctx.canvas.width / 2, ctx.canvas.height / 2 - 10 + index * 20);
     });
-    
+
     if (percentageElement) {
       percentageElement.innerHTML = "0% of total incidents";
       totalElement.innerHTML = "0";
@@ -252,7 +244,7 @@ function createDoughnutChart(municipalityData) {
         datalabels: {
           color: "white",
           formatter: (value) => `${value}`,
-          font: { weight: "semibold"},
+          font: { weight: "semibold" },
           align: "center",
           anchor: "center",
         },
@@ -262,18 +254,15 @@ function createDoughnutChart(municipalityData) {
   });
 }
 
-
-
 // Create a map instance
 var map = new ol.Map({
   target: "map",
   layers: [],
   view: new ol.View({
     center: ol.proj.fromLonLat([118.7384, 9.8349]),
-    zoom: 1,
+    zoom: 7.5,
     minZoom: 2,
     maxZoom: 18,
-    extent: ol.proj.transformExtent([114, 7.5, 124.5, 25], "EPSG:4326", "EPSG:3857"),
   }),
 });
 
@@ -353,7 +342,7 @@ map.on("click", function (evt) {
 
     overlay.setElement(createOverlayHTML(regionName));
     overlay.setPosition(centroid);
-    
+
     fetchMunicipalityData(regionName);
   } else {
     removeOverlay();
@@ -386,7 +375,6 @@ map.on("pointermove", function (evt) {
     highlight = feature;
   }
 });
-
 
 function removeOverlay() {
   overlay.setPosition(undefined);

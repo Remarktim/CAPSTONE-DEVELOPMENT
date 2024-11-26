@@ -745,6 +745,11 @@ def maps(request):
 
 
 @login_required
+def reports(request):
+    return render(request, 'private/reports.html')
+
+
+@login_required
 def account_view(request):
     change_password_form = ChangePasswordForm()
     context = {
@@ -753,51 +758,53 @@ def account_view(request):
     return render(request, 'private/account_view.html', context)
 
 
-# views.py
-
-
 @login_required
 def change_password(request):
-    if request.method != 'POST':
-        form = ChangePasswordForm()
-        return render(request, 'admin/includes/modal/modal_changepass.html', {'form': form})
-
-    form = ChangePasswordForm(request.POST)
-    if not form.is_valid():
-        return render(request, 'admin/includes/modal/modal_changepass.html', {
-            'form': form,
-            'error': True
-        })
-
     try:
-        current_user_id = request.session.get('user_id')
-        user = User.objects.get(id=current_user_id)
-        current_password = form.cleaned_data['current_password']
-        new_password = form.cleaned_data['new_password']
+        data = json.loads(request.body)
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
 
-        if not user.user_password(current_password):
-            form.add_error('current_password', 'Current password is incorrect')
-            return render(request, 'admin/includes/modal/modal_changepass.html', {
-                'form': form,
-                'error': True
+        user_id = request.session.get('user_id')
+        user = User.objects.get(id=user_id)
+
+        if not check_password(current_password, user.password):
+            return JsonResponse({
+                'status': 'error',
+                'errors': {'current_password': 'Current password is incorrect'}
             })
 
-        user.set_password(new_password)
+        if not new_password:
+            return JsonResponse({
+                'status': 'error',
+                'errors': {'new_password': 'New password is required'}
+            })
+
+        if new_password != confirm_password:
+            return JsonResponse({
+                'status': 'error',
+                'errors': {'confirm_password': 'Passwords do not match'}
+            })
+
+        user.password = make_password(new_password)
         user.save()
 
-        # Add success message for HTMX response
-        return HttpResponse(
-            '<div class="bg-green-100 text-green-700 p-4 rounded">'
-            'Password changed successfully!'
-            '<script>setTimeout(() => closeChangePasswordModal(), 2000)</script>'
-            '</div>'
-        )
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Your password has been changed successfully!'
+        })
 
+    except User.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'errors': {'__all__': 'User not found'}
+        })
     except Exception as e:
-        form.add_error(None, str(e))
-        return render(request, 'admin/includes/modal/modal_changepass.html', {
-            'form': form,
-            'error': True
+        print("Error:", str(e))
+        return JsonResponse({
+            'status': 'error',
+            'errors': {'__all__': str(e)}
         })
 
 
