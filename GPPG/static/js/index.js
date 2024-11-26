@@ -282,3 +282,9 @@ var typed = new Typed("#typing", {
   startDelay: 0,
   smartBackspace: true,
 });
+
+const measurementId = "G-P4VNGN1W54";
+
+gtag("get", measurementId, "page_view", (pageViews) => {
+  document.getElementById("visitorCount").textContent = pageViews;
+});

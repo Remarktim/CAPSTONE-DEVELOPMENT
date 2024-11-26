@@ -1,18 +1,39 @@
 //############################################################################################################
-// Data for Website Views
+// GA4 Configuration
+const measurementId = "G-P4VNGN1W54";
+
 const WebsiteViews_ChartData = {
   thisYear: {
     labels: ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Sep", "Nov", "Dec"],
-    data: [50, 60, 80, 10, null, 120, 140, 160, 180],
+    data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
   lastYear: {
     labels: ["Jan", "Mar", "Apr", "May", "Jul", "Sep", "Oct", "Dec"],
-    data: [40, 70, 100, 110, null, 130, 150, 170],
+    data: [0, 0, 0, 0, 0, 0, 0, 0],
   },
 };
 
 function WebsiteViews_sumData(data) {
   return data.reduce((sum, value) => sum + (value !== null ? value : 0), 0);
+}
+
+function updateAnalyticsData() {
+  gtag("get", measurementId, "page_view", (pageViewData) => {
+    Object.keys(pageViewData?.yearlyData || {}).forEach((year) => {
+      const yearData = pageViewData.yearlyData[year];
+      if (year === new Date().getFullYear().toString()) {
+        WebsiteViews_ChartData.thisYear.data = yearData;
+      } else {
+        WebsiteViews_ChartData.lastYear.data = yearData;
+      }
+    });
+
+    const thisYearSum = WebsiteViews_sumData(WebsiteViews_ChartData.thisYear.data);
+    const lastYearSum = WebsiteViews_sumData(WebsiteViews_ChartData.lastYear.data);
+
+    WebsiteViews_pieChart.data.datasets[0].data = [thisYearSum, lastYearSum];
+    WebsiteViews_pieChart.update();
+  });
 }
 
 const thisYearSum = WebsiteViews_sumData(WebsiteViews_ChartData.thisYear.data);
@@ -70,6 +91,10 @@ const WebsiteViews_pieChart = new Chart(WebsiteViews_ctx, {
   },
   plugins: [ChartDataLabels],
 });
+
+// Initial update and refresh interval
+updateAnalyticsData();
+setInterval(updateAnalyticsData, 300000); // Update every 5 minutes
 
 //############################################################################################################
 // Bar Chart for Poaching
@@ -330,13 +355,11 @@ function fetchDataIllegalTrade() {
     });
 }
 
-
 function updateChartIllegalTrade(year, chartData) {
   if (!chartData || !Array.isArray(chartData)) {
     console.error("Invalid data for the selected year:", chartData);
     return;
   }
-
 
   IllegalTradeChart.data.datasets[0].data = chartData;
   IllegalTradeChart.data.datasets[0].label = `Illegal Trade - ${year}`;
@@ -357,10 +380,7 @@ yearSelect.addEventListener("change", function () {
       if (trends && trends.yearly && selectedYear in trends.yearly) {
         updateChartIllegalTrade(selectedYear, trends.yearly[selectedYear]);
       } else {
-        console.error(
-          `No data found for the selected year '${selectedYear}' or invalid structure:`,
-          trends
-        );
+        console.error(`No data found for the selected year '${selectedYear}' or invalid structure:`, trends);
         alert(`No data available for the selected year: ${selectedYear}`);
       }
     })
@@ -369,10 +389,8 @@ yearSelect.addEventListener("change", function () {
     });
 });
 
-
 // Initialize the fetch on page load
 fetchDataIllegalTrade();
-
 
 //############################################################################################################
 // Bar two Chart Code for Dead and alive
@@ -443,17 +461,17 @@ let globalDeadTrend = {};
 // Function to get all unique years from the data
 function getUniqueYears(data) {
   const years = new Set();
-  
+
   // Add years from alive trend
   if (data.alive_trend?.yearly) {
-    Object.keys(data.alive_trend.yearly).forEach(year => years.add(year));
+    Object.keys(data.alive_trend.yearly).forEach((year) => years.add(year));
   }
-  
+
   // Add years from dead trend
   if (data.dead_trend?.yearly) {
-    Object.keys(data.dead_trend.yearly).forEach(year => years.add(year));
+    Object.keys(data.dead_trend.yearly).forEach((year) => years.add(year));
   }
-  
+
   return Array.from(years).sort();
 }
 
@@ -467,15 +485,15 @@ function fetchDataDeadAlive() {
       // Store the trend data globally
       globalAliveTrend = data.alive_trend?.yearly || {};
       globalDeadTrend = data.dead_trend?.yearly || {};
-      
+
       // Get all unique years
       const availableYears = getUniqueYears(data);
 
       // Populate the year dropdown
       const yearSelect = document.getElementById("DeadAlive_yearSelector");
       // Clear existing options first
-      yearSelect.innerHTML = '';
-      
+      yearSelect.innerHTML = "";
+
       availableYears.forEach((year) => {
         const option = document.createElement("option");
         option.value = year;
@@ -499,7 +517,7 @@ function fetchDataDeadAlive() {
 function updateChartData(selectedYear) {
   // Initialize arrays with zeros
   const emptyData = new Array(12).fill(0);
-  
+
   // Get data for the selected year or use zeros if not available
   const aliveData = globalAliveTrend[selectedYear] || emptyData;
   const deadData = globalDeadTrend[selectedYear] || emptyData;
