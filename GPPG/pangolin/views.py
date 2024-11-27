@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
@@ -1804,3 +1805,38 @@ def chart_user_accounts(request):
 
 def chart_illegal_trade(request):
     return render(request, 'admin/charts/illegal_trade.html')
+
+
+def export_incidents_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="pangolins_data.csv"'
+
+    incidents = Incident.objects.all()
+    selected_status = request.GET.get('status')
+
+    if selected_status:
+        incidents = incidents.filter(status=selected_status)
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'Municipality/City', 'Status', 'Date', 'Life History',
+        'Body Weight', 'Sex', 'OBL (Rolled)', 'OBL (Stretched)',
+        'Ticks', 'Feces', 'Other Remarks'
+    ])
+
+    for incident in incidents:
+        writer.writerow([
+            incident.municity,
+            incident.status,
+            incident.date_reported,
+            incident.life_history,
+            incident.weight,
+            incident.sex,
+            incident.obl_rolled,
+            incident.obl_stretched,
+            incident.ticks,
+            incident.feces,
+            incident.description
+        ])
+
+    return response
