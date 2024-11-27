@@ -1,39 +1,18 @@
 //############################################################################################################
 // GA4 Configuration
-const measurementId = "G-P4VNGN1W54";
-
 const WebsiteViews_ChartData = {
   thisYear: {
     labels: ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Sep", "Nov", "Dec"],
-    data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    data: [50, 60, 80, 10, null, 120, 140, 160, 180],
   },
   lastYear: {
     labels: ["Jan", "Mar", "Apr", "May", "Jul", "Sep", "Oct", "Dec"],
-    data: [0, 0, 0, 0, 0, 0, 0, 0],
+    data: [40, 70, 100, 110, null, 130, 150, 170],
   },
 };
 
 function WebsiteViews_sumData(data) {
   return data.reduce((sum, value) => sum + (value !== null ? value : 0), 0);
-}
-
-function updateAnalyticsData() {
-  gtag("get", measurementId, "page_view", (pageViewData) => {
-    Object.keys(pageViewData?.yearlyData || {}).forEach((year) => {
-      const yearData = pageViewData.yearlyData[year];
-      if (year === new Date().getFullYear().toString()) {
-        WebsiteViews_ChartData.thisYear.data = yearData;
-      } else {
-        WebsiteViews_ChartData.lastYear.data = yearData;
-      }
-    });
-
-    const thisYearSum = WebsiteViews_sumData(WebsiteViews_ChartData.thisYear.data);
-    const lastYearSum = WebsiteViews_sumData(WebsiteViews_ChartData.lastYear.data);
-
-    WebsiteViews_pieChart.data.datasets[0].data = [thisYearSum, lastYearSum];
-    WebsiteViews_pieChart.update();
-  });
 }
 
 const thisYearSum = WebsiteViews_sumData(WebsiteViews_ChartData.thisYear.data);
@@ -91,11 +70,6 @@ const WebsiteViews_pieChart = new Chart(WebsiteViews_ctx, {
   },
   plugins: [ChartDataLabels],
 });
-
-// Initial update and refresh interval
-updateAnalyticsData();
-setInterval(updateAnalyticsData, 300000); // Update every 5 minutes
-
 //############################################################################################################
 // Bar Chart for Poaching
 // const PoachingChart_ctx = document.getElementById("PoachingChart").getContext("2d");
